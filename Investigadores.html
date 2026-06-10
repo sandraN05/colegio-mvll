@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Investigadores - Colegio Mario Vargas Llosa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/investigadores.css"/>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a class="logo-area" href="index.html">
+      <img src="img/logo.png" alt="Logo MVL" class="logo-img"/>
+      <div>
+        <div class="logo-text">Mario Vargas Llosa</div>
+        <div class="logo-sub">Mariano Melgar · Arequipa</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#nosotros">Historia</a>
+      <a href="index.html#niveles">Niveles</a>
+
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-btn">
+          Equipo <span class="nav-chevron">▾</span>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="profesores.html">Profesores</a>
+          <a href="index.html#direccion">Dirección</a>
+        </div>
+      </div>
+
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-btn">
+          Institución <span class="nav-chevron">▾</span>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="promotores.html">Promotores</a>
+          <a href="investigadores.html">Investigadores</a>
+        </div>
+      </div>
+
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-btn">
+          Contenido <span class="nav-chevron">▾</span>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="index.html#revistas">Revista</a>
+          <a href="index.html#actividades">Actividades</a>
+          <a href="index.html#anuncios">Anuncios</a>
+        </div>
+      </div>
+
+      <a href="index.html#contacto">Contacto</a>
+      <a href="login.html" class="nav-admin">⚙ Admin</a>
+    </div>
+
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div class="nav-menu-mobile" id="mobileMenu">
+    <a href="index.html#nosotros" onclick="toggleMenu()">Historia</a>
+    <a href="index.html#niveles"  onclick="toggleMenu()">Niveles</a>
+
+    <div class="mobile-group-label">Equipo</div>
+    <a href="profesores.html"      onclick="toggleMenu()">Profesores</a>
+    <a href="index.html#direccion" onclick="toggleMenu()">Dirección</a>
+
+    <div class="mobile-group-label">Institución</div>
+    <a href="promotores.html"      onclick="toggleMenu()">Promotores</a>
+    <a href="investigadores.html"  onclick="toggleMenu()">Investigadores</a>
+
+    <div class="mobile-group-label">Contenido</div>
+    <a href="index.html#revistas"   onclick="toggleMenu()">Revista</a>
+    <a href="index.html#actividades"onclick="toggleMenu()">Actividades</a>
+    <a href="index.html#anuncios"   onclick="toggleMenu()">Anuncios</a>
+
+    <a href="index.html#contacto" onclick="toggleMenu()">Contacto</a>
+    <a href="login.html">⚙ Admin</a>
+  </div>
+</nav>
+
+  <!-- HERO -->
+  <div class="inv-hero">
+    <div class="inv-hero-inner">
+      <div class="section-tag">Área académica</div>
+      <h1>Investigadores</h1>
+      <p>Investigación, conocimiento y desarrollo académico en nuestra institución.</p>
+    </div>
+  </div>
+
+  <!-- CONTENIDO -->
+  <section class="inv-sec">
+    <div class="section-inner">
+  <div id="cargando-inv" class="estado-msg">
+  <div class="spinner"></div>
+  <p>Cargando investigadores...</p>
+</div>
+<div id="sin-inv" class="estado-msg" style="display:none;">
+  <span style="font-size:2.5rem">🔬</span>
+  <p>Próximamente se publicará contenido en esta sección.</p>
+</div>
+<div id="grid-inv" class="profes-grid" style="display:none;"></div>
+    </div>
+  </section>
+
+  <a href="https://wa.me/51957240209" class="wa-float" target="_blank">💬</a>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/investigadores.js"></script>
+  <script>
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    }
+  </script>
+</body>
+</html>

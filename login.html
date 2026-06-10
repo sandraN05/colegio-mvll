@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Admin - Colegio Mario Vargas Llosa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/login.css"/>
+</head>
+<body>
+  <div class="login-bg">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="img/logo.png" alt="Logo MVL" class="logo-img-login"/>
+        <div class="login-titulo">Panel Administrativo</div>
+        <div class="login-sub">Colegio Mario Vargas Llosa</div>
+      </div>
+
+      <div id="login-error" class="login-error" style="display:none;"></div>
+
+      <div class="login-form">
+        <div class="campo">
+          <label>Correo electrónico</label>
+          <input type="email" id="email" placeholder="Correo" onkeydown="if(event.key==='Enter') iniciarSesion()"/>
+        </div>
+        <div class="campo">
+          <label>Contraseña</label>
+          <input type="password" id="password" placeholder="Ingresa tu contraseña" onkeydown="if(event.key==='Enter') iniciarSesion()"/>
+        </div>
+        <button class="btn-login" onclick="iniciarSesion()" id="btn-login">
+          Ingresar al panel
+        </button>
+      </div>
+
+      <a href="index.html" class="volver-link">← Volver al inicio</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script>
+    async function verificarSesion() {
+      const { data: { session } } = await window.supabase.auth.getSession();
+      if (session) window.location.href = "admin.html";
+    }
+    verificarSesion();
+
+    async function iniciarSesion() {
+      const email    = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const btn      = document.getElementById("btn-login");
+
+      if (!email || !password) {
+        mostrarError("Completa todos los campos.");
+        return;
+      }
+
+      btn.textContent = "Verificando...";
+      btn.disabled = true;
+
+      const { data, error } = await window.supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        mostrarError("Correo o contraseña incorrectos.");
+        btn.textContent = "Ingresar al panel";
+        btn.disabled = false;
+        document.getElementById("password").value = "";
+        return;
+      }
+      window.location.href = "admin.html";
+    }
+    function mostrarError(msg) {
+      const el = document.getElementById("login-error");
+      el.textContent = msg;
+      el.style.display = "block";
+    }
+  </script>
+</body>
+</html>

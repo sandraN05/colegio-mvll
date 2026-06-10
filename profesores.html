@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Profesores - Colegio Mario Vargas Llosa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/profesores.css"/>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="logo-area" href="index.html">
+      <img src="img/logo.png" alt="Logo MVL" class="logo-img"/>
+      <div>
+        <div class="logo-text">Mario Vargas Llosa</div>
+        <div class="logo-sub">Mariano Melgar · Arequipa</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#nosotros">Historia</a>
+      <a href="index.html#niveles">Niveles</a>
+
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-btn">
+          Equipo <span class="nav-chevron">▾</span>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="profesores.html">Profesores</a>
+          <a href="index.html#direccion">Dirección</a>
+        </div>
+      </div>
+
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-btn">
+          Institución <span class="nav-chevron">▾</span>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="promotores.html">Promotores</a>
+          <a href="investigadores.html">Investigadores</a>
+        </div>
+      </div>
+
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-btn">
+          Contenido <span class="nav-chevron">▾</span>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="index.html#revistas">Revista</a>
+          <a href="index.html#actividades">Actividades</a>
+          <a href="index.html#anuncios">Anuncios</a>
+        </div>
+      </div>
+
+      <a href="index.html#contacto">Contacto</a>
+      <a href="login.html" class="nav-admin">⚙ Admin</a>
+    </div>
+
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div class="nav-menu-mobile" id="mobileMenu">
+    <a href="index.html#nosotros" onclick="toggleMenu()">Historia</a>
+    <a href="index.html#niveles"  onclick="toggleMenu()">Niveles</a>
+
+    <div class="mobile-group-label">Equipo</div>
+    <a href="profesores.html"      onclick="toggleMenu()">Profesores</a>
+    <a href="index.html#direccion" onclick="toggleMenu()">Dirección</a>
+
+    <div class="mobile-group-label">Institución</div>
+    <a href="promotores.html"      onclick="toggleMenu()">Promotores</a>
+    <a href="investigadores.html"  onclick="toggleMenu()">Investigadores</a>
+
+    <div class="mobile-group-label">Contenido</div>
+    <a href="index.html#revistas"   onclick="toggleMenu()">Revista</a>
+    <a href="index.html#actividades"onclick="toggleMenu()">Actividades</a>
+    <a href="index.html#anuncios"   onclick="toggleMenu()">Anuncios</a>
+
+    <a href="index.html#contacto" onclick="toggleMenu()">Contacto</a>
+    <a href="login.html">⚙ Admin</a>
+  </div>
+</nav>
+
+  <div class="prof-hero">
+    <div class="prof-hero-inner">
+      <div class="section-tag">Nuestro equipo</div>
+      <h1>Docentes <span>comprometidos</span></h1>
+      <p>Profesionales altamente capacitados con vocación de servicio y dedicación a la educación.</p>
+    </div>
+  </div>
+  <section class="prof-sec" id="permanentes">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-tag">Plana docente</div>
+        <h2 class="section-title">Profesores permanentes</h2>
+        <p class="section-sub">Docentes que forman el núcleo de nuestra institución educativa.</p>
+      </div>
+      <div id="cargando-perm" class="estado-msg">
+        <div class="spinner"></div>
+        <p>Cargando profesores...</p>
+      </div>
+      <div id="sin-perm" class="estado-msg" style="display:none;">
+        <span style="font-size:2.5rem"></span>
+        <p>No hay profesores permanentes registrados aún.</p>
+      </div>
+      <div id="grid-permanentes" class="profes-permanentes-grid" style="display:none;"></div>
+    </div>
+  </section>
+
+  <section class="prof-sec prof-sec-alt" id="temporales">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-tag">Personal temporal</div>
+        <h2 class="section-title">Profesores temporales</h2>
+        <p class="section-sub">Docentes que colaboran con nosotros por períodos determinados.</p>
+      </div>
+      <div id="cargando-temp" class="estado-msg">
+        <div class="spinner"></div>
+        <p>Cargando...</p>
+      </div>
+      <div id="sin-temp" class="estado-msg" style="display:none;">
+        <span style="font-size:2.5rem">📋</span>
+        <p>No hay profesores temporales registrados.</p>
+      </div>
+      <div id="lista-temporales" class="profes-temporales-lista" style="display:none;"></div>
+    </div>
+  </section>
+  <a href="https://wa.me/51957240209" class="wa-float" target="_blank">💬</a>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/profesores.js"></script>
+  <script>
+    function toggleMenu() {
+      document.getElementById('navMobile').classList.toggle('open');
+    }
+  </script>
+</body>
+</html>

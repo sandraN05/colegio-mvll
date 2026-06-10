@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Dashboard Admin - Colegio MVL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/admin.css"/>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+<img src="img/logo.png" alt="Logo MVL" class="logo-img-sidebar"/>
+      <div>
+        <div class="sidebar-titulo">Panel Admin</div>
+        <div class="sidebar-sub">Colegio Mario Vargas Llosa</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Contenido</div>
+      <button class="sidebar-btn active" onclick="mostrarTab('actividades',this)">
+    <span class="sb-icon"></span>
+    <span>Actividades</span>
+  </button>
+
+  <button class="sidebar-btn" onclick="mostrarTab('anuncios',this)">
+    <span class="sb-icon"></span>
+    <span>Anuncios</span>
+  </button>
+
+  <button class="sidebar-btn" onclick="mostrarTab('revistas',this)">
+    <span class="sb-icon"></span>
+    <span>Revistas</span>
+  </button>
+
+  <button class="sidebar-btn" onclick="mostrarTab('archivados',this)">
+    <span class="sb-icon"></span>
+    <span>Archivados</span>
+  </button>
+
+  <button class="sidebar-btn" onclick="mostrarTab('niveles',this)">
+    <span class="sb-icon"></span>
+    <span>Niveles</span>
+  </button>
+  <div class="sidebar-section-label">Dirección e Investigadores</div>
+ 
+  <button class="sidebar-btn" onclick="mostrarTab('direccion',this)">
+  <span class="sb-icon">🎖️</span>
+  <span>Dirección</span>
+  </button>
+ 
+  <button class="sidebar-btn" onclick="mostrarTab('investigadores',this)">
+  <span class="sb-icon">🔬</span>
+  <span>Investigadores</span>
+  </button>
+
+  <button class="sidebar-btn" onclick="mostrarTab('escuela',this)">
+  <span class="sb-icon">🏫</span>
+  <span>Escuela Investigación</span>
+  </button>
+ 
+  <button class="sidebar-btn" onclick="mostrarTab('promotores',this)">
+  <span class="sb-icon">🏅</span>
+  <span>Promotores</span>
+  </button>
+
+  <div class="sidebar-section-label">Docentes</div>
+
+  <button class="sidebar-btn" onclick="mostrarTab('permanentes',this)">
+    <span class="sb-icon"></span>
+    <span>Permanentes</span>
+  </button>
+
+  <button class="sidebar-btn" onclick="mostrarTab('temporales',this)">
+    <span class="sb-icon"></span>
+    <span>Temporales</span>
+  </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="index.html" target="_blank" class="sidebar-ver-web">
+        <span>🌐</span> Ver página web
+      </a>
+      <button class="sidebar-salir" onclick="cerrarSesion()">
+        <span>🚪</span> Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div id="tab-actividades" class="tab-contenido active">
+      <div class="panel-header">
+        <div>
+          <h2> Actividades</h2>
+          <p class="panel-desc">Gestiona las actividades del colegio</p>
+        </div>
+        <button class="btn-nuevo" onclick="abrirModal('actividad')">+ Nueva actividad</button>
+      </div>
+      <div id="lista-act" class="admin-lista"></div>
+    </div>
+
+    <div id="tab-anuncios" class="tab-contenido">
+      <div class="panel-header">
+        <div>
+          <h2>Anuncios</h2>
+          <p class="panel-desc">Próximos eventos e invitaciones</p>
+        </div>
+        <button class="btn-nuevo" onclick="abrirModal('anuncio')">+ Nuevo anuncio</button>
+      </div>
+      <div id="lista-anu" class="admin-lista"></div>
+    </div>
+
+    <div id="tab-revistas" class="tab-contenido">
+      <div class="panel-header">
+        <div>
+          <h2>Revistas</h2>
+          <p class="panel-desc">Revistas institucionales en PDF</p>
+        </div>
+        <button class="btn-nuevo" onclick="abrirModal('revista')">+ Nueva revista</button>
+      </div>
+      <div id="lista-rev" class="admin-lista"></div>
+    </div>
+
+    <div id="tab-niveles" class="tab-contenido">
+      <div class="panel-header">
+        <div>
+          <h2>Niveles</h2>
+          <p class="panel-desc">Fotos por nivel educativo</p>
+        </div>
+      </div>
+      <div class="niveles-tabs">
+        <button class="btn-nivel-tab active" onclick="seleccionarNivel('inicial',this)">🌱 Inicial</button>
+        <button class="btn-nivel-tab" onclick="seleccionarNivel('primaria',this)">📚 Primaria</button>
+        <button class="btn-nivel-tab" onclick="seleccionarNivel('secundaria',this)">🎓 Secundaria</button>
+      </div>
+      <div class="panel-header" style="margin-top:1rem;">
+        <h3 id="nivel-actual-titulo" style="font-size:1rem;color:#94a3b8;">Nivel: Inicial</h3>
+        <button class="btn-nuevo" onclick="abrirModalFoto()">+ Agregar foto</button>
+      </div>
+      <div id="lista-fotos-nivel" class="admin-lista"></div>
+    </div>
+
+    <div id="tab-direccion" class="tab-contenido">
+  <div class="panel-header">
+    <div>
+      <h2>🎖️ Dirección</h2>
+      <p class="panel-desc">Director(a) y equipo directivo</p>
+    </div>
+    <button class="btn-nuevo" onclick="abrirModalDireccion()">+ Agregar</button>
+  </div>
+  <div id="lista-direccion" class="admin-lista"></div>
+</div>
+ 
+<!-- TAB INVESTIGADORES -->
+<div id="tab-investigadores" class="tab-contenido">
+  <div class="panel-header">
+    <div>
+      <h2>🔬 Investigadores</h2>
+      <p class="panel-desc">Contenido textual de la sección investigadores</p>
+    </div>
+    <button class="btn-nuevo" onclick="abrirModalInvestigador()">+ Nuevo contenido</button>
+  </div>
+  <div id="lista-investigadores" class="admin-lista"></div>
+</div>
+
+<!-- TAB ESCUELA DE INVESTIGACIÓN -->
+<div id="tab-escuela" class="tab-contenido">
+  <div class="panel-header">
+    <div>
+      <h2>🏫 Escuela de Investigación</h2>
+      <p class="panel-desc">Contenido textual de la escuela de investigación</p>
+    </div>
+    <button class="btn-nuevo" onclick="abrirModalEscuela()">+ Nuevo contenido</button>
+  </div>
+  <div id="lista-escuela" class="admin-lista"></div>
+</div>
+ 
+<!-- TAB PROMOTORES -->
+<div id="tab-promotores" class="tab-contenido">
+  <div class="panel-header">
+    <div>
+      <h2>🏅 Promotores</h2>
+      <p class="panel-desc">Equipo promotor del colegio</p>
+    </div>
+    <button class="btn-nuevo" onclick="abrirModalPromotor()">+ Nuevo promotor</button>
+  </div>
+  <div id="lista-promotores" class="admin-lista"></div>
+</div>
+ 
+ 
+    <div id="tab-archivados" class="tab-contenido">
+  <div class="panel-header">
+    <div>
+      <h2> Archivados</h2>
+      <p class="panel-desc">
+        Actividades, anuncios y revistas vencidas
+      </p>
+    </div>
+  </div>
+  
+
+  <div id="lista-archivados" class="admin-lista">
+    <div class="admin-empty">
+      <p>No hay contenido archivado.</p>
+    </div>
+  </div>
+</div>
+
+    <div id="tab-permanentes" class="tab-contenido">
+      <div class="panel-header">
+        <div>
+          <h2>Profesores permanentes</h2>
+          <p class="panel-desc">Plana docente fija del colegio</p>
+        </div>
+        <button class="btn-nuevo" onclick="abrirModal('perm')">+ Nuevo profesor</button>
+      </div>
+      <div id="lista-perm" class="admin-lista"></div>
+    </div>
+
+    <div id="tab-temporales" class="tab-contenido">
+      <div class="panel-header">
+        <div>
+          <h2> Profesores temporales</h2>
+          <p class="panel-desc">Docentes por período determinado</p>
+        </div>
+        <button class="btn-nuevo" onclick="abrirModal('temp')">+ Nuevo profesor</button>
+      </div>
+      <div id="lista-temp" class="admin-lista"></div>
+    </div>
+
+  </main>
+  <div id="modal-actividad" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-act-titulo">Nueva actividad</h3>
+        <button onclick="cerrarModal('actividad')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="act-id"/>
+        <div class="campo">
+          <label>Título *</label>
+          <input type="text" id="act-titulo" placeholder="Ej: Feria de Ciencias 2025"/>
+        </div>
+        <div class="campo">
+          <label>Descripción</label>
+          <textarea id="act-desc" rows="3" placeholder="Describe la actividad..."></textarea>
+        </div>
+        <div class="campo-row">
+          <div class="campo">
+            <label>Fecha *</label>
+            <input type="date" id="act-fecha"/>
+          </div>
+          <div class="campo">
+            <label>Categoría</label>
+            <select id="act-categoria">
+              <option value="otro"> Otro</option>
+              <option value="ciencia">Ciencia</option>
+              <option value="deporte">Deporte</option>
+              <option value="aniversario">Aniversario</option>
+              <option value="concurso">Concurso</option>
+              <option value="feria">Feria</option>
+              <option value="arte">Arte</option>
+            </select>
+          </div>
+        </div>
+        <div class="campo">
+          <label>Imagen (opcional)</label>
+          <input type="file" id="act-imagen" accept="image/*"/>
+          <div id="act-imagen-preview" class="preview-img" style="display:none;">
+            <img id="act-img-actual" src="" alt="imagen actual"/>
+          </div>
+        </div>
+        <div id="act-error" class="form-error" style="display:none;"></div>
+        <div class="modal-footer">
+          <button class="btn-cancelar" onclick="cerrarModal('actividad')">Cancelar</button>
+          <button class="btn-guardar" id="btn-guardar-act" onclick="guardarActividad()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-revista" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-rev-titulo">Nueva revista</h3>
+        <button onclick="cerrarModal('revista')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="rev-id"/>
+        <div class="campo">
+          <label>Título *</label>
+          <input type="text" id="rev-titulo" placeholder="Ej: Revista Escolar 2025"/>
+        </div>
+        <div class="campo">
+          <label>Descripción</label>
+          <textarea id="rev-desc" rows="2" placeholder="Breve descripción..."></textarea>
+        </div>
+        <div class="campo">
+          <label>Archivo PDF *</label>
+          <input type="file" id="rev-pdf" accept="application/pdf"/>
+          <p id="rev-pdf-actual" class="campo-hint" style="display:none;"></p>
+        </div>
+        <div class="campo">
+          <label>Imagen de portada (opcional)</label>
+          <input type="file" id="rev-portada" accept="image/*"/>
+          <div id="rev-portada-preview" class="preview-img" style="display:none;">
+            <img id="rev-img-actual" src="" alt="portada actual"/>
+          </div>
+        </div>
+        <div id="rev-error" class="form-error" style="display:none;"></div>
+        <div class="modal-footer">
+          <button class="btn-cancelar" onclick="cerrarModal('revista')">Cancelar</button>
+          <button class="btn-guardar" id="btn-guardar-rev" onclick="guardarRevista()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-anuncio" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-anu-titulo">Nuevo anuncio</h3>
+        <button onclick="cerrarModal('anuncio')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="anu-id"/>
+        <div class="campo">
+          <label>Título *</label>
+          <input type="text" id="anu-titulo" placeholder="Ej: Día de la Madre 2026"/>
+        </div>
+        <div class="campo">
+          <label>Descripción</label>
+          <textarea id="anu-desc" rows="2" placeholder="Breve descripción del evento..."></textarea>
+        </div>
+        <div class="campo-row">
+          <div class="campo">
+            <label>Fecha del evento</label>
+            <input type="date" id="anu-fecha"/>
+          </div>
+          <div class="campo">
+            <label>Hora</label>
+            <input type="text" id="anu-hora" placeholder="Ej: 9:00 am"/>
+          </div>
+        </div>
+        <div class="campo">
+          <label>Lugar</label>
+          <input type="text" id="anu-lugar" placeholder="Ej: Patio de Honor"/>
+        </div>
+        <div class="campo">
+          <label>Imagen del flyer (opcional)</label>
+          <input type="file" id="anu-imagen" accept="image/*"/>
+          <div id="anu-imagen-preview" class="preview-img" style="display:none;">
+            <img id="anu-img-actual" src="" alt="flyer actual"/>
+          </div>
+        </div>
+        <div id="anu-error" class="form-error" style="display:none;"></div>
+        <div class="modal-footer">
+          <button class="btn-cancelar" onclick="cerrarModal('anuncio')">Cancelar</button>
+          <button class="btn-guardar" id="btn-guardar-anu" onclick="guardarAnuncio()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="modal-ver-archivado" class="modal-overlay">
+
+  <div class="modal-card">
+
+    <div class="modal-header">
+      <h3>Contenido archivado</h3>
+      <button onclick="cerrarVerArchivado()">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <div
+        id="ver-archivado-imagen-container"
+        class="preview-img"
+        style="display:none;"
+      >
+        <img
+          id="ver-archivado-imagen"
+          src=""
+          alt=""
+        />
+      </div>
+
+      <div class="campo">
+        <label>Tipo</label>
+        <input
+          type="text"
+          id="ver-archivado-tipo"
+          readonly
+        />
+      </div>
+
+      <div class="campo">
+        <label>Título</label>
+        <input
+          type="text"
+          id="ver-archivado-titulo-input"
+          readonly
+        />
+      </div>
+
+      <div class="campo">
+        <label>Descripción</label>
+        <textarea
+          id="ver-archivado-descripcion"
+          rows="5"
+          readonly
+        ></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          class="btn-cancelar"
+          onclick="cerrarVerArchivado()"
+        >
+          Cerrar
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+  <div id="modal-perm" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-perm-titulo">Nuevo profesor permanente</h3>
+        <button onclick="cerrarModal('perm')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="perm-id"/>
+        <div class="campo">
+          <label>Nombre completo *</label>
+          <input type="text" id="perm-nombre" placeholder="Ej: Prof. Juan Pérez"/>
+        </div>
+        <div class="campo">
+          <label>Curso / Área *</label>
+          <input type="text" id="perm-curso" placeholder="Ej: Matemáticas"/>
+        </div>
+        <div class="campo">
+          <label>Orden</label>
+          <input type="text" id="perm-orden" placeholder="Ej: 1, 2, 3..."/>
+        </div>
+        <div class="campo">
+          <label>Foto (opcional)</label>
+          <input type="file" id="perm-foto" accept="image/*"/>
+          <div id="perm-foto-preview" class="preview-img" style="display:none;">
+            <img id="perm-foto-actual" src="" alt="foto actual"/>
+          </div>
+        </div>
+        <div id="perm-error" class="form-error" style="display:none;"></div>
+        <div class="modal-footer">
+          <button class="btn-cancelar" onclick="cerrarModal('perm')">Cancelar</button>
+          <button class="btn-guardar" id="btn-guardar-perm" onclick="guardarPermanente()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-temp" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-temp-titulo">Nuevo profesor temporal</h3>
+        <button onclick="cerrarModal('temp')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="temp-id"/>
+        <div class="campo">
+          <label>Nombre completo *</label>
+          <input type="text" id="temp-nombre" placeholder="Ej: Prof. María García"/>
+        </div>
+        <div class="campo">
+          <label>Curso / Área *</label>
+          <input type="text" id="temp-curso" placeholder="Ej: Educación Física"/>
+        </div>
+        <div id="temp-error" class="form-error" style="display:none;"></div>
+        <div class="modal-footer">
+          <button class="btn-cancelar" onclick="cerrarModal('temp')">Cancelar</button>
+          <button class="btn-guardar" id="btn-guardar-temp" onclick="guardarTemporal()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-foto-nivel" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-foto-titulo">Agregar foto</h3>
+        <button onclick="cerrarModal('foto-nivel')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="foto-nivel-id"/>
+        <input type="hidden" id="foto-nivel-nivel"/>
+        <div class="campo">
+          <label>Foto *</label>
+          <input type="file" id="foto-nivel-archivo" accept="image/*"/>
+          <div id="foto-nivel-preview" class="preview-img" style="display:none;">
+            <img id="foto-nivel-actual" src="" alt="foto actual" style="width:120px;height:80px;"/>
+          </div>
+        </div>
+        <div class="campo">
+          <label>Descripción (opcional)</label>
+          <input type="text" id="foto-nivel-desc" placeholder="Ej: Alumnos en clase de arte"/>
+        </div>
+        <div class="campo">
+          <label>Orden</label>
+          <input type="text" id="foto-nivel-orden" placeholder="Ej: 1, 2, 3..."/>
+        </div>
+        <div id="foto-nivel-error" class="form-error" style="display:none;"></div>
+        <div class="modal-footer">
+          <button class="btn-cancelar" onclick="cerrarModal('foto-nivel')">Cancelar</button>
+          <button class="btn-guardar" id="btn-guardar-foto-nivel" onclick="guardarFotoNivel()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="modal-promotor" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="modal-promotor-titulo">Nuevo promotor</h3>
+      <button onclick="cerrarModal('promotor')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="prom-id"/>
+      <div class="campo">
+        <label>Nombre completo *</label>
+        <input type="text" id="prom-nombre" placeholder="Ej: María López"/>
+      </div>
+      <div class="campo">
+        <label>Cargo (opcional)</label>
+        <input type="text" id="prom-cargo" placeholder="Ej: Promotora General"/>
+      </div>
+      <div class="campo">
+        <label>Orden</label>
+        <input type="text" id="prom-orden" placeholder="Ej: 1, 2, 3..."/>
+      </div>
+      <div class="campo">
+        <label>Foto (opcional)</label>
+        <input type="file" id="prom-foto" accept="image/*"/>
+        <div id="prom-foto-preview" class="preview-img" style="display:none;">
+          <img id="prom-foto-actual" src="" alt="foto actual"/>
+        </div>
+      </div>
+      <div id="prom-error" class="form-error" style="display:none;"></div>
+      <div class="modal-footer">
+        <button class="btn-cancelar" onclick="cerrarModal('promotor')">Cancelar</button>
+        <button class="btn-guardar" id="btn-guardar-prom" onclick="guardarPromotor()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- MODAL DIRECCIÓN -->
+<div id="modal-direccion" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="modal-dir-titulo">Nueva dirección</h3>
+      <button onclick="cerrarModal('direccion')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="dir-id"/>
+      <div class="campo">
+        <label>Nombre completo *</label>
+        <input type="text" id="dir-nombre" placeholder="Ej: Prof. Ana García"/>
+      </div>
+      <div class="campo">
+        <label>Cargo</label>
+        <input type="text" id="dir-cargo" placeholder="Ej: Directora General"/>
+      </div>
+      <div class="campo">
+        <label>Descripción / Información adicional</label>
+        <textarea id="dir-descripcion" rows="4" placeholder="Información sobre el director(a)..."></textarea>
+      </div>
+      <div class="campo">
+        <label>Foto (opcional)</label>
+        <input type="file" id="dir-foto" accept="image/*"/>
+        <div id="dir-foto-preview" class="preview-img" style="display:none;">
+          <img id="dir-foto-actual" src="" alt="foto actual"/>
+        </div>
+      </div>
+      <div id="dir-error" class="form-error" style="display:none;"></div>
+      <div class="modal-footer">
+        <button class="btn-cancelar" onclick="cerrarModal('direccion')">Cancelar</button>
+        <button class="btn-guardar" id="btn-guardar-dir" onclick="guardarDireccion()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- MODAL INVESTIGADOR -->
+<div id="modal-investigador" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="modal-inv-titulo-label">Nuevo investigador</h3>
+      <button onclick="cerrarModal('investigador')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="inv-id"/>
+      <div class="campo">
+        <label>Nombre completo *</label>
+        <input type="text" id="inv-nombre" placeholder="Ej: María López"/>
+      </div>
+      <div class="campo">
+        <label>Cargo (opcional)</label>
+        <input type="text" id="inv-cargo" placeholder="Ej: Investigadora Senior"/>
+      </div>
+      <div class="campo">
+        <label>Orden</label>
+        <input type="text" id="inv-orden" placeholder="Ej: 1, 2, 3..."/>
+      </div>
+      <div class="campo">
+        <label>Foto (opcional)</label>
+        <input type="file" id="inv-foto" accept="image/*"/>
+        <div id="inv-foto-preview" style="display:none; margin-top:8px;">
+          <img id="inv-foto-actual" style="width:80px; height:80px; border-radius:50%; object-fit:cover;"/>
+        </div>
+      </div>
+      <div id="inv-error" class="form-error" style="display:none;"></div>
+      <div class="modal-footer">
+        <button class="btn-cancelar" onclick="cerrarModal('investigador')">Cancelar</button>
+        <button class="btn-guardar" id="btn-guardar-inv" onclick="guardarInvestigador()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- MODAL ESCUELA -->
+<div id="modal-escuela" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="modal-esc-titulo-label">Nuevo contenido</h3>
+      <button onclick="cerrarModal('escuela')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="esc-id"/>
+      <div class="campo">
+        <label>Título *</label>
+        <input type="text" id="esc-titulo" placeholder="Ej: Proyecto de Investigación 2025"/>
+      </div>
+      <div class="campo">
+        <label>Contenido</label>
+        <textarea id="esc-cuerpo" rows="8" placeholder="Escribe el contenido aquí..."></textarea>
+      </div>
+      <div id="esc-error" class="form-error" style="display:none;"></div>
+      <div class="modal-footer">
+        <button class="btn-cancelar" onclick="cerrarModal('escuela')">Cancelar</button>
+        <button class="btn-guardar" id="btn-guardar-esc" onclick="guardarEscuela()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-eliminar" class="modal-overlay">
+  <div class="modal-card modal-sm">
+    <div class="modal-header">
+      <h3>¿Eliminar?</h3>
+      <button onclick="cerrarEliminar()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="eliminar-msg" style="color:#94a3b8;font-size:0.9rem;">¿Estás segura de eliminar este elemento?</p>
+      <div class="modal-footer">
+        <button class="btn-cancelar" onclick="cerrarEliminar()">Cancelar</button>
+        <button class="btn-eliminar-confirm" id="btn-confirmar-eliminar">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
