@@ -15,9 +15,7 @@
         <div class="login-titulo">Panel Administrativo</div>
         <div class="login-sub">Colegio Mario Vargas Llosa</div>
       </div>
-
       <div id="login-error" class="login-error" style="display:none;"></div>
-
       <div class="login-form">
         <div class="campo">
           <label>Correo electrónico</label>
@@ -31,11 +29,9 @@
           Ingresar al panel
         </button>
       </div>
-
       <a href="index.html" class="volver-link">← Volver al inicio</a>
     </div>
   </div>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase.js"></script>
   <script>
@@ -44,20 +40,16 @@
       if (session) window.location.href = "admin.html";
     }
     verificarSesion();
-
     async function iniciarSesion() {
       const email    = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
       const btn      = document.getElementById("btn-login");
-
       if (!email || !password) {
         mostrarError("Completa todos los campos.");
         return;
       }
-
       btn.textContent = "Verificando...";
       btn.disabled = true;
-
       const { data, error } = await window.supabase.auth.signInWithPassword({ email, password });
       if (error) {
         mostrarError("Correo o contraseña incorrectos.");
