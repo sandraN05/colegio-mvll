@@ -21,48 +21,39 @@
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Contenido</div>
       <button class="sidebar-btn active" onclick="mostrarTab('actividades',this)">
-    <span class="sb-icon"></span>
     <span>Actividades</span>
   </button>
 
   <button class="sidebar-btn" onclick="mostrarTab('anuncios',this)">
-    <span class="sb-icon"></span>
     <span>Anuncios</span>
   </button>
 
   <button class="sidebar-btn" onclick="mostrarTab('revistas',this)">
-    <span class="sb-icon"></span>
     <span>Revistas</span>
   </button>
 
   <button class="sidebar-btn" onclick="mostrarTab('archivados',this)">
-    <span class="sb-icon"></span>
     <span>Archivados</span>
   </button>
 
   <button class="sidebar-btn" onclick="mostrarTab('niveles',this)">
-    <span class="sb-icon"></span>
     <span>Niveles</span>
   </button>
   <div class="sidebar-section-label">Dirección e Investigadores</div>
  
   <button class="sidebar-btn" onclick="mostrarTab('direccion',this)">
-  <span class="sb-icon">🎖️</span>
   <span>Dirección</span>
   </button>
  
   <button class="sidebar-btn" onclick="mostrarTab('investigadores',this)">
-  <span class="sb-icon">🔬</span>
   <span>Investigadores</span>
   </button>
 
   <button class="sidebar-btn" onclick="mostrarTab('escuela',this)">
-  <span class="sb-icon">🏫</span>
   <span>Escuela Investigación</span>
   </button>
  
   <button class="sidebar-btn" onclick="mostrarTab('promotores',this)">
-  <span class="sb-icon">🏅</span>
   <span>Promotores</span>
   </button>
 
@@ -81,14 +72,13 @@
 
     <div class="sidebar-footer">
       <a href="index.html" target="_blank" class="sidebar-ver-web">
-        <span>🌐</span> Ver página web
+        <span></span> Ver página web
       </a>
       <button class="sidebar-salir" onclick="cerrarSesion()">
-        <span>🚪</span> Cerrar sesión
+        <span></span> Cerrar sesión
       </button>
     </div>
   </aside>
-
   <main class="admin-main">
     <div id="tab-actividades" class="tab-contenido active">
       <div class="panel-header">
@@ -100,7 +90,6 @@
       </div>
       <div id="lista-act" class="admin-lista"></div>
     </div>
-
     <div id="tab-anuncios" class="tab-contenido">
       <div class="panel-header">
         <div>
@@ -111,7 +100,6 @@
       </div>
       <div id="lista-anu" class="admin-lista"></div>
     </div>
-
     <div id="tab-revistas" class="tab-contenido">
       <div class="panel-header">
         <div>
@@ -122,7 +110,6 @@
       </div>
       <div id="lista-rev" class="admin-lista"></div>
     </div>
-
     <div id="tab-niveles" class="tab-contenido">
       <div class="panel-header">
         <div>
@@ -131,9 +118,9 @@
         </div>
       </div>
       <div class="niveles-tabs">
-        <button class="btn-nivel-tab active" onclick="seleccionarNivel('inicial',this)">🌱 Inicial</button>
-        <button class="btn-nivel-tab" onclick="seleccionarNivel('primaria',this)">📚 Primaria</button>
-        <button class="btn-nivel-tab" onclick="seleccionarNivel('secundaria',this)">🎓 Secundaria</button>
+        <button class="btn-nivel-tab active" onclick="seleccionarNivel('inicial',this)"> Inicial</button>
+        <button class="btn-nivel-tab" onclick="seleccionarNivel('primaria',this)">Primaria</button>
+        <button class="btn-nivel-tab" onclick="seleccionarNivel('secundaria',this)"> Secundaria</button>
       </div>
       <div class="panel-header" style="margin-top:1rem;">
         <h3 id="nivel-actual-titulo" style="font-size:1rem;color:#94a3b8;">Nivel: Inicial</h3>
@@ -141,19 +128,16 @@
       </div>
       <div id="lista-fotos-nivel" class="admin-lista"></div>
     </div>
-
     <div id="tab-direccion" class="tab-contenido">
   <div class="panel-header">
     <div>
-      <h2>🎖️ Dirección</h2>
+      <h2> Dirección</h2>
       <p class="panel-desc">Director(a) y equipo directivo</p>
     </div>
     <button class="btn-nuevo" onclick="abrirModalDireccion()">+ Agregar</button>
   </div>
   <div id="lista-direccion" class="admin-lista"></div>
 </div>
- 
-<!-- TAB INVESTIGADORES -->
 <div id="tab-investigadores" class="tab-contenido">
   <div class="panel-header">
     <div>
@@ -164,32 +148,26 @@
   </div>
   <div id="lista-investigadores" class="admin-lista"></div>
 </div>
-
-<!-- TAB ESCUELA DE INVESTIGACIÓN -->
 <div id="tab-escuela" class="tab-contenido">
   <div class="panel-header">
     <div>
-      <h2>🏫 Escuela de Investigación</h2>
+      <h2>Escuela de Investigación</h2>
       <p class="panel-desc">Contenido textual de la escuela de investigación</p>
     </div>
     <button class="btn-nuevo" onclick="abrirModalEscuela()">+ Nuevo contenido</button>
   </div>
   <div id="lista-escuela" class="admin-lista"></div>
 </div>
- 
-<!-- TAB PROMOTORES -->
 <div id="tab-promotores" class="tab-contenido">
   <div class="panel-header">
     <div>
-      <h2>🏅 Promotores</h2>
+      <h2>Promotores</h2>
       <p class="panel-desc">Equipo promotor del colegio</p>
     </div>
     <button class="btn-nuevo" onclick="abrirModalPromotor()">+ Nuevo promotor</button>
   </div>
   <div id="lista-promotores" class="admin-lista"></div>
 </div>
- 
- 
     <div id="tab-archivados" class="tab-contenido">
   <div class="panel-header">
     <div>
@@ -199,7 +177,6 @@
       </p>
     </div>
   </div>
-  
 
   <div id="lista-archivados" class="admin-lista">
     <div class="admin-empty">
@@ -207,7 +184,6 @@
     </div>
   </div>
 </div>
-
     <div id="tab-permanentes" class="tab-contenido">
       <div class="panel-header">
         <div>
@@ -218,7 +194,6 @@
       </div>
       <div id="lista-perm" class="admin-lista"></div>
     </div>
-
     <div id="tab-temporales" class="tab-contenido">
       <div class="panel-header">
         <div>
@@ -229,7 +204,6 @@
       </div>
       <div id="lista-temp" class="admin-lista"></div>
     </div>
-
   </main>
   <div id="modal-actividad" class="modal-overlay">
     <div class="modal-card">
@@ -317,7 +291,6 @@
       </div>
     </div>
   </div>
-
   <div id="modal-anuncio" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
@@ -328,11 +301,11 @@
         <input type="hidden" id="anu-id"/>
         <div class="campo">
           <label>Título *</label>
-          <input type="text" id="anu-titulo" placeholder="Ej: Día de la Madre 2026"/>
+          <input type="text" id="anu-titulo" placeholder=""/>
         </div>
         <div class="campo">
           <label>Descripción</label>
-          <textarea id="anu-desc" rows="2" placeholder="Breve descripción del evento..."></textarea>
+          <textarea id="anu-desc" rows="2" placeholder="Breve descripción"></textarea>
         </div>
         <div class="campo-row">
           <div class="campo">
@@ -341,12 +314,12 @@
           </div>
           <div class="campo">
             <label>Hora</label>
-            <input type="text" id="anu-hora" placeholder="Ej: 9:00 am"/>
+            <input type="text" id="anu-hora" placeholder="00:00 am / pm"/>
           </div>
         </div>
         <div class="campo">
           <label>Lugar</label>
-          <input type="text" id="anu-lugar" placeholder="Ej: Patio de Honor"/>
+          <input type="text" id="anu-lugar" placeholder=""/>
         </div>
         <div class="campo">
           <label>Imagen del flyer (opcional)</label>
@@ -364,16 +337,12 @@
     </div>
   </div>
   <div id="modal-ver-archivado" class="modal-overlay">
-
   <div class="modal-card">
-
     <div class="modal-header">
       <h3>Contenido archivado</h3>
       <button onclick="cerrarVerArchivado()">✕</button>
     </div>
-
     <div class="modal-body">
-
       <div
         id="ver-archivado-imagen-container"
         class="preview-img"
@@ -421,13 +390,9 @@
           Cerrar
         </button>
       </div>
-
     </div>
-
   </div>
-
 </div>
-
   <div id="modal-perm" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
@@ -438,15 +403,15 @@
         <input type="hidden" id="perm-id"/>
         <div class="campo">
           <label>Nombre completo *</label>
-          <input type="text" id="perm-nombre" placeholder="Ej: Prof. Juan Pérez"/>
+          <input type="text" id="perm-nombre" placeholder=""/>
         </div>
         <div class="campo">
           <label>Curso / Área *</label>
-          <input type="text" id="perm-curso" placeholder="Ej: Matemáticas"/>
+          <input type="text" id="perm-curso" placeholder=""/>
         </div>
         <div class="campo">
           <label>Orden</label>
-          <input type="text" id="perm-orden" placeholder="Ej: 1, 2, 3..."/>
+          <input type="text" id="perm-orden" placeholder=""/>
         </div>
         <div class="campo">
           <label>Foto (opcional)</label>
@@ -474,11 +439,11 @@
         <input type="hidden" id="temp-id"/>
         <div class="campo">
           <label>Nombre completo *</label>
-          <input type="text" id="temp-nombre" placeholder="Ej: Prof. María García"/>
+          <input type="text" id="temp-nombre" placeholder=""/>
         </div>
         <div class="campo">
           <label>Curso / Área *</label>
-          <input type="text" id="temp-curso" placeholder="Ej: Educación Física"/>
+          <input type="text" id="temp-curso" placeholder=""/>
         </div>
         <div id="temp-error" class="form-error" style="display:none;"></div>
         <div class="modal-footer">
@@ -507,11 +472,11 @@
         </div>
         <div class="campo">
           <label>Descripción (opcional)</label>
-          <input type="text" id="foto-nivel-desc" placeholder="Ej: Alumnos en clase de arte"/>
+          <input type="text" id="foto-nivel-desc" placeholder=""/>
         </div>
         <div class="campo">
           <label>Orden</label>
-          <input type="text" id="foto-nivel-orden" placeholder="Ej: 1, 2, 3..."/>
+          <input type="text" id="foto-nivel-orden" placeholder=""/>
         </div>
         <div id="foto-nivel-error" class="form-error" style="display:none;"></div>
         <div class="modal-footer">
@@ -531,15 +496,15 @@
       <input type="hidden" id="prom-id"/>
       <div class="campo">
         <label>Nombre completo *</label>
-        <input type="text" id="prom-nombre" placeholder="Ej: María López"/>
+        <input type="text" id="prom-nombre" placeholder=""/>
       </div>
       <div class="campo">
         <label>Cargo (opcional)</label>
-        <input type="text" id="prom-cargo" placeholder="Ej: Promotora General"/>
+        <input type="text" id="prom-cargo" placeholder=""/>
       </div>
       <div class="campo">
         <label>Orden</label>
-        <input type="text" id="prom-orden" placeholder="Ej: 1, 2, 3..."/>
+        <input type="text" id="prom-orden" placeholder=""/>
       </div>
       <div class="campo">
         <label>Foto (opcional)</label>
@@ -556,8 +521,6 @@
     </div>
   </div>
 </div>
- 
-<!-- MODAL DIRECCIÓN -->
 <div id="modal-direccion" class="modal-overlay">
   <div class="modal-card">
     <div class="modal-header">
@@ -568,15 +531,15 @@
       <input type="hidden" id="dir-id"/>
       <div class="campo">
         <label>Nombre completo *</label>
-        <input type="text" id="dir-nombre" placeholder="Ej: Prof. Ana García"/>
+        <input type="text" id="dir-nombre" placeholder=""/>
       </div>
       <div class="campo">
         <label>Cargo</label>
-        <input type="text" id="dir-cargo" placeholder="Ej: Directora General"/>
+        <input type="text" id="dir-cargo" placeholder=""/>
       </div>
       <div class="campo">
         <label>Descripción / Información adicional</label>
-        <textarea id="dir-descripcion" rows="4" placeholder="Información sobre el director(a)..."></textarea>
+        <textarea id="dir-descripcion" rows="4" placeholder=""></textarea>
       </div>
       <div class="campo">
         <label>Foto (opcional)</label>
@@ -593,8 +556,6 @@
     </div>
   </div>
 </div>
- 
-<!-- MODAL INVESTIGADOR -->
 <div id="modal-investigador" class="modal-overlay">
   <div class="modal-card">
     <div class="modal-header">
@@ -605,15 +566,15 @@
       <input type="hidden" id="inv-id"/>
       <div class="campo">
         <label>Nombre completo *</label>
-        <input type="text" id="inv-nombre" placeholder="Ej: María López"/>
+        <input type="text" id="inv-nombre" placeholder=""/>
       </div>
       <div class="campo">
         <label>Cargo (opcional)</label>
-        <input type="text" id="inv-cargo" placeholder="Ej: Investigadora Senior"/>
+        <input type="text" id="inv-cargo" placeholder=""/>
       </div>
       <div class="campo">
         <label>Orden</label>
-        <input type="text" id="inv-orden" placeholder="Ej: 1, 2, 3..."/>
+        <input type="text" id="inv-orden" placeholder=""/>
       </div>
       <div class="campo">
         <label>Foto (opcional)</label>
@@ -630,7 +591,6 @@
     </div>
   </div>
 </div>
-<!-- MODAL ESCUELA -->
 <div id="modal-escuela" class="modal-overlay">
   <div class="modal-card">
     <div class="modal-header">
@@ -641,11 +601,11 @@
       <input type="hidden" id="esc-id"/>
       <div class="campo">
         <label>Título *</label>
-        <input type="text" id="esc-titulo" placeholder="Ej: Proyecto de Investigación 2025"/>
+        <input type="text" id="esc-titulo" placeholder=""/>
       </div>
       <div class="campo">
         <label>Contenido</label>
-        <textarea id="esc-cuerpo" rows="8" placeholder="Escribe el contenido aquí..."></textarea>
+        <textarea id="esc-cuerpo" rows="8" placeholder="."></textarea>
       </div>
       <div id="esc-error" class="form-error" style="display:none;"></div>
       <div class="modal-footer">
@@ -671,9 +631,6 @@
     </div>
   </div>
 </div>
-
-
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase.js"></script>
   <script src="js/admin.js"></script>
