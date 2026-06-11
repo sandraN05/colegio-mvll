@@ -1321,3 +1321,17 @@ async function guardarEscuela() {
   cerrarModal('escuela');
   cargarEscuelaAdmin();
 }
+const menuBtn = document.getElementById("menuBtn");
+const sidebar = document.querySelector(".sidebar");
+
+menuBtn.addEventListener("click", () => {
+  sidebar.classList.toggle("activa");
+});
+
+document.querySelectorAll(".sidebar-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (window.innerWidth <= 768) {
+      sidebar.classList.remove("activa");
+    }
+  });
+});
