@@ -1,26 +1,18 @@
-// ══════════════════════════════════════════════════
-//  PROMOTORES — página pública promotores.html
-//  Muestra TODO el contenido (todos los admins)
-// ══════════════════════════════════════════════════
 async function cargarPromotores() {
   const cargando = document.getElementById('cargando-promotores');
   const sinDatos = document.getElementById('sin-promotores');
   const grid     = document.getElementById('grid-promotores');
   if (!grid) return;
-
   try {
     const { data, error } = await supabase
       .from('promotores')
       .select('*')
       .order('orden', { ascending: true });
-
     cargando.style.display = 'none';
-
     if (error || !data || !data.length) {
       sinDatos.style.display = 'flex';
       return;
     }
-
     grid.style.display = 'grid';
     grid.innerHTML = data.map(p => `
       <div class="profe-card-grande">
@@ -37,7 +29,6 @@ async function cargarPromotores() {
         ${p.cargo ? `<div class="profe-curso">${p.cargo}</div>` : ''}
       </div>
     `).join('');
-
   } catch(err) {
     cargando.style.display = 'none';
     sinDatos.style.display = 'flex';
