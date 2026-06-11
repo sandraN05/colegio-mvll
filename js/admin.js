@@ -1,15 +1,9 @@
-// ══════════════════════════════════════════════════
-//  VERIFICAR SESIÓN
-// ══════════════════════════════════════════════════
 async function verificarAdmin() {
   const { data: { session } } = await window.supabase.auth.getSession();
   if (!session) window.location.href = 'login.html';
 }
 verificarAdmin();
 
-// ══════════════════════════════════════════════════
-//  TABS
-// ══════════════════════════════════════════════════
 function mostrarTab(tab, btn) {
   document.querySelectorAll('.tab-contenido').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
@@ -28,23 +22,15 @@ function mostrarTab(tab, btn) {
   else if (tab === 'investigadores') cargarInvestigadoresAdmin();
   else if (tab === 'escuela') cargarEscuelaAdmin();
 }
-
 async function cerrarSesion() {
   await window.supabase.auth.signOut();
   window.location.href = 'login.html';
 }
-
-// ══════════════════════════════════════════════════
-//  HELPER: obtener usuario actual
-// ══════════════════════════════════════════════════
 async function getUser() {
   const { data: { user } } = await window.supabase.auth.getUser();
   return user;
 }
 
-// ══════════════════════════════════════════════════
-//  ACTIVIDADES
-// ══════════════════════════════════════════════════
 async function cargarActividades() {
   const lista = document.getElementById('lista-act');
   lista.innerHTML = '<p style="color:#94a3b8;padding:20px">Cargando...</p>';
@@ -55,7 +41,7 @@ async function cargarActividades() {
   const { data, error } = await window.supabase
     .from('actividades')
     .select('*')
-    .eq('usuario_id', user.id)       // ← solo las del admin logueado
+    .eq('usuario_id', user.id)    
     .eq('estado', 'activo')
     .gt('fecha_expiracion', ahora)
     .order('fecha', { ascending: false });
@@ -66,7 +52,6 @@ async function cargarActividades() {
     lista.innerHTML = '<div class="admin-empty"><span>🎉</span><p>No hay actividades aún. ¡Agrega la primera!</p></div>';
     return;
   }
-
   lista.innerHTML = data.map(a => `
     <div class="admin-item">
       <div class="admin-item-img">
@@ -75,7 +60,7 @@ async function cargarActividades() {
       <div class="admin-item-info">
         <h4>${a.titulo}</h4>
         <p>${a.descripcion || 'Sin descripción'}</p>
-        <div class="admin-item-meta">📅 ${formatearFecha(a.fecha)} · ${a.categoria || 'otro'}</div>
+        <div class="admin-item-meta"> ${formatearFecha(a.fecha)} · ${a.categoria || 'otro'}</div>
       </div>
       <div class="admin-item-acciones">
         <button class="btn-editar"   onclick="editarActividad('${a.id}')">✏️ Editar</button>
@@ -84,14 +69,12 @@ async function cargarActividades() {
     </div>
   `).join('');
 }
-
 async function editarActividad(id) {
   const user = await getUser();
   const { data, error } = await window.supabase
     .from('actividades').select('*')
     .eq('id', id).eq('usuario_id', user.id).single();
   if (error || !data) return;
-
   document.getElementById('modal-act-titulo').textContent = 'Editar actividad';
   document.getElementById('act-id').value        = data.id;
   document.getElementById('act-titulo').value    = data.titulo;
@@ -104,7 +87,6 @@ async function editarActividad(id) {
   }
   document.getElementById('modal-actividad').classList.add('activo');
 }
-
 async function guardarActividad() {
   const btn     = document.getElementById('btn-guardar-act');
   const errorEl = document.getElementById('act-error');
@@ -148,16 +130,14 @@ async function guardarActividad() {
     fecha_expiracion: fechaExp.toISOString(),
     fecha_eliminacion:fechaElim.toISOString(),
     estado:           'activo',
-    usuario_id:       user.id      // ← vinculado al admin
+    usuario_id:       user.id     
   };
-
   let error;
   if (id) {
     ({ error } = await window.supabase.from('actividades').update(payload).eq('id', id).eq('usuario_id', user.id));
   } else {
     ({ error } = await window.supabase.from('actividades').insert(payload));
   }
-
   if (error) {
     errorEl.textContent = 'Error al guardar: ' + error.message;
     errorEl.style.display = 'block';
@@ -166,10 +146,6 @@ async function guardarActividad() {
   cerrarModal('actividad');
   cargarActividades();
 }
-
-// ══════════════════════════════════════════════════
-//  ANUNCIOS
-// ══════════════════════════════════════════════════
 async function cargarAnuncios() {
   const lista = document.getElementById('lista-anu');
   lista.innerHTML = '<p style="color:#94a3b8;padding:20px">Cargando...</p>';
@@ -179,17 +155,16 @@ async function cargarAnuncios() {
 
   const { data, error } = await window.supabase
     .from('anuncios').select('*')
-    .eq('usuario_id', user.id)       // ← solo los del admin logueado
+    .eq('usuario_id', user.id)       
     .eq('estado', 'activo')
     .gt('fecha_expiracion', ahora)
     .order('fecha_evento', { ascending: true });
 
   if (error) { lista.innerHTML = '<p style="color:red">Error al cargar anuncios.</p>'; return; }
   if (!data.length) {
-    lista.innerHTML = '<div class="admin-empty"><span>📢</span><p>No hay anuncios aún. ¡Agrega el primero!</p></div>';
+    lista.innerHTML = '<div class="admin-empty"><span></span><p>No hay anuncios aún. ¡Agrega el primero!</p></div>';
     return;
   }
-
   lista.innerHTML = data.map(a => `
     <div class="admin-item">
       <div class="admin-item-img">
@@ -211,14 +186,12 @@ async function cargarAnuncios() {
     </div>
   `).join('');
 }
-
 async function editarAnuncio(id) {
   const user = await getUser();
   const { data, error } = await window.supabase
     .from('anuncios').select('*')
     .eq('id', id).eq('usuario_id', user.id).single();
   if (error || !data) return;
-
   document.getElementById('modal-anu-titulo').textContent = 'Editar anuncio';
   document.getElementById('anu-id').value    = data.id;
   document.getElementById('anu-titulo').value = data.titulo;
@@ -276,7 +249,7 @@ async function guardarAnuncio() {
     fecha_expiracion: fechaExp.toISOString(),
     fecha_eliminacion:fechaElim.toISOString(),
     estado:           'activo',
-    usuario_id:       user.id      // ← vinculado al admin
+    usuario_id:       user.id      
   };
 
   let error;
@@ -294,10 +267,6 @@ async function guardarAnuncio() {
   cerrarModal('anuncio');
   cargarAnuncios();
 }
-
-// ══════════════════════════════════════════════════
-//  REVISTAS
-// ══════════════════════════════════════════════════
 async function cargarRevistas() {
   const lista = document.getElementById('lista-rev');
   lista.innerHTML = '<p style="color:#94a3b8;padding:20px">Cargando...</p>';
@@ -307,29 +276,28 @@ async function cargarRevistas() {
 
   const { data, error } = await window.supabase
     .from('revistas').select('*')
-    .eq('usuario_id', user.id)       // ← solo las del admin logueado
+    .eq('usuario_id', user.id)      
     .eq('estado', 'activo')
     .gt('fecha_expiracion', ahora)
     .order('created_at', { ascending: false });
 
   if (error) { lista.innerHTML = '<p style="color:red">Error al cargar revistas.</p>'; return; }
   if (!data.length) {
-    lista.innerHTML = '<div class="admin-empty"><span>📖</span><p>No hay revistas aún. ¡Agrega la primera!</p></div>';
+    lista.innerHTML = '<div class="admin-empty"><span></span><p>No hay revistas aún. ¡Agrega la primera!</p></div>';
     return;
   }
-
   lista.innerHTML = data.map(r => `
     <div class="admin-item">
       <div class="admin-item-img">
-        ${r.portada_url ? `<img src="${r.portada_url}" alt="${r.titulo}"/>` : '<span style="font-size:2rem">📖</span>'}
+        ${r.portada_url ? `<img src="${r.portada_url}" alt="${r.titulo}"/>` : '<span style="font-size:2rem"></span>'}
       </div>
       <div class="admin-item-info">
         <h4>${r.titulo}</h4>
         <p>${r.descripcion || 'Sin descripción'}</p>
-        <div class="admin-item-meta">📄 PDF subido</div>
+        <div class="admin-item-meta"> PDF subido</div>
       </div>
       <div class="admin-item-acciones">
-        <button class="btn-editar"   onclick="editarRevista('${r.id}')">✏️ Editar</button>
+        <button class="btn-editar"   onclick="editarRevista('${r.id}')">Editar</button>
         <button class="btn-eliminar" onclick="confirmarEliminar('revista','${r.id}','${r.titulo.replace(/'/g,"\\'")}')">🗑 Eliminar</button>
       </div>
     </div>
@@ -342,14 +310,13 @@ async function editarRevista(id) {
     .from('revistas').select('*')
     .eq('id', id).eq('usuario_id', user.id).single();
   if (error || !data) return;
-
   document.getElementById('modal-rev-titulo').textContent = 'Editar revista';
   document.getElementById('rev-id').value    = data.id;
   document.getElementById('rev-titulo').value = data.titulo;
   document.getElementById('rev-desc').value  = data.descripcion || '';
   if (data.pdf_url) {
     const pdfActual = document.getElementById('rev-pdf-actual');
-    pdfActual.textContent = '✅ Ya tiene un PDF. Sube uno nuevo para reemplazarlo.';
+    pdfActual.textContent = ' Ya tiene un PDF. Sube uno nuevo para reemplazarlo.';
     pdfActual.style.display = 'block';
   }
   if (data.portada_url) {
@@ -358,7 +325,6 @@ async function editarRevista(id) {
   }
   document.getElementById('modal-revista').classList.add('activo');
 }
-
 async function guardarRevista() {
   const btn     = document.getElementById('btn-guardar-rev');
   const errorEl = document.getElementById('rev-error');
@@ -368,12 +334,9 @@ async function guardarRevista() {
 
   if (!titulo) { errorEl.textContent = 'El título es obligatorio.'; errorEl.style.display = 'block'; return; }
   if (!id && !pdfFile) { errorEl.textContent = 'Debes subir un PDF.'; errorEl.style.display = 'block'; return; }
-
   btn.textContent = 'Subiendo...'; btn.disabled = true;
   errorEl.style.display = 'none';
-
   let pdf_url = null, portada_url = null;
-
   if (pdfFile) {
     const path = 'revistas/' + Date.now() + '.pdf';
     const { error: upError } = await window.supabase.storage.from('archivos').upload(path, pdfFile, { upsert: true });
@@ -384,7 +347,6 @@ async function guardarRevista() {
     const { data: urlData } = window.supabase.storage.from('archivos').getPublicUrl(path);
     pdf_url = urlData.publicUrl;
   }
-
   const portadaFile = document.getElementById('rev-portada').files[0];
   if (portadaFile) {
     const ext  = portadaFile.name.split('.').pop();
@@ -395,11 +357,9 @@ async function guardarRevista() {
       portada_url = urlData.publicUrl;
     }
   }
-
   const fechaExp  = new Date(); fechaExp.setFullYear(fechaExp.getFullYear() + 1);
   const fechaElim = new Date(); fechaElim.setFullYear(fechaElim.getFullYear() + 2); fechaElim.setMonth(fechaElim.getMonth() + 5);
   const user = await getUser();
-
   const payload = {
     titulo:           titulo,
     descripcion:      document.getElementById('rev-desc').value.trim(),
@@ -408,16 +368,14 @@ async function guardarRevista() {
     fecha_expiracion: fechaExp.toISOString(),
     fecha_eliminacion:fechaElim.toISOString(),
     estado:           'activo',
-    usuario_id:       user.id      // ← vinculado al admin
+    usuario_id:       user.id   
   };
-
   let error;
   if (id) {
     ({ error } = await window.supabase.from('revistas').update(payload).eq('id', id).eq('usuario_id', user.id));
   } else {
     ({ error } = await window.supabase.from('revistas').insert(payload));
   }
-
   if (error) {
     errorEl.textContent = 'Error al guardar: ' + error.message;
     errorEl.style.display = 'block'; btn.textContent = 'Guardar'; btn.disabled = false; return;
@@ -425,10 +383,6 @@ async function guardarRevista() {
   cerrarModal('revista');
   cargarRevistas();
 }
-
-// ══════════════════════════════════════════════════
-//  ARCHIVADOS
-// ══════════════════════════════════════════════════
 async function cargarArchivados() {
   const lista = document.getElementById('lista-archivados');
   lista.innerHTML = '<p style="color:#94a3b8;padding:20px">Cargando...</p>';
@@ -441,7 +395,6 @@ async function cargarArchivados() {
     window.supabase.from('anuncios').select('*').eq('usuario_id', user.id).lt('fecha_expiracion', ahora),
     window.supabase.from('revistas').select('*').eq('usuario_id', user.id).lt('fecha_expiracion', ahora)
   ]);
-
   const archivados = [
     ...(actRes.data || []).map(i => ({ ...i, tipo: 'Actividad' })),
     ...(anuRes.data || []).map(i => ({ ...i, tipo: 'Anuncio' })),
@@ -452,7 +405,6 @@ async function cargarArchivados() {
     lista.innerHTML = '<div class="admin-empty"><p>No hay contenido archivado.</p></div>';
     return;
   }
-
   lista.innerHTML = archivados.map(item => `
     <div class="admin-item">
       <div class="admin-item-img">
@@ -473,7 +425,6 @@ async function cargarArchivados() {
     </div>
   `).join('');
 }
-
 async function verArchivado(tipo, id) {
   const tabla = tipo === 'Actividad' ? 'actividades' : tipo === 'Anuncio' ? 'anuncios' : 'revistas';
   const user  = await getUser();
@@ -510,26 +461,21 @@ async function restaurarArchivado(tipo, id) {
     .update({ estado: 'activo', fecha_expiracion: nuevaFecha.toISOString() })
     .eq('id', id).eq('usuario_id', user.id);
 
-  if (error) { alert('❌ Error al restaurar'); return; }
+  if (error) { alert('Error al restaurar'); return; }
   cargarArchivados();
-  alert('✅ Contenido restaurado correctamente');
+  alert(' Contenido restaurado correctamente');
 }
 
 function eliminarArchivado(tipo, id, titulo) {
   const tipoEliminar = tipo === 'Actividad' ? 'actividad' : tipo === 'Anuncio' ? 'anuncio' : 'revista';
   confirmarEliminar(tipoEliminar, id, titulo);
 }
-
-// ══════════════════════════════════════════════════
-//  ELIMINAR (con limpieza de Storage)
-// ══════════════════════════════════════════════════
 function obtenerRutaStorage(url) {
   if (!url) return null;
   const marcador = '/object/public/archivos/';
   if (!url.includes(marcador)) return null;
   return url.split(marcador)[1];
 }
-
 function confirmarEliminar(tipo, id, nombre) {
   document.getElementById('eliminar-msg').textContent = '¿Eliminar "' + nombre + '"? Esta acción no se puede deshacer.';
   document.getElementById('modal-eliminar').classList.add('activo');
@@ -559,8 +505,6 @@ function confirmarEliminar(tipo, id, nombre) {
           await window.supabase.storage.from('archivos').remove(archivos);
         }
       }
-
-      // Para tablas con usuario_id agregamos el filtro
       let q = window.supabase.from(tabla).delete().eq('id', id);
       if (['actividades','anuncios','revistas'].includes(tabla)) {
         q = q.eq('usuario_id', user.id);
@@ -588,10 +532,6 @@ else                              cargarArchivados();                        car
 function cerrarEliminar() {
   document.getElementById('modal-eliminar').classList.remove('activo');
 }
-
-// ══════════════════════════════════════════════════
-//  PROFESORES PERMANENTES
-// ══════════════════════════════════════════════════
 async function cargarPermanentes() {
   const lista = document.getElementById('lista-perm');
   lista.innerHTML = '<p style="color:#94a3b8;padding:20px">Cargando...</p>';
@@ -621,13 +561,10 @@ async function cargarPermanentes() {
     </div>
   `).join('');
 }
-
 async function editarPermanente(id) {
-  // ← tabla correcta: profesores_permanentes (antes era 'anuncios' — bug corregido)
   const { data, error } = await window.supabase
     .from('profesores_permanentes').select('*').eq('id', id).single();
   if (error || !data) return;
-
   document.getElementById('modal-perm-titulo').textContent = 'Editar profesor permanente';
   document.getElementById('perm-id').value     = data.id;
   document.getElementById('perm-nombre').value = data.nombre;
@@ -639,7 +576,6 @@ async function editarPermanente(id) {
   }
   document.getElementById('modal-perm').classList.add('activo');
 }
-
 async function guardarPermanente() {
   const btn     = document.getElementById('btn-guardar-perm');
   const errorEl = document.getElementById('perm-error');
@@ -650,10 +586,8 @@ async function guardarPermanente() {
     errorEl.textContent = 'El nombre y el curso son obligatorios.';
     errorEl.style.display = 'block'; return;
   }
-
   btn.textContent = 'Guardando...'; btn.disabled = true;
   errorEl.style.display = 'none';
-
   const id       = document.getElementById('perm-id').value;
   const fotoFile = document.getElementById('perm-foto').files[0];
   let foto_url   = null;
@@ -669,21 +603,18 @@ async function guardarPermanente() {
   } else if (id && document.getElementById('perm-foto-preview').style.display !== 'none') {
     foto_url = document.getElementById('perm-foto-actual').src || null;
   }
-
   const payload = {
     nombre:   nombre,
     curso:    curso,
     orden:    parseInt(document.getElementById('perm-orden').value) || 0,
     foto_url: foto_url
   };
-
   let error;
   if (id) {
     ({ error } = await window.supabase.from('profesores_permanentes').update(payload).eq('id', id));
   } else {
     ({ error } = await window.supabase.from('profesores_permanentes').insert(payload));
   }
-
   if (error) {
     errorEl.textContent = 'Error al guardar: ' + error.message;
     errorEl.style.display = 'block'; btn.textContent = 'Guardar'; btn.disabled = false; return;
@@ -691,37 +622,31 @@ async function guardarPermanente() {
   cerrarModal('perm');
   cargarPermanentes();
 }
-
-// ══════════════════════════════════════════════════
-//  PROFESORES TEMPORALES
-// ══════════════════════════════════════════════════
 async function cargarTemporales() {
   const lista = document.getElementById('lista-temp');
   lista.innerHTML = '<p style="color:#94a3b8;padding:20px">Cargando...</p>';
-
   const { data, error } = await window.supabase
     .from('profesores_temporales').select('*').order('created_at', { ascending: true });
 
   if (error) { lista.innerHTML = '<p style="color:red">Error al cargar.</p>'; return; }
   if (!data.length) {
-    lista.innerHTML = '<div class="admin-empty"><span>📋</span><p>No hay profesores temporales. ¡Agrega el primero!</p></div>';
+    lista.innerHTML = '<div class="admin-empty"><span></span><p>No hay profesores temporales. ¡Agrega el primero!</p></div>';
     return;
   }
   lista.innerHTML = data.map(p => `
     <div class="admin-item">
-      <div class="admin-item-img"><span style="font-size:2rem">📋</span></div>
+      <div class="admin-item-img"><span style="font-size:2rem"></span></div>
       <div class="admin-item-info">
         <h4>${p.nombre}</h4>
         <p>${p.curso}</p>
       </div>
       <div class="admin-item-acciones">
-        <button class="btn-editar"   onclick="editarTemporal('${p.id}')">✏️ Editar</button>
+        <button class="btn-editar"   onclick="editarTemporal('${p.id}')">Editar</button>
         <button class="btn-eliminar" onclick="confirmarEliminar('temp','${p.id}','${p.nombre.replace(/'/g,"\\'")}')">🗑 Eliminar</button>
       </div>
     </div>
   `).join('');
 }
-
 async function editarTemporal(id) {
   const { data, error } = await window.supabase.from('profesores_temporales').select('*').eq('id', id).single();
   if (error || !data) return;
@@ -731,7 +656,6 @@ async function editarTemporal(id) {
   document.getElementById('temp-curso').value  = data.curso;
   document.getElementById('modal-temp').classList.add('activo');
 }
-
 async function guardarTemporal() {
   const btn     = document.getElementById('btn-guardar-temp');
   const errorEl = document.getElementById('temp-error');
@@ -742,20 +666,16 @@ async function guardarTemporal() {
     errorEl.textContent = 'El nombre y el curso son obligatorios.';
     errorEl.style.display = 'block'; return;
   }
-
   btn.textContent = 'Guardando...'; btn.disabled = true;
   errorEl.style.display = 'none';
-
   const id      = document.getElementById('temp-id').value;
   const payload = { nombre, curso };
-
   let error;
   if (id) {
     ({ error } = await window.supabase.from('profesores_temporales').update(payload).eq('id', id));
   } else {
     ({ error } = await window.supabase.from('profesores_temporales').insert(payload));
   }
-
   if (error) {
     errorEl.textContent = 'Error al guardar: ' + error.message;
     errorEl.style.display = 'block'; btn.textContent = 'Guardar'; btn.disabled = false; return;
@@ -763,10 +683,6 @@ async function guardarTemporal() {
   cerrarModal('temp');
   cargarTemporales();
 }
-
-// ══════════════════════════════════════════════════
-//  NIVELES / FOTOS
-// ══════════════════════════════════════════════════
 let nivelSeleccionado   = 'inicial';
 let nivelSeleccionadoId = null;
 
@@ -778,33 +694,26 @@ async function seleccionarNivel(nivel, btn) {
   document.getElementById('nivel-actual-titulo').textContent = 'Nivel: ' + nombres[nivel];
   await cargarFotosNivel(nivel);
 }
-
 async function cargarFotosNivel(nivel) {
   nivelSeleccionado = nivel;
   const lista = document.getElementById('lista-fotos-nivel');
   lista.innerHTML = '<p style="color:#94a3b8;padding:20px">Cargando...</p>';
-
   let { data: nivData, error: nivError } = await window.supabase
     .from('niveles').select('id').eq('nivel', nivel).single();
-
   if (nivError || !nivData) {
     const { data: nuevo } = await window.supabase
       .from('niveles').insert({ nivel, descripcion: '' }).select().single();
     nivData = nuevo;
   }
-
   nivelSeleccionadoId = nivData ? nivData.id : null;
   if (!nivelSeleccionadoId) { lista.innerHTML = '<p style="color:red">Error al cargar el nivel.</p>'; return; }
-
   const { data, error } = await window.supabase
     .from('niveles_fotos').select('*').eq('nivel_id', nivelSeleccionadoId).order('orden', { ascending: true });
-
   if (error) { lista.innerHTML = '<p style="color:red">Error al cargar fotos.</p>'; return; }
   if (!data || !data.length) {
     lista.innerHTML = '<div class="admin-empty"><span>📷</span><p>No hay fotos para este nivel. ¡Agrega la primera!</p></div>';
     return;
   }
-
   lista.innerHTML = data.map(f => `
     <div class="admin-item">
       <div class="admin-item-img"><img src="${f.foto_url}" alt="foto"/></div>
@@ -813,23 +722,21 @@ async function cargarFotosNivel(nivel) {
         <div class="admin-item-meta">Orden: ${f.orden || 0}</div>
       </div>
       <div class="admin-item-acciones">
-        <button class="btn-editar"   onclick="editarFotoNivel('${f.id}')">✏️ Editar</button>
+        <button class="btn-editar"   onclick="editarFotoNivel('${f.id}')">Editar</button>
         <button class="btn-eliminar" onclick="confirmarEliminarFoto('${f.id}','${(f.descripcion || 'esta foto').replace(/'/g,"\\'")}')">🗑️ Eliminar</button>
       </div>
     </div>
   `).join('');
 }
-
 function abrirModalFoto() {
   document.getElementById('modal-foto-titulo').textContent = 'Agregar foto — ' + nivelSeleccionado;
   document.getElementById('foto-nivel-nivel').value = nivelSeleccionado;
   document.getElementById('modal-foto-nivel').classList.add('activo');
 }
-
 async function editarFotoNivel(id) {
   const { data, error } = await window.supabase.from('niveles_fotos').select('*').eq('id', id).single();
   if (error || !data) return;
-  document.getElementById('modal-foto-titulo').textContent = '✏️ Editar foto';
+  document.getElementById('modal-foto-titulo').textContent = ' Editar foto';
   document.getElementById('foto-nivel-id').value    = data.id;
   document.getElementById('foto-nivel-desc').value  = data.descripcion || '';
   document.getElementById('foto-nivel-orden').value = data.orden || '';
@@ -850,12 +757,9 @@ async function guardarFotoNivel() {
     errorEl.textContent = 'Debes seleccionar una foto.';
     errorEl.style.display = 'block'; return;
   }
-
   btn.textContent = 'Subiendo...'; btn.disabled = true;
   errorEl.style.display = 'none';
-
   let foto_url = null;
-
   if (archivo) {
     const ext  = archivo.name.split('.').pop();
     const path = 'niveles/' + nivelSeleccionado + '/' + Date.now() + '.' + ext;
@@ -869,21 +773,18 @@ async function guardarFotoNivel() {
   } else if (id) {
     foto_url = document.getElementById('foto-nivel-actual').src;
   }
-
   const payload = {
     nivel_id:    nivelSeleccionadoId,
     foto_url:    foto_url,
     descripcion: document.getElementById('foto-nivel-desc').value.trim(),
     orden:       parseInt(document.getElementById('foto-nivel-orden').value) || 0
   };
-
   let error;
   if (id) {
     ({ error } = await window.supabase.from('niveles_fotos').update(payload).eq('id', id));
   } else {
     ({ error } = await window.supabase.from('niveles_fotos').insert(payload));
   }
-
   if (error) {
     errorEl.textContent = 'Error al guardar: ' + error.message;
     errorEl.style.display = 'block'; btn.textContent = 'Guardar'; btn.disabled = false; return;
@@ -891,7 +792,6 @@ async function guardarFotoNivel() {
   cerrarModal('foto-nivel');
   cargarFotosNivel(nivelSeleccionado);
 }
-
 function confirmarEliminarFoto(id, nombre) {
   document.getElementById('eliminar-msg').textContent = '¿Eliminar "' + nombre + '"?';
   document.getElementById('modal-eliminar').classList.add('activo');
@@ -901,10 +801,6 @@ function confirmarEliminarFoto(id, nombre) {
     cargarFotosNivel(nivelSeleccionado);
   };
 }
-
-// ══════════════════════════════════════════════════
-//  MODALES
-// ══════════════════════════════════════════════════
 function abrirModal(tipo) {
   limpiarModal(tipo);
   document.getElementById('modal-' + tipo).classList.add('activo');
@@ -921,12 +817,10 @@ function abrirModal(tipo) {
     document.getElementById('modal-temp-titulo').textContent = 'Nuevo profesor temporal';
   }
 }
-
 function cerrarModal(tipo) {
   document.getElementById('modal-' + tipo).classList.remove('activo');
   limpiarModal(tipo);
 }
-
 function limpiarModal(tipo) {
   const campos = {
     'foto-nivel': ['foto-nivel-id','foto-nivel-archivo','foto-nivel-desc','foto-nivel-orden'],
@@ -973,10 +867,6 @@ function limpiarModal(tipo) {
   if (tipo === 'actividad') { const s = document.getElementById('act-categoria'); if (s) s.value = 'otro'; }
   if (tipo === 'revista')   { const p = document.getElementById('rev-pdf-actual'); if (p) p.style.display = 'none'; }
 }
-
-// ══════════════════════════════════════════════════
-//  UTILS
-// ══════════════════════════════════════════════════
 function formatearFecha(fecha) {
   if (!fecha) return '';
   const [y, m, d] = fecha.split('-');
@@ -988,19 +878,16 @@ function abrirModalPromotor() {
   document.getElementById('modal-promotor-titulo').textContent = 'Nuevo promotor';
   document.getElementById('modal-promotor').classList.add('activo');
 }
-
 function abrirModalDireccion() {
   limpiarModalNuevo('direccion');
   document.getElementById('modal-dir-titulo').textContent = 'Nueva dirección';
   document.getElementById('modal-direccion').classList.add('activo');
 }
-
 function abrirModalInvestigador() {
   limpiarModalNuevo('investigador');
   document.getElementById('modal-inv-titulo-label').textContent = 'Nuevo contenido';
   document.getElementById('modal-investigador').classList.add('activo');
 }
-
 function limpiarModalNuevo(tipo) {
   const maps = {
     promotor: {
@@ -1022,25 +909,20 @@ function limpiarModalNuevo(tipo) {
   btn: 'btn-guardar-inv'
 }
   };
-
   const m = maps[tipo];
   if (!m) return;
-
   m.campos.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
-
   if (m.preview) {
     const el = document.getElementById(m.preview);
     if (el) el.style.display = 'none';
   }
-
   if (m.error) {
     const el = document.getElementById(m.error);
     if (el) el.style.display = 'none';
   }
-
   if (m.btn) {
     const el = document.getElementById(m.btn);
     if (el) {
@@ -1049,57 +931,35 @@ function limpiarModalNuevo(tipo) {
     }
   }
 }
-
-// ══════════════════════════════════════════════════
-//  INACTIVIDAD (60 min)
-// ══════════════════════════════════════════════════
 const TIEMPO_INACTIVIDAD =  60 * 1000;
 let temporizadorInactividad;
-
 function reiniciarTemporizador() {
   clearTimeout(temporizadorInactividad);
   temporizadorInactividad = setTimeout(cerrarSesionPorInactividad, TIEMPO_INACTIVIDAD);
 }
-
 async function cerrarSesionPorInactividad() {
   alert('Tu sesión se cerró por inactividad.');
   await window.supabase.auth.signOut();
   window.location.href = 'login.html';
 }
-
 ['mousemove','mousedown','click','scroll','keydown','touchstart'].forEach(ev => {
   document.addEventListener(ev, reiniciarTemporizador);
 });
 reiniciarTemporizador();
-
-// ══════════════════════════════════════════════════
-//  INICIO
-// ══════════════════════════════════════════════════
 cargarActividades();
-// ══════════════════════════════════════════════════
-//  NUEVAS SECCIONES PARA admin.js
-//  Pega estas funciones al final de tu admin.js actual
-// ══════════════════════════════════════════════════
-
-// ════════════════════════════════
-//  PROMOTORES
-// ════════════════════════════════
 async function cargarPromotoresAdmin() {
   const lista = document.getElementById('lista-promotores');
   lista.innerHTML = '<p style="color:#94a3b8;padding:20px">Cargando...</p>';
   const user = await getUser();
-
   const { data, error } = await window.supabase
     .from('promotores').select('*')
     .eq('usuario_id', user.id)
     .order('orden', { ascending: true });
-
   if (error) { lista.innerHTML = '<p style="color:red">Error al cargar.</p>'; return; }
   if (!data.length) {
     lista.innerHTML = '<div class="admin-empty"><span>🏅</span><p>No hay promotores. ¡Agrega el primero!</p></div>';
     return;
   }
-
   lista.innerHTML = data.map(p => `
     <div class="admin-item">
       <div class="admin-item-img">
@@ -1117,13 +977,11 @@ async function cargarPromotoresAdmin() {
     </div>
   `).join('');
 }
-
 async function editarPromotor(id) {
   const user = await getUser();
   const { data, error } = await window.supabase
     .from('promotores').select('*').eq('id', id).eq('usuario_id', user.id).single();
   if (error || !data) return;
-
   document.getElementById('modal-promotor-titulo').textContent = 'Editar promotor';
   document.getElementById('prom-id').value     = data.id;
   document.getElementById('prom-nombre').value = data.nombre;
@@ -1135,25 +993,20 @@ async function editarPromotor(id) {
   }
   document.getElementById('modal-promotor').classList.add('activo');
 }
-
 async function guardarPromotor() {
   const btn     = document.getElementById('btn-guardar-prom');
   const errorEl = document.getElementById('prom-error');
   const nombre  = document.getElementById('prom-nombre').value.trim();
-
   if (!nombre) {
     errorEl.textContent = 'El nombre es obligatorio.';
     errorEl.style.display = 'block'; return;
   }
-
   btn.textContent = 'Guardando...'; btn.disabled = true;
   errorEl.style.display = 'none';
-
   const id       = document.getElementById('prom-id').value;
   const fotoFile = document.getElementById('prom-foto').files[0];
   let foto_url   = null;
   const user     = await getUser();
-
   if (fotoFile) {
     const ext  = fotoFile.name.split('.').pop();
     const path = 'promotores/' + Date.now() + '.' + ext;
@@ -1165,7 +1018,6 @@ async function guardarPromotor() {
   } else if (id && document.getElementById('prom-foto-preview').style.display !== 'none') {
     foto_url = document.getElementById('prom-foto-actual').src || null;
   }
-
   const payload = {
     nombre:     nombre,
     cargo:      document.getElementById('prom-cargo').value.trim() || null,
@@ -1173,14 +1025,12 @@ async function guardarPromotor() {
     foto_url:   foto_url,
     usuario_id: user.id
   };
-
   let error;
   if (id) {
     ({ error } = await window.supabase.from('promotores').update(payload).eq('id', id).eq('usuario_id', user.id));
   } else {
     ({ error } = await window.supabase.from('promotores').insert(payload));
   }
-
   if (error) {
     errorEl.textContent = 'Error: ' + error.message;
     errorEl.style.display = 'block'; btn.textContent = 'Guardar'; btn.disabled = false; return;
@@ -1188,15 +1038,10 @@ async function guardarPromotor() {
   cerrarModal('promotor');
   cargarPromotoresAdmin();
 }
-
-// ════════════════════════════════
-//  DIRECCIÓN
-// ════════════════════════════════
 async function cargarDireccionAdmin() {
   const lista = document.getElementById('lista-direccion');
   lista.innerHTML = '<p style="color:#94a3b8;padding:20px">Cargando...</p>';
   const user = await getUser();
-
   const { data, error } = await window.supabase
     .from('direccion').select('*')
     .eq('usuario_id', user.id)
@@ -1204,14 +1049,13 @@ async function cargarDireccionAdmin() {
 
   if (error) { lista.innerHTML = '<p style="color:red">Error al cargar.</p>'; return; }
   if (!data.length) {
-    lista.innerHTML = '<div class="admin-empty"><span>🎖️</span><p>No hay dirección registrada. ¡Agrega la primera!</p></div>';
+    lista.innerHTML = '<div class="admin-empty"><span></span><p>No hay dirección registrada. ¡Agrega la primera!</p></div>';
     return;
   }
-
   lista.innerHTML = data.map(d => `
     <div class="admin-item">
       <div class="admin-item-img">
-        ${d.foto_url ? `<img src="${d.foto_url}" alt="${d.nombre}"/>` : '<span style="font-size:2rem">🎖️</span>'}
+        ${d.foto_url ? `<img src="${d.foto_url}" alt="${d.nombre}"/>` : '<span style="font-size:2rem"></span>'}
       </div>
       <div class="admin-item-info">
         <h4>${d.nombre}</h4>
@@ -1219,13 +1063,12 @@ async function cargarDireccionAdmin() {
         ${d.descripcion ? `<div class="admin-item-meta">${d.descripcion.substring(0,60)}...</div>` : ''}
       </div>
       <div class="admin-item-acciones">
-        <button class="btn-editar"   onclick="editarDireccion('${d.id}')">✏️ Editar</button>
+        <button class="btn-editar"   onclick="editarDireccion('${d.id}')">Editar</button>
         <button class="btn-eliminar" onclick="confirmarEliminar('direccion','${d.id}','${d.nombre.replace(/'/g,"\\'")}')">🗑 Eliminar</button>
       </div>
     </div>
   `).join('');
 }
-
 async function editarDireccion(id) {
   const user = await getUser();
   const { data, error } = await window.supabase
@@ -1243,7 +1086,6 @@ async function editarDireccion(id) {
   }
   document.getElementById('modal-direccion').classList.add('activo');
 }
-
 async function guardarDireccion() {
   const btn     = document.getElementById('btn-guardar-dir');
   const errorEl = document.getElementById('dir-error');
@@ -1273,7 +1115,6 @@ async function guardarDireccion() {
   } else if (id && document.getElementById('dir-foto-preview').style.display !== 'none') {
     foto_url = document.getElementById('dir-foto-actual').src || null;
   }
-
   const payload = {
     nombre:      nombre,
     cargo:       document.getElementById('dir-cargo').value.trim() || null,
@@ -1281,7 +1122,6 @@ async function guardarDireccion() {
     foto_url:    foto_url,
     usuario_id:  user.id
   };
-
   let error;
   if (id) {
     ({ error } = await window.supabase.from('direccion').update(payload).eq('id', id).eq('usuario_id', user.id));
@@ -1297,9 +1137,6 @@ async function guardarDireccion() {
   cargarDireccionAdmin();
 }
 
-// ════════════════════════════════
-//  INVESTIGADORES
-// ════════════════════════════════
 async function cargarInvestigadoresAdmin() {
   const lista = document.getElementById('lista-investigadores');
   lista.innerHTML = '<p style="color:#94a3b8;padding:20px">Cargando...</p>';
@@ -1312,10 +1149,9 @@ async function cargarInvestigadoresAdmin() {
 
   if (error) { lista.innerHTML = '<p style="color:red">Error al cargar.</p>'; return; }
   if (!data.length) {
-    lista.innerHTML = '<div class="admin-empty"><span>🔬</span><p>No hay investigadores. ¡Agrega el primero!</p></div>';
+    lista.innerHTML = '<div class="admin-empty"><span></span><p>No hay investigadores. ¡Agrega el primero!</p></div>';
     return;
   }
-
   lista.innerHTML = data.map(p => `
     <div class="admin-item">
       <div class="admin-item-img">
@@ -1327,13 +1163,12 @@ async function cargarInvestigadoresAdmin() {
         <div class="admin-item-meta">Orden: ${p.orden || 0}</div>
       </div>
       <div class="admin-item-acciones">
-        <button class="btn-editar"   onclick="editarInvestigador('${p.id}')">✏️ Editar</button>
+        <button class="btn-editar"   onclick="editarInvestigador('${p.id}')"> Editar</button>
         <button class="btn-eliminar" onclick="confirmarEliminar('investigador','${p.id}','${p.nombre.replace(/'/g,"\\'")}')">🗑 Eliminar</button>
       </div>
     </div>
   `).join('');
 }
-
 async function editarInvestigador(id) {
   const user = await getUser();
   const { data, error } = await window.supabase
@@ -1347,7 +1182,6 @@ async function editarInvestigador(id) {
   document.getElementById('inv-orden').value  = data.orden || '';
   document.getElementById('modal-investigador').classList.add('activo');
 }
-
 async function guardarInvestigador() {
   const btn     = document.getElementById('btn-guardar-inv');
   const errorEl = document.getElementById('inv-error');
@@ -1377,7 +1211,6 @@ async function guardarInvestigador() {
   } else if (id && document.getElementById('inv-foto-preview').style.display !== 'none') {
     foto_url = document.getElementById('inv-foto-actual').src || null;
   }
-
   const payload = {
     nombre:     nombre,
     cargo:      document.getElementById('inv-cargo').value.trim() || null,
@@ -1385,14 +1218,12 @@ async function guardarInvestigador() {
     foto_url:   foto_url,
     usuario_id: user.id
   };
-
   let error;
   if (id) {
     ({ error } = await window.supabase.from('investigadores').update(payload).eq('id', id).eq('usuario_id', user.id));
   } else {
     ({ error } = await window.supabase.from('investigadores').insert(payload));
   }
-
   if (error) {
     errorEl.textContent = 'Error: ' + error.message;
     errorEl.style.display = 'block'; btn.textContent = 'Guardar'; btn.disabled = false; return;
@@ -1400,9 +1231,6 @@ async function guardarInvestigador() {
   cerrarModal('investigador');
   cargarInvestigadoresAdmin();
 }
-// ════════════════════════════════
-//  ESCUELA DE INVESTIGACIÓN
-// ════════════════════════════════
 function abrirModalEscuela() {
   limpiarModalEscuela();
   document.getElementById('modal-esc-titulo-label').textContent = 'Nuevo contenido';
@@ -1430,19 +1258,19 @@ async function cargarEscuelaAdmin() {
 
   if (error) { lista.innerHTML = '<p style="color:red">Error al cargar.</p>'; return; }
   if (!data.length) {
-    lista.innerHTML = '<div class="admin-empty"><span>🏫</span><p>No hay contenido. ¡Agrega el primero!</p></div>';
+    lista.innerHTML = '<div class="admin-empty"><span></span><p>No hay contenido. ¡Agrega el primero!</p></div>';
     return;
   }
 
   lista.innerHTML = data.map(i => `
     <div class="admin-item">
-      <div class="admin-item-img"><span style="font-size:2rem">🏫</span></div>
+      <div class="admin-item-img"><span style="font-size:2rem"></span></div>
       <div class="admin-item-info">
         <h4>${i.titulo}</h4>
         <p>${i.cuerpo ? i.cuerpo.substring(0,80) + '...' : 'Sin contenido'}</p>
       </div>
       <div class="admin-item-acciones">
-        <button class="btn-editar" onclick="editarEscuela('${i.id}')">✏️ Editar</button>
+        <button class="btn-editar" onclick="editarEscuela('${i.id}')"> Editar</button>
         <button class="btn-eliminar" onclick="confirmarEliminar('escuela','${i.id}','${i.titulo.replace(/'/g,"\\'")}')">🗑 Eliminar</button>
       </div>
     </div>
@@ -1454,14 +1282,12 @@ async function editarEscuela(id) {
   const { data, error } = await window.supabase
     .from('escuela_investigacion').select('*').eq('id', id).eq('usuario_id', user.id).single();
   if (error || !data) return;
-
   document.getElementById('modal-esc-titulo-label').textContent = 'Editar contenido';
   document.getElementById('esc-id').value     = data.id;
   document.getElementById('esc-titulo').value = data.titulo;
   document.getElementById('esc-cuerpo').value = data.cuerpo || '';
   document.getElementById('modal-escuela').classList.add('activo');
 }
-
 async function guardarEscuela() {
   const btn     = document.getElementById('btn-guardar-esc');
   const errorEl = document.getElementById('esc-error');
@@ -1471,7 +1297,6 @@ async function guardarEscuela() {
     errorEl.textContent = 'El título es obligatorio.';
     errorEl.style.display = 'block'; return;
   }
-
   btn.textContent = 'Guardando...'; btn.disabled = true;
   errorEl.style.display = 'none';
 
@@ -1483,14 +1308,12 @@ async function guardarEscuela() {
     cuerpo:     document.getElementById('esc-cuerpo').value.trim(),
     usuario_id: user.id
   };
-
   let error;
   if (id) {
     ({ error } = await window.supabase.from('escuela_investigacion').update(payload).eq('id', id).eq('usuario_id', user.id));
   } else {
     ({ error } = await window.supabase.from('escuela_investigacion').insert(payload));
   }
-
   if (error) {
     errorEl.textContent = 'Error: ' + error.message;
     errorEl.style.display = 'block'; btn.textContent = 'Guardar'; btn.disabled = false; return;
