@@ -169,9 +169,6 @@
   .profes-temporales-lista { grid-template-columns: 1fr; }
   .prof-hero h1 { font-size: 2rem; }
 }
-/* ════════════════════════════
-   CARDS GRANDES (Promotores, Investigadores)
-════════════════════════════ */
 .profes-grandes-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
