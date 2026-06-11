@@ -1,7 +1,3 @@
-// ══════════════════════════════════════════════════
-//  INVESTIGADORES — página pública
-//  Muestra TODO el contenido (todos los admins)
-// ══════════════════════════════════════════════════
 async function cargarInvestigadores() {
   const cargando = document.getElementById('cargando-inv');
   const sinDatos = document.getElementById('sin-inv');
@@ -12,14 +8,11 @@ async function cargarInvestigadores() {
       .from('investigadores')
       .select('*')
       .order('orden', { ascending: true });
-
     cargando.style.display = 'none';
-
     if (error || !data || !data.length) {
       sinDatos.style.display = 'flex';
       return;
     }
-
 grid.style.display = 'grid';
 grid.innerHTML = data.map(p => `
   <div class="profe-card-grande">
@@ -36,7 +29,6 @@ grid.innerHTML = data.map(p => `
     ${p.cargo ? `<div class="profe-curso">${p.cargo}</div>` : ''}
   </div>
 `).join('');
-
   } catch(err) {
     cargando.style.display = 'none';
     sinDatos.style.display = 'flex';
