@@ -1,9 +1,7 @@
-
 function toggleMenu() {
   const menu = document.getElementById('mobileMenu');
   menu.classList.toggle('open');
 }
-
 document.addEventListener('click', function(e) {
   const menu      = document.getElementById('mobileMenu');
   const hamburger = document.querySelector('.hamburger');
@@ -14,9 +12,6 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// ══════════════════════════════════════════════════
-//  SMOOTH SCROLL
-// ══════════════════════════════════════════════════
 document.querySelectorAll('a[href^="#"]').forEach(function(link) {
   link.addEventListener('click', function(e) {
     const destino = document.querySelector(this.getAttribute('href'));
@@ -26,10 +21,6 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
     }
   });
 });
-
-// ══════════════════════════════════════════════════
-//  VISOR PDF
-// ══════════════════════════════════════════════════
 function abrirVisor(urlPdf, titulo) {
   const modal    = document.getElementById('visor-modal');
   const iframe   = document.getElementById('visor-iframe');
@@ -40,7 +31,6 @@ function abrirVisor(urlPdf, titulo) {
   modal.classList.add('activo');
   document.body.style.overflow = 'hidden';
 }
-
 function cerrarVisor(event) {
   if (event && event.target !== document.getElementById('visor-modal')) return;
   const modal  = document.getElementById('visor-modal');
@@ -49,48 +39,33 @@ function cerrarVisor(event) {
   iframe.src                   = '';
   document.body.style.overflow = '';
 }
-
-// Cerrar con ESC
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') cerrarVisor();
 });
-
-// ══════════════════════════════════════════════════
-//  FORMATEAR FECHA
-// ══════════════════════════════════════════════════
 function formatearFecha(fechaStr) {
   const fecha = new Date(fechaStr);
   return fecha.toLocaleDateString('es-PE', {
     day: '2-digit', month: 'long', year: 'numeric'
   });
 }
-
-// ══════════════════════════════════════════════════
-//  CARGAR ACTIVIDADES DESDE SUPABASE
-// ══════════════════════════════════════════════════
 async function cargarActividades() {
   const cargando = document.getElementById('cargando-actividades');
   const sinDatos = document.getElementById('sin-actividades');
   const lista    = document.getElementById('lista-actividades');
   if (!lista) return;
-
   try {
    const ahora = new Date().toISOString();
-
    const { data, error } = await supabase
    .from('actividades')
    .select('*')
    .eq('estado', 'activo')
    .gt('fecha_expiracion', ahora)
    .order('fecha', { ascending: false });
-
     cargando.style.display = 'none';
-
     if (error || !data || data.length === 0) {
       sinDatos.style.display = 'flex';
       return;
     }
-
     lista.style.display = 'grid';
     lista.innerHTML = data.map(function(act) {
       return `
@@ -120,33 +95,24 @@ async function cargarActividades() {
     console.error('Error al cargar actividades:', err);
   }
 }
-
-// ══════════════════════════════════════════════════
-//  CARGAR REVISTAS DESDE SUPABASE
-// ══════════════════════════════════════════════════
 async function cargarRevistas() {
   const cargando = document.getElementById('cargando-revistas');
   const sinDatos = document.getElementById('sin-revistas');
   const lista    = document.getElementById('lista-revistas');
   if (!lista) return;
-
   try {
    const ahora = new Date().toISOString();
-
    const { data, error } = await supabase
    .from('revistas')
    .select('*')
    .eq('estado', 'activo')
    .gt('fecha_expiracion', ahora)
    .order('created_at', { ascending: false });
-
     cargando.style.display = 'none';
-
     if (error || !data || data.length === 0) {
       sinDatos.style.display = 'flex';
       return;
     }
-
     lista.style.display = 'grid';
     lista.innerHTML = data.map(function(rev) {
       return `
@@ -176,10 +142,6 @@ async function cargarRevistas() {
     console.error('Error al cargar revistas:', err);
   }
 }
-
-// ══════════════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════════════
 function getIconoCategoria(categoria) {
   const iconos = {
     ciencia:     '',
@@ -197,10 +159,6 @@ function capitalizarPrimera(texto) {
   if (!texto) return '';
   return texto.charAt(0).toUpperCase() + texto.slice(1);
 }
-
-// ══════════════════════════════════════════════════
-//  ANIMACIONES AL HACER SCROLL
-// ══════════════════════════════════════════════════
 const observer = new IntersectionObserver(
   function(entries) {
     entries.forEach(function(entry) {
@@ -212,26 +170,18 @@ const observer = new IntersectionObserver(
   },
   { threshold: 0.1 }
 );
-
 document.querySelectorAll('.nivel-card, .profe-card, .actividad-card, .anuncio-card').forEach(function(el) {
   el.style.opacity    = '0';
   el.style.transform  = 'translateY(20px)';
   el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
   observer.observe(el);
 });
-
-// ══════════════════════════════════════════════════
-//  INICIAR AL CARGAR LA PÁGINA
-// ══════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', function() {
   cargarActividades();
   cargarRevistas();
   cargarAnuncios();
   cargarDireccion();
 });
-// ══════════════════════════════════════════════════
-//  CARGAR ANUNCIOS DESDE SUPABASE
-// ══════════════════════════════════════════════════
 async function cargarAnuncios() {
   const cargando = document.getElementById('cargando-anuncios');
   const sinDatos = document.getElementById('sin-anuncios');
@@ -247,14 +197,11 @@ async function cargarAnuncios() {
    .eq('estado', 'activo')
    .gt('fecha_expiracion', ahora)
    .order('fecha_evento', { ascending: true });
-
     cargando.style.display = 'none';
-
     if (error || !data || data.length === 0) {
       sinDatos.style.display = 'flex';
       return;
     }
-
     lista.style.display = 'grid';
     lista.innerHTML = data.map(function(a) {
       const detalles = [];
@@ -285,12 +232,7 @@ async function cargarAnuncios() {
     console.error('Error al cargar anuncios:', err);
   }
 }
-
-// ══════════════════════════════════════════════════
-//  EFECTOS DE SCROLL (REVEAL)
-// ══════════════════════════════════════════════════
 function initReveal() {
-  // Agregar clase reveal a todos los elementos que queremos animar
   const selectores = [
     '.nivel-card',
     '.actividad-card', 
@@ -310,7 +252,6 @@ function initReveal() {
   selectores.forEach(function(selector) {
     document.querySelectorAll(selector).forEach(function(el, i) {
       el.classList.add('reveal');
-      // Delay escalonado para cards en fila
       const delay = i % 4;
       if (delay === 1) el.classList.add('reveal-delay-1');
       if (delay === 2) el.classList.add('reveal-delay-2');
@@ -326,15 +267,10 @@ function initReveal() {
       }
     });
   }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
-
   document.querySelectorAll('.reveal').forEach(function(el) {
     observer.observe(el);
   });
 }
-
-// ══════════════════════════════════════════════════
-//  PARALLAX EN HERO
-// ══════════════════════════════════════════════════
 function initParallax() {
   const bg = document.querySelector('.hero-parallax-bg');
   if (!bg) return;
@@ -343,10 +279,6 @@ function initParallax() {
     bg.style.transform = 'translateY(' + (scroll * 0.3) + 'px)';
   }, { passive: true });
 }
-
-// ══════════════════════════════════════════════════
-//  CONTADOR ANIMADO EN STATS
-// ══════════════════════════════════════════════════
 function animarContador(el, target, suffix) {
   const duration = 1800;
   const start = performance.now();
@@ -378,19 +310,11 @@ function initContadores() {
 
   stats.forEach(function(s) { observer.observe(s); });
 }
-
-// ══════════════════════════════════════════════════
-//  INICIAR TODOS LOS EFECTOS
-// ══════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', function() {
   initReveal();
   initParallax();
   initContadores();
 });
-
-// ══════════════════════════════════════════════════
-//  MODAL DE NIVELES
-// ══════════════════════════════════════════════════
 const nivelesInfo = {
   inicial: {
     icon: '🌱',
@@ -415,34 +339,24 @@ const nivelesInfo = {
 async function abrirNivel(nivel) {
   const info = nivelesInfo[nivel];
   if (!info) return;
-
-  // Llenar header
   document.getElementById('nivel-modal-icon').textContent = info.icon;
   document.getElementById('nivel-modal-titulo').textContent = info.titulo;
   document.getElementById('nivel-modal-desc').textContent = info.desc;
-
-  // Resetear estado
   document.getElementById('nivel-modal-cargando').style.display = 'flex';
   document.getElementById('nivel-modal-sin-fotos').style.display = 'none';
   document.getElementById('nivel-modal-fotos').style.display = 'none';
-
-  // Abrir modal
   document.getElementById('modal-nivel').classList.add('activo');
   document.body.style.overflow = 'hidden';
 
   try {
-    // Buscar nivel en BD
     const { data: nivData, error: nivError } = await supabase
       .from('niveles')
       .select('id, descripcion')
       .eq('nivel', nivel)
       .single();
-
     if (!nivError && nivData && nivData.descripcion) {
       document.getElementById('nivel-modal-desc').textContent = nivData.descripcion;
     }
-
-    // Buscar fotos
     const nivelId = nivData ? nivData.id : null;
     let fotosData = [];
 
@@ -455,14 +369,11 @@ async function abrirNivel(nivel) {
 
       if (!error && data) fotosData = data;
     }
-
     document.getElementById('nivel-modal-cargando').style.display = 'none';
-
     if (!fotosData.length) {
       document.getElementById('nivel-modal-sin-fotos').style.display = 'flex';
       return;
     }
-
     const galeria = document.getElementById('nivel-modal-fotos');
     galeria.style.display = 'grid';
     galeria.innerHTML = fotosData.map(function(f) {
@@ -480,46 +391,36 @@ async function abrirNivel(nivel) {
     console.error('Error cargando nivel:', err);
   }
 }
-
 function cerrarNivel(event) {
   if (event && event.target !== document.getElementById('modal-nivel')) return;
   document.getElementById('modal-nivel').classList.remove('activo');
   document.body.style.overflow = '';
 }
-
-// Cerrar con ESC
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') cerrarNivel();
 });
-// ══════════════════════════════════════════════════
-//  CARGAR DIRECCIÓN DESDE SUPABASE
-// ══════════════════════════════════════════════════
 async function cargarDireccion() {
   const cargando = document.getElementById('cargando-direccion');
   const sinDatos = document.getElementById('sin-direccion');
   const grid     = document.getElementById('grid-direccion');
   if (!grid) return;
-
   try {
     const { data, error } = await supabase
       .from('direccion')
       .select('*')
       .order('created_at', { ascending: true });
-
     cargando.style.display = 'none';
-
     if (error || !data || !data.length) {
       sinDatos.style.display = 'flex';
       return;
     }
-
     grid.style.display = 'block';
     grid.innerHTML = data.map(d => `
       <div class="direccion-card">
         <div class="direccion-foto">
           ${d.foto_url
             ? `<img src="${d.foto_url}" alt="${d.nombre}"/>`
-            : `<div class="direccion-foto-placeholder">🎖️</div>`
+            : `<div class="direccion-foto-placeholder"></div>`
           }
         </div>
         <div class="direccion-info">
@@ -530,7 +431,6 @@ async function cargarDireccion() {
         </div>
       </div>
     `).join('');
-
   } catch(err) {
     cargando.style.display = 'none';
     sinDatos.style.display = 'flex';
