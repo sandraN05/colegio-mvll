@@ -16,11 +16,22 @@
   <link rel="stylesheet" href="css/style.css"/>
   <link rel="stylesheet" href="css/Direccion.css"/>
 </head>
-<iframe id="yt-audio"
-  src="https://www.youtube.com/embed/V1bFr2SWP1I?autoplay=1&loop=1&playlist=V1bFr2SWP1I&controls=0&mute=0"
-  allow="autoplay"
-  style="display:none; width:0; height:0; border:none; position:absolute;">
-</iframe>
+<audio id="bg-music" loop autoplay preload="auto">
+  <source src="audio/musica.mp3" type="audio/mpeg">
+</audio>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const music = document.getElementById('bg-music');
+    if (!music) return;
+    music.volume = 0.35;
+    music.play().catch(function() {
+      document.addEventListener('click', function iniciar() {
+        music.play();
+        document.removeEventListener('click', iniciar);
+      }, { once: true });
+    });
+  });
+</script>
 <body>
 <nav>
   <div class="nav-inner">
@@ -100,7 +111,6 @@
     <a href="login.html">⚙ Admin</a>
   </div>
 </nav>
-
   <div class="hero">
     <div class="hero-carousel">
       <div class="hero-carousel-slide active" style="background-image:url('img/banner.jpg');"></div>
@@ -108,11 +118,35 @@
     </div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <h1 class="hero-title-anim">
-        <span class="hero-word" style="--d:0.1s">Mario</span>
-        <span class="hero-word" style="--d:0.3s">Vargas</span>
-        <span class="hero-word hero-golden" style="--d:0.5s">Llosa</span>
-      </h1>
+<div class="hero-arco-wrap">
+  <svg class="hero-arco-svg" viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <path id="arc1" d="M 30,195 A 230,230 0 0,1 490,195" fill="none"/>
+      <path id="arc2" d="M 75,195 A 185,185 0 0,1 445,195" fill="none"/>
+      <path id="arc3" d="M 125,195 A 135,135 0 0,1 395,195" fill="none"/>
+      <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%"   stop-color="#a86200"/>
+        <stop offset="20%"  stop-color="#F0A500"/>
+        <stop offset="45%"  stop-color="#ffe580"/>
+        <stop offset="55%"  stop-color="#fffbe0"/>
+        <stop offset="80%"  stop-color="#F0A500"/>
+        <stop offset="100%" stop-color="#a86200"/>
+      </linearGradient>
+    </defs>
+    <text font-family="'Playfair Display', serif" font-size="52" font-weight="700"
+          fill="url(#goldGrad)" class="hero-arco-text" id="arco-mario">
+      <textPath href="#arc1" startOffset="50%" text-anchor="middle">Mario</textPath>
+    </text>
+    <text font-family="'Playfair Display', serif" font-size="44" font-weight="700"
+          fill="url(#goldGrad)" class="hero-arco-text" id="arco-vargas">
+      <textPath href="#arc2" startOffset="50%" text-anchor="middle">Vargas</textPath>
+    </text>
+    <text font-family="'Playfair Display', serif" font-size="38" font-weight="700"
+          fill="url(#goldGrad)" class="hero-arco-text" id="arco-llosa">
+      <textPath href="#arc3" startOffset="50%" text-anchor="middle">Llosa</textPath>
+    </text>
+  </svg>
+</div>
       <div class="hero-divider hero-divider-anim"></div>
       <p class="hero-tagline hero-tagline-anim">Formamos personas con valores, educación y visión de futuro.</p>
     </div>
