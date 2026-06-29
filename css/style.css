@@ -242,21 +242,33 @@ nav {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .hero-arco-svg {
-  width: min(500px, 88vw);
+  width: min(560px, 85vw);
   height: auto;
   overflow: visible;
   animation: goldShimmerSvg 3s ease-in-out infinite;
 }
 
 @keyframes goldShimmerSvg {
-  0%,100% { filter: drop-shadow(0 0 14px rgba(240,165,0,0.25)); }
-  50%      { filter: drop-shadow(0 0 30px rgba(240,165,0,0.55)); }
+  0%,100% { filter: drop-shadow(0 0 12px rgba(240,165,0,0.25)); }
+  50%      { filter: drop-shadow(0 0 28px rgba(240,165,0,0.6)); }
 }
 
+.arco-letra { opacity: 0; }
+
+.arco-letra-in {
+  animation: letraArcoIn 0.55s cubic-bezier(0.22,1,0.36,1) forwards;
+  animation-delay: var(--ld, 0s);
+}
+
+@keyframes letraArcoIn {
+  0%   { opacity: 0; baseline-shift: -20px; }
+  60%  { opacity: 1; baseline-shift: 4px; }
+  100% { opacity: 1; baseline-shift: 0px; }
+}
 /* letras del arco: aparecen una a una */
 .arco-letra {
   opacity: 0;
