@@ -119,40 +119,32 @@
     <div class="hero-overlay"></div>
     <div class="hero-content">
 <div class="hero-arco-wrap">
-  <svg class="hero-arco-svg" viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <path id="arc1" d="M 0,310 A 400,400 0 0,1 800,310" fill="none"/>
-      <path id="arc2" d="M 60,310 A 340,340 0 0,1 740,310" fill="none"/>
-      <path id="arc3" d="M 130,310 A 270,270 0 0,1 670,310" fill="none"/>
+ <svg class="hero-arco-svg" viewBox="0 0 800 380" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path id="arc1" d="M 20,370 Q 400,30 780,370" fill="none"/>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#a86200"/>
+      <stop offset="15%"  stop-color="#F0A500"/>
+      <stop offset="45%"  stop-color="#ffe580"/>
+      <stop offset="50%"  stop-color="#fffbe0"/>
+      <stop offset="75%"  stop-color="#F0A500"/>
+      <stop offset="100%" stop-color="#a86200"/>
+    </linearGradient>
+  </defs>
 
-      <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%"   stop-color="#a86200"/>
-        <stop offset="20%"  stop-color="#F0A500"/>
-        <stop offset="42%"  stop-color="#ffe580"/>
-        <stop offset="50%"  stop-color="#fffbe0"/>
-        <stop offset="78%"  stop-color="#F0A500"/>
-        <stop offset="100%" stop-color="#a86200"/>
-      </linearGradient>
-    </defs>
-    <text font-family="'Playfair Display', serif"
-          font-size="68" font-weight="700"
-          fill="url(#goldGrad)" letter-spacing="22"
-          id="arco-mario">
-      <textPath href="#arc1" startOffset="50%" text-anchor="middle">Mario</textPath>
-    </text>
-    <text font-family="'Playfair Display', serif"
-          font-size="58" font-weight="700"
-          fill="url(#goldGrad)" letter-spacing="14"
-          id="arco-vargas">
-      <textPath href="#arc2" startOffset="50%" text-anchor="middle">Vargas</textPath>
-    </text>
-    <text font-family="'Playfair Display', serif"
-          font-size="50" font-weight="700"
-          fill="url(#goldGrad)" letter-spacing="20"
-          id="arco-llosa">
-      <textPath href="#arc3" startOffset="50%" text-anchor="middle">Llosa</textPath>
-    </text>
-  </svg>
+  <text font-family="'Playfair Display', serif" font-size="64"
+        font-weight="700" fill="url(#goldGrad)" letter-spacing="6" id="arco-mario">
+    <textPath href="#arc1" startOffset="14%" text-anchor="middle">MARIO</textPath>
+  </text>
+  <text font-family="'Playfair Display', serif" font-size="64"
+        font-weight="700" fill="url(#goldGrad)" letter-spacing="6" id="arco-vargas">
+    <textPath href="#arc1" startOffset="50%" text-anchor="middle">VARGAS</textPath>
+  </text>
+  <text font-family="'Playfair Display', serif" font-size="64"
+        font-weight="700" fill="url(#goldGrad)" letter-spacing="6" id="arco-llosa">
+    <textPath href="#arc1" startOffset="86%" text-anchor="middle">LLOSA</textPath>
+  </text>
+</svg>
 </div>
       <div class="hero-divider hero-divider-anim"></div>
       <p class="hero-tagline hero-tagline-anim">Formamos personas con valores, educación y visión de futuro.</p>
