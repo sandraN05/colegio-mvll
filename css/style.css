@@ -242,19 +242,22 @@ nav {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
+  margin-top: -20px;
 }
 
 .hero-arco-svg {
-  width: min(560px, 85vw);
+  width: min(640px, 88vw);
   height: auto;
   overflow: visible;
   animation: goldShimmerSvg 3s ease-in-out infinite;
 }
 
 @keyframes goldShimmerSvg {
-  0%,100% { filter: drop-shadow(0 0 12px rgba(240,165,0,0.25)); }
-  50%      { filter: drop-shadow(0 0 28px rgba(240,165,0,0.6)); }
+  0%,100% { filter: drop-shadow(0 0 14px rgba(240,165,0,0.3))
+                    drop-shadow(0 0 2px rgba(240,165,0,0.5)); }
+  50%      { filter: drop-shadow(0 0 30px rgba(240,165,0,0.65))
+                    drop-shadow(0 0 6px rgba(255,220,80,0.4)); }
 }
 
 .arco-letra { opacity: 0; }
@@ -265,8 +268,8 @@ nav {
 }
 
 @keyframes letraArcoIn {
-  0%   { opacity: 0; baseline-shift: -20px; }
-  60%  { opacity: 1; baseline-shift: 4px; }
+  0%   { opacity: 0; baseline-shift: -22px; }
+  60%  { opacity: 1; baseline-shift: 5px; }
   100% { opacity: 1; baseline-shift: 0px; }
 }
 /* letras del arco: aparecen una a una */
