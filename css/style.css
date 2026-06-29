@@ -247,7 +247,7 @@ nav {
 }
 
 .hero-arco-svg {
-  width: min(500px, 80vw);
+  width: min(700px, 90vw);
   height: auto;
   overflow: visible;
   animation: goldShimmerSvg 3s ease-in-out infinite;
