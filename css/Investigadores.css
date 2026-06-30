@@ -125,3 +125,8 @@
 @media (max-width: 600px) {
   .profes-grandes-grid { grid-template-columns: repeat(2, 1fr); }
 }
+.profe-card-grande {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
