@@ -9,7 +9,22 @@
   <link rel="stylesheet" href="css/profesores.css"/>
 </head>
 <body>
-
+<audio id="bg-music" loop preload="auto">
+  <source src="assets/fondo.mp3" type="audio/mpeg">
+</audio>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const music = document.getElementById("bg-music");
+    if (!music) return;
+    music.volume = 0.35;
+    music.play().catch(function() {
+      document.addEventListener("click", function iniciar() {
+        music.play();
+        document.removeEventListener("click", iniciar);
+      }, { once: true });
+    });
+  });
+</script>
 <nav>
   <div class="nav-inner">
     <a class="logo-area" href="index.html">
