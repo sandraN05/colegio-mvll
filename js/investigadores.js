@@ -15,7 +15,7 @@ async function cargarInvestigadores() {
     }
 const perfilesAcademicos = {
   'Dr. Luis Alberto Almanza Ope': 'https://scholar.google.com/citations?hl=es&user=I5-LU6oAAAAJ',
-  'Dr. Carlos David Laura Quispe': 'https://scholar.google.com/citations?hl=es&user=vgjClNcAAAAJ'
+  'Dr. Carlos David Laura Quispe': 'https://scholar.google.com/citations?hl=es&user=vgjCINcAAAAJ'
   // Dr. Angel Pilco Escobedo no tiene perfil propio, usa busqueda general
 };
 
