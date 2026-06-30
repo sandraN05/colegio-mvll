@@ -13,9 +13,15 @@ async function cargarInvestigadores() {
       sinDatos.style.display = 'flex';
       return;
     }
+const perfilesAcademicos = {
+  'Dr. Luis Alberto Almanza Ope': 'https://scholar.google.com/citations?hl=es&user=I5-LU6oAAAAJ',
+  'Dr. Carlos David Laura Quispe': 'https://scholar.google.com/citations?hl=es&user=vgjCINcAAAAJ'
+  // Dr. Angel Pilco Escobedo no tiene perfil propio, usa busqueda general
+};
+
 grid.style.display = 'grid';
 grid.innerHTML = data.map(p => {
-  const urlPerfil = 'https://scholar.google.com/scholar?q=' + encodeURIComponent(p.nombre);
+  const urlPerfil = perfilesAcademicos[p.nombre] || ('https://scholar.google.com/scholar?q=' + encodeURIComponent(p.nombre));
   return `
   <a class="profe-card-grande" href="${urlPerfil}" target="_blank" rel="noopener noreferrer" title="Ver perfil académico de ${p.nombre}">
     <div class="profe-avatar-grande">
