@@ -14,8 +14,10 @@ async function cargarInvestigadores() {
       return;
     }
 grid.style.display = 'grid';
-grid.innerHTML = data.map(p => `
-  <div class="profe-card-grande">
+grid.innerHTML = data.map(p => {
+  const urlPerfil = 'https://scholar.google.com/scholar?q=' + encodeURIComponent(p.nombre);
+  return `
+  <a class="profe-card-grande" href="${urlPerfil}" target="_blank" rel="noopener noreferrer" title="Ver perfil académico de ${p.nombre}">
     <div class="profe-avatar-grande">
       ${p.foto_url
         ? `<img src="${p.foto_url}" alt="${p.nombre}"/>`
@@ -27,8 +29,9 @@ grid.innerHTML = data.map(p => `
     </div>
     <div class="profe-name">${p.nombre}</div>
     ${p.cargo ? `<div class="profe-curso">${p.cargo}</div>` : ''}
-  </div>
-`).join('');
+  </a>
+`;
+}).join('');
   } catch(err) {
     cargando.style.display = 'none';
     sinDatos.style.display = 'flex';
