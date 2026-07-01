@@ -116,23 +116,46 @@ async function cargarActividades() {
 function abrirActividadDetalle(i) {
   const act = actividadesData[i];
   if (!act) return;
+  _abrirDetalle(act.imagen_url, act.titulo, act.descripcion || '',
+    formatearFecha(act.fecha), capitalizarPrimera(act.categoria || 'Actividad'),
+    'cat-' + (act.categoria || 'otro'));
+}
 
-  const imgWrap = document.getElementById('act-detalle-imagen-wrap');
-  const img     = document.getElementById('act-detalle-imagen');
-  if (act.imagen_url) {
-    img.src = act.imagen_url;
-    imgWrap.style.display = 'block';
+function abrirDireccionDetalle(i) {
+  const d = direccionData[i];
+  if (!d) return;
+  _abrirDetalle(d.foto_url, d.nombre, d.descripcion || '', d.cargo || '', 'Dirección', 'cat-otro');
+}
+
+function abrirAnuncioDetalle(i) {
+  const a = anunciosData[i];
+  if (!a) return;
+  _abrirDetalle(a.imagen_url, a.titulo, a.descripcion || '',
+    a.fecha_evento ? formatearFecha(a.fecha_evento) : '', 'Anuncio', 'cat-otro');
+}
+
+function _abrirDetalle(imgUrl, titulo, desc, fecha, badgeTxt, badgeClass) {
+  const conImagen    = document.getElementById('act-detalle-imagen-wrap');
+  const sinImagen    = document.getElementById('act-detalle-sin-imagen');
+
+  if (imgUrl) {
+    document.getElementById('act-detalle-imagen').src        = imgUrl;
+    document.getElementById('act-detalle-titulo').textContent = titulo;
+    document.getElementById('act-detalle-desc').textContent   = desc;
+    document.getElementById('act-detalle-fecha').textContent  = fecha;
+    const b = document.getElementById('act-detalle-badge');
+    b.textContent = badgeTxt; b.className = 'actividad-badge ' + badgeClass;
+    conImagen.style.display = 'flex';
+    sinImagen.style.display = 'none';
   } else {
-    imgWrap.style.display = 'none';
+    document.getElementById('act-detalle-titulo2').textContent = titulo;
+    document.getElementById('act-detalle-desc2').textContent   = desc;
+    document.getElementById('act-detalle-fecha2').textContent  = fecha;
+    const b2 = document.getElementById('act-detalle-badge2');
+    b2.textContent = badgeTxt; b2.className = 'actividad-badge ' + badgeClass;
+    conImagen.style.display = 'none';
+    sinImagen.style.display = 'block';
   }
-
-  document.getElementById('act-detalle-titulo').textContent = act.titulo;
-  document.getElementById('act-detalle-desc').textContent   = act.descripcion || '';
-  document.getElementById('act-detalle-fecha').textContent  = formatearFecha(act.fecha);
-
-  const badge = document.getElementById('act-detalle-badge');
-  badge.textContent  = capitalizarPrimera(act.categoria || 'Actividad');
-  badge.className    = 'actividad-badge cat-' + (act.categoria || 'otro');
 
   document.getElementById('modal-actividad-detalle').classList.add('activo');
   document.body.style.overflow = 'hidden';
