@@ -1,4 +1,3 @@
-
 function toggleMenu() {
   const menu = document.getElementById('mobileMenu');
   menu.classList.toggle('open');
@@ -45,10 +44,6 @@ document.addEventListener('keydown', function(e) {
     cerrarVisor();
     cerrarNivel();
   }
-  if (document.getElementById('modal-nivel')?.classList.contains('activo')) {
-    if (e.key === 'ArrowRight') moverCarrusel(1);
-    if (e.key === 'ArrowLeft')  moverCarrusel(-1);
-  }
 });
 
 function formatearFecha(fechaStr) {
@@ -57,17 +52,9 @@ function formatearFecha(fechaStr) {
     day: '2-digit', month: 'long', year: 'numeric'
   });
 }
-function getIconoCategoria(categoria) {
-  const iconos = {
-    ciencia:'🔬', deporte:'⚽', aniversario:'🎉',
-    concurso:'🏆', feria:'🎪', arte:'🎨', otro:'📌'
-  };
-  return iconos[categoria] || '📌';
-}
-function capitalizarPrimera(texto) {
-  if (!texto) return '';
-  return texto.charAt(0).toUpperCase() + texto.slice(1);
-}
+
+// Datos de actividades en memoria para el modal
+let actividadesData = [];
 
 async function cargarActividades() {
   const cargando = document.getElementById('cargando-actividades');
@@ -87,10 +74,14 @@ async function cargarActividades() {
       sinDatos.style.display = 'flex';
       return;
     }
+    actividadesData = data;
     lista.style.display = 'grid';
-    lista.innerHTML = data.map(function(act) {
+    lista.innerHTML = data.map(function(act, i) {
+      const descCorta = act.descripcion && act.descripcion.length > 120
+        ? act.descripcion.substring(0, 120) + '...'
+        : (act.descripcion || '');
       return `
-        <div class="actividad-card">
+        <div class="actividad-card" onclick="abrirActividadDetalle(${i})" style="cursor:pointer;">
           ${act.imagen_url
             ? `<img src="${act.imagen_url}" alt="${act.titulo}"/>`
             : `<div class="actividad-card-placeholder">${getIconoCategoria(act.categoria)}</div>`
@@ -104,7 +95,10 @@ async function cargarActividades() {
               <span class="actividad-fecha">${formatearFecha(act.fecha)}</span>
             </div>
             <div class="actividad-titulo">${act.titulo}</div>
-            ${act.descripcion ? `<div class="actividad-desc">${act.descripcion}</div>` : ''}
+            ${descCorta ? `<div class="actividad-desc">${descCorta}</div>` : ''}
+            ${act.descripcion && act.descripcion.length > 120
+              ? `<div class="act-ver-mas">Ver más →</div>`
+              : ''}
           </div>
         </div>
       `;
@@ -115,6 +109,38 @@ async function cargarActividades() {
     console.error('Error al cargar actividades:', err);
   }
 }
+
+function abrirActividadDetalle(i) {
+  const act = actividadesData[i];
+  if (!act) return;
+
+  const imgWrap = document.getElementById('act-detalle-imagen-wrap');
+  const img     = document.getElementById('act-detalle-imagen');
+  if (act.imagen_url) {
+    img.src = act.imagen_url;
+    imgWrap.style.display = 'block';
+  } else {
+    imgWrap.style.display = 'none';
+  }
+
+  document.getElementById('act-detalle-titulo').textContent = act.titulo;
+  document.getElementById('act-detalle-desc').textContent   = act.descripcion || '';
+  document.getElementById('act-detalle-fecha').textContent  = formatearFecha(act.fecha);
+
+  const badge = document.getElementById('act-detalle-badge');
+  badge.textContent  = capitalizarPrimera(act.categoria || 'Actividad');
+  badge.className    = 'actividad-badge cat-' + (act.categoria || 'otro');
+
+  document.getElementById('modal-actividad-detalle').classList.add('activo');
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarActividadDetalle(event) {
+  if (event && event.target !== document.getElementById('modal-actividad-detalle')) return;
+  document.getElementById('modal-actividad-detalle').classList.remove('activo');
+  document.body.style.overflow = '';
+}
+
 async function cargarRevistas() {
   const cargando = document.getElementById('cargando-revistas');
   const sinDatos = document.getElementById('sin-revistas');
@@ -139,12 +165,12 @@ async function cargarRevistas() {
         <div class="actividad-card">
           ${rev.portada_url
             ? `<img src="${rev.portada_url}" alt="${rev.titulo}" style="width:100%;height:180px;object-fit:cover;display:block;"/>`
-            : `<div class="actividad-card-placeholder">📖</div>`
+            : `<div class="actividad-card-placeholder"></div>`
           }
           <div class="actividad-franja"></div>
           <div class="actividad-body">
             <div class="actividad-meta">
-              <span class="actividad-badge cat-otro">📖 Revista</span>
+              <span class="actividad-badge cat-otro"> Revista</span>
             </div>
             <div class="actividad-titulo">${rev.titulo}</div>
             ${rev.descripcion ? `<div class="actividad-desc">${rev.descripcion}</div>` : ''}
@@ -162,90 +188,17 @@ async function cargarRevistas() {
   }
 }
 
-async function cargarAnuncios() {
-  const cargando = document.getElementById('cargando-anuncios');
-  const sinDatos = document.getElementById('sin-anuncios');
-  const lista    = document.getElementById('lista-anuncios');
-  if (!lista) return;
-  try {
-    const ahora = new Date().toISOString();
-    const { data, error } = await supabase
-      .from('anuncios')
-      .select('*')
-      .eq('estado', 'activo')
-      .gt('fecha_expiracion', ahora)
-      .order('fecha_evento', { ascending: true });
-    cargando.style.display = 'none';
-    if (error || !data || data.length === 0) {
-      sinDatos.style.display = 'flex';
-      return;
-    }
-    lista.style.display = 'grid';
-    lista.innerHTML = data.map(function(a) {
-      const detalles = [];
-      if (a.fecha_evento) detalles.push(`<div class="anuncio-detalle"><span>📅</span><span>${formatearFecha(a.fecha_evento)}</span></div>`);
-      if (a.hora)         detalles.push(`<div class="anuncio-detalle"><span>🕐</span><span>${a.hora}</span></div>`);
-      if (a.lugar)        detalles.push(`<div class="anuncio-detalle"><span>📍</span><span>${a.lugar}</span></div>`);
-      return `
-        <div class="anuncio-card">
-          ${a.imagen_url
-            ? `<img class="anuncio-img" src="${a.imagen_url}" alt="${a.titulo}"/>`
-            : `<div class="anuncio-img-placeholder">📢</div>`
-          }
-          <div class="anuncio-franja"></div>
-          <div class="anuncio-body">
-            <div class="anuncio-badge">📢 Anuncio</div>
-            <div class="anuncio-titulo">${a.titulo}</div>
-            ${a.descripcion ? `<div class="anuncio-desc">${a.descripcion}</div>` : ''}
-            ${detalles.length ? `<div class="anuncio-detalles">${detalles.join('')}</div>` : ''}
-          </div>
-        </div>
-      `;
-    }).join('');
-  } catch (err) {
-    cargando.style.display = 'none';
-    sinDatos.style.display = 'flex';
-    console.error('Error al cargar anuncios:', err);
-  }
+function getIconoCategoria(categoria) {
+  const iconos = {
+    ciencia:'', deporte:'', aniversario:'',
+    concurso:'', feria:'', arte:'', otro:''
+  };
+  return iconos[categoria] || '';
 }
 
-async function cargarDireccion() {
-  const cargando = document.getElementById('cargando-direccion');
-  const sinDatos = document.getElementById('sin-direccion');
-  const grid     = document.getElementById('grid-direccion');
-  if (!grid) return;
-  try {
-    const { data, error } = await supabase
-      .from('direccion')
-      .select('*')
-      .order('created_at', { ascending: true });
-    cargando.style.display = 'none';
-    if (error || !data || !data.length) {
-      sinDatos.style.display = 'flex';
-      return;
-    }
-    grid.style.display = 'block';
-    grid.innerHTML = data.map(d => `
-      <div class="direccion-card">
-        <div class="direccion-foto">
-          ${d.foto_url
-            ? `<img src="${d.foto_url}" alt="${d.nombre}"/>`
-            : `<div class="direccion-foto-placeholder"></div>`
-          }
-        </div>
-        <div class="direccion-info">
-          <div class="section-tag">Liderazgo institucional</div>
-          <h3>${d.nombre}</h3>
-          <div class="direccion-cargo">${d.cargo || ''}</div>
-          ${d.descripcion ? `<div class="direccion-desc">${d.descripcion}</div>` : ''}
-        </div>
-      </div>
-    `).join('');
-  } catch(err) {
-    cargando.style.display = 'none';
-    sinDatos.style.display = 'flex';
-    console.error(err);
-  }
+function capitalizarPrimera(texto) {
+  if (!texto) return '';
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
 }
 
 function initReveal() {
@@ -277,6 +230,14 @@ function initReveal() {
   });
 }
 
+function initParallax() {
+  const bg = document.querySelector('.hero-parallax-bg');
+  if (!bg) return;
+  window.addEventListener('scroll', function() {
+    bg.style.transform = 'translateY(' + (window.scrollY * 0.3) + 'px)';
+  }, { passive: true });
+}
+
 function animarContador(el, target, suffix) {
   const duration = 1800;
   const start = performance.now();
@@ -288,15 +249,16 @@ function animarContador(el, target, suffix) {
   }
   requestAnimationFrame(update);
 }
+
 function initContadores() {
   const stats = document.querySelectorAll('.stat-num');
   if (!stats.length) return;
   const observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
       if (entry.isIntersecting) {
-        const el   = entry.target;
+        const el = entry.target;
         const text = el.textContent;
-        const num  = parseInt(text.replace(/[^0-9]/g, ''));
+        const num = parseInt(text.replace(/[^0-9]/g, ''));
         const suffix = text.includes('+') ? '+' : '';
         animarContador(el, num, suffix);
         observer.unobserve(el);
@@ -306,6 +268,9 @@ function initContadores() {
   stats.forEach(function(s) { observer.observe(s); });
 }
 
+// ══════════════════════════════════════
+// EFECTO 3D EN CARDS DE NIVELES
+// ══════════════════════════════════════
 function init3DNivelCards() {
   document.querySelectorAll('.nivel-card').forEach(function(card) {
     card.addEventListener('mousemove', function(e) {
@@ -328,69 +293,103 @@ function init3DNivelCards() {
   });
 }
 
+// ══════════════════════════════════════
+// EFECTO ARCO DORADO EN BANNERS
+// ══════════════════════════════════════
+function initBannerLetras() {
+  document.querySelectorAll('.banner-content h2').forEach(function(h2) {
+    const texto  = h2.textContent.trim();
+    const letras = texto.split('');
+    const total  = letras.length;
+    h2.innerHTML = '';
+
+    letras.forEach(function(letra, i) {
+      if (letra === ' ') {
+        const espacio = document.createElement('span');
+        espacio.className = 'banner-espacio';
+        h2.appendChild(espacio);
+      } else {
+        const span = document.createElement('span');
+        span.className = 'banner-letra';
+        span.textContent = letra;
+
+        // Arco: seno hace que los extremos suban y el centro baje
+        const pos   = i / (total - 1);
+        const arcoY = -Math.sin(pos * Math.PI) * 22;
+        span.style.setProperty('--arco-y', arcoY + 'px');
+        span.style.animationDelay = (i * 0.055) + 's';
+        h2.appendChild(span);
+      }
+    });
+  });
+}
+
+// ══════════════════════════════════════
+// CARRUSEL EN MODAL DE NIVELES
+// ══════════════════════════════════════
 let carruselIndex = 0;
 let carruselFotos = [];
 
 function renderCarrusel(fotos, info) {
   carruselFotos  = fotos;
   carruselIndex  = 0;
+
   const galeria  = document.getElementById('nivel-modal-fotos');
   galeria.style.display = 'block';
   galeria.innerHTML = `
     <div class="carrusel-wrap">
-      <div class="carrusel-escena" id="carrusel-escena"></div>
+      <div class="carrusel-track" id="carrusel-track"></div>
       <button class="carrusel-btn carrusel-prev" onclick="moverCarrusel(-1)">&#8249;</button>
       <button class="carrusel-btn carrusel-next" onclick="moverCarrusel(1)">&#8250;</button>
       <div class="carrusel-puntos" id="carrusel-puntos"></div>
     </div>
     ${fotos.length > 1 ? `<p class="carrusel-counter" id="carrusel-counter">1 / ${fotos.length}</p>` : ''}
   `;
-  const escena = document.getElementById('carrusel-escena');
-  const puntos  = document.getElementById('carrusel-puntos');
+
+  const track  = document.getElementById('carrusel-track');
+  const puntos = document.getElementById('carrusel-puntos');
+
   fotos.forEach(function(f, i) {
     const slide = document.createElement('div');
-    slide.className    = 'carrusel-slide';
-    slide.dataset.index = i;
+    slide.className = 'carrusel-slide';
     slide.innerHTML = `
       <img src="${f.foto_url}" alt="${f.descripcion || info.titulo}" loading="lazy"/>
       ${f.descripcion ? `<div class="carrusel-caption">${f.descripcion}</div>` : ''}
     `;
-    slide.addEventListener('click', function() {
-      const pos = parseInt(slide.dataset.pos || '0');
-      if (pos !== 0) irASlide(i);
-    });
-    escena.appendChild(slide);
+    track.appendChild(slide);
+
     const punto = document.createElement('button');
     punto.className = 'carrusel-punto' + (i === 0 ? ' activo' : '');
-    punto.onclick   = function() { irASlide(i); };
+    punto.onclick = function() { irASlide(i); };
     puntos.appendChild(punto);
   });
+
   actualizarCarrusel();
 }
 
 function actualizarCarrusel() {
-  const slides  = document.querySelectorAll('#carrusel-escena .carrusel-slide');
+  const track   = document.getElementById('carrusel-track');
   const puntos  = document.querySelectorAll('.carrusel-punto');
   const counter = document.getElementById('carrusel-counter');
-  const total   = carruselFotos.length;
-  slides.forEach(function(slide, i) {
-    let offset = i - carruselIndex;
-    if (offset >  Math.floor(total / 2)) offset -= total;
-    if (offset < -Math.floor(total / 2)) offset += total;
-    slide.dataset.pos = Math.max(-5, Math.min(5, offset));
+  if (!track) return;
+  track.style.transform = `translateX(-${carruselIndex * 100}%)`;
+  puntos.forEach(function(p, i) {
+    p.classList.toggle('activo', i === carruselIndex);
   });
-  puntos.forEach(function(p, i) { p.classList.toggle('activo', i === carruselIndex); });
-  if (counter) counter.textContent = `${carruselIndex + 1} / ${total}`;
+  if (counter) counter.textContent = `${carruselIndex + 1} / ${carruselFotos.length}`;
 }
+
 function moverCarrusel(dir) {
   carruselIndex = (carruselIndex + dir + carruselFotos.length) % carruselFotos.length;
   actualizarCarrusel();
 }
+
 function irASlide(i) {
   carruselIndex = i;
   actualizarCarrusel();
 }
 
+// Swipe en móvil
 let touchStartX = 0;
 document.addEventListener('touchstart', function(e) {
   if (e.target.closest('.carrusel-wrap')) touchStartX = e.touches[0].clientX;
@@ -402,24 +401,21 @@ document.addEventListener('touchend', function(e) {
   }
 }, { passive: true });
 
+// ══════════════════════════════════════
+// MODAL DE NIVELES
+// ══════════════════════════════════════
 const nivelesInfo = {
   inicial: {
-    icon: '🧒',
-    titulo: 'Nivel Inicial',
-    desc: 'Estimulación temprana y desarrollo integral en un ambiente lúdico, seguro y estimulante para niños de 3 a 5 años.',
-    clave: 'inicial'
+    icon: '🌱', titulo: 'Nivel Inicial',
+    desc: 'Estimulación temprana y desarrollo integral en un ambiente lúdico, seguro y estimulante para niños de 3 a 5 años.'
   },
   primaria: {
-    icon: '📚',
-    titulo: 'Nivel Primaria',
-    desc: 'Formación sólida en competencias fundamentales: lectura, matemáticas, ciencias y habilidades para la vida. Del 1° al 6° grado.',
-    clave: 'primaria'
+    icon: '📚', titulo: 'Nivel Primaria',
+    desc: 'Formación sólida en competencias fundamentales: lectura, matemáticas, ciencias y habilidades para la vida. Del 1° al 6° grado.'
   },
   secundaria: {
-    icon: '🎓',
-    titulo: 'Nivel Secundaria',
-    desc: 'Preparación integral para el ingreso a la universidad con orientación vocacional y desarrollo del liderazgo. Del 1° al 5° año.',
-    clave: 'secundaria'
+    icon: '🎓', titulo: 'Nivel Secundaria',
+    desc: 'Preparación integral para el ingreso a la universidad con orientación vocacional y desarrollo del liderazgo. Del 1° al 5° año.'
   }
 };
 
@@ -434,17 +430,19 @@ async function abrirNivel(nivel) {
   document.getElementById('nivel-modal-fotos').style.display     = 'none';
   document.getElementById('modal-nivel').classList.add('activo');
   document.body.style.overflow = 'hidden';
+
   try {
     const { data: nivData, error: nivError } = await supabase
       .from('niveles').select('id, descripcion').eq('nivel', nivel).single();
     if (!nivError && nivData && nivData.descripcion) {
       document.getElementById('nivel-modal-desc').textContent = nivData.descripcion;
     }
-    const nivelId  = nivData ? nivData.id : null;
-    let fotosData  = [];
+    const nivelId = nivData ? nivData.id : null;
+    let fotosData = [];
     if (nivelId) {
       const { data, error } = await supabase
-        .from('niveles_fotos').select('*').eq('nivel_id', nivelId).order('orden', { ascending: true });
+        .from('niveles_fotos').select('*')
+        .eq('nivel_id', nivelId).order('orden', { ascending: true });
       if (!error && data) fotosData = data;
     }
     document.getElementById('nivel-modal-cargando').style.display = 'none';
@@ -479,114 +477,98 @@ function cerrarNivel(event) {
   carruselFotos = [];
 }
 
-let heroSlideIndex = 0;
-let heroSlideTimer = null;
-
-function irHeroSlide(n) {
-  const slides = document.querySelectorAll('.hero-carousel-slide');
-  const dots   = document.querySelectorAll('.hero-dot');
-  if (!slides.length) return;
-  slides[heroSlideIndex].classList.remove('active');
-  dots[heroSlideIndex] && dots[heroSlideIndex].classList.remove('active');
-  heroSlideIndex = (n + slides.length) % slides.length;
-  slides[heroSlideIndex].classList.add('active');
-  dots[heroSlideIndex] && dots[heroSlideIndex].classList.add('active');
-}
-function avanzarHeroSlide() { irHeroSlide(heroSlideIndex + 1); }
-function initHeroCarousel() {
-  const slides = document.querySelectorAll('.hero-carousel-slide');
-  if (slides.length <= 1) return;
-  heroSlideTimer = setInterval(avanzarHeroSlide, 4500);
-  const hero = document.querySelector('.hero');
-  if (hero) {
-    hero.addEventListener('mouseenter', () => clearInterval(heroSlideTimer));
-    hero.addEventListener('mouseleave', () => {
-      clearInterval(heroSlideTimer);
-      heroSlideTimer = setInterval(avanzarHeroSlide, 4500);
-    });
-  }
-}
-function initBannerShimmer() {
-  const banners = document.querySelectorAll('.banner-wrap');
-  if (!banners.length) return;
-  const obs = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) entry.target.classList.add('visible-banner');
-    });
-  }, { threshold: 0.3 });
-  banners.forEach(function(b) { obs.observe(b); });
-}
-
-function animarArcoLetras() {
-  const palabras = [
-    { id: 'arco-mario',  texto: 'Mario',  delay: 0    },
-    { id: 'arco-vargas', texto: 'Vargas', delay: 0.6  },
-    { id: 'arco-llosa',  texto: 'Llosa',  delay: 1.15 },
-  ];
-
-  palabras.forEach(function(p) {
-    const el = document.getElementById(p.id);
-    if (!el) return;
-    const letras   = p.texto.split('');
-    const textPath = el.querySelector('textPath');
-    if (!textPath) return;
-    const offset = textPath.getAttribute('startOffset');
-    const anchor = textPath.getAttribute('text-anchor');
-    const href   = textPath.getAttribute('href');
-    el.innerHTML =
-      `<textPath href="${href}" startOffset="${offset}" text-anchor="${anchor}">` +
-      letras.map(function(l, i) {
-        return `<tspan class="arco-letra" style="--ld:${p.delay + i * 0.09}s">${l === ' ' ? '\u00A0' : l}</tspan>`;
-      }).join('') +
-      `</textPath>`;
-  });
-
-  function lanzarAnimacion() {
-    document.querySelectorAll('.arco-letra').forEach(function(el) {
-      el.classList.remove('arco-letra-in');
-      void el.offsetWidth;
-      el.classList.add('arco-letra-in');
-    });
-  }
-
-  setTimeout(lanzarAnimacion, 100);
-  setInterval(lanzarAnimacion, 5000);
-}
-function initMusica() {
-  const music = document.getElementById('bg-music');
-  if (!music) return;
-  music.volume = 0.35;
-  music.play().catch(function() {
-    document.addEventListener('click', function iniciar() {
-      music.play();
-      document.removeEventListener('click', iniciar);
-    }, { once: true });
-  });
-}
-
-(function initScrollSuave() {
-  let lastY   = window.scrollY;
-  let ticking = false;
-  window.addEventListener('scroll', function() {
-    if (!ticking) {
-      window.requestAnimationFrame(function() {
-        lastY   = window.scrollY;
-        ticking = false;
-      });
-      ticking = true;
+async function cargarAnuncios() {
+  const cargando = document.getElementById('cargando-anuncios');
+  const sinDatos = document.getElementById('sin-anuncios');
+  const lista    = document.getElementById('lista-anuncios');
+  if (!lista) return;
+  try {
+    const ahora = new Date().toISOString();
+    const { data, error } = await supabase
+      .from('anuncios').select('*').eq('estado', 'activo')
+      .gt('fecha_expiracion', ahora).order('fecha_evento', { ascending: true });
+    cargando.style.display = 'none';
+    if (error || !data || data.length === 0) {
+      sinDatos.style.display = 'flex';
+      return;
     }
-  }, { passive: true });
-})();
+    lista.style.display = 'grid';
+    lista.innerHTML = data.map(function(a) {
+      const detalles = [];
+      if (a.fecha_evento) detalles.push(`<div class="anuncio-detalle"><span>📅</span><span>${formatearFecha(a.fecha_evento)}</span></div>`);
+      if (a.hora)         detalles.push(`<div class="anuncio-detalle"><span>🕐</span><span>${a.hora}</span></div>`);
+      if (a.lugar)        detalles.push(`<div class="anuncio-detalle"><span>📍</span><span>${a.lugar}</span></div>`);
+      return `
+        <div class="anuncio-card">
+          ${a.imagen_url
+            ? `<img class="anuncio-img" src="${a.imagen_url}" alt="${a.titulo}"/>`
+            : `<div class="anuncio-img-placeholder"></div>`
+          }
+          <div class="anuncio-franja"></div>
+          <div class="anuncio-body">
+            <div class="anuncio-badge"> Anuncio</div>
+            <div class="anuncio-titulo">${a.titulo}</div>
+            ${a.descripcion ? `<div class="anuncio-desc">${a.descripcion}</div>` : ''}
+            ${detalles.length ? `<div class="anuncio-detalles">${detalles.join('')}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    cargando.style.display = 'none';
+    sinDatos.style.display = 'flex';
+    console.error('Error al cargar anuncios:', err);
+  }
+}
+
+async function cargarDireccion() {
+  const cargando = document.getElementById('cargando-direccion');
+  const sinDatos = document.getElementById('sin-direccion');
+  const grid     = document.getElementById('grid-direccion');
+  if (!grid) return;
+  try {
+    const { data, error } = await supabase
+      .from('direccion').select('*').order('created_at', { ascending: true });
+    cargando.style.display = 'none';
+    if (error || !data || !data.length) {
+      sinDatos.style.display = 'flex';
+      return;
+    }
+    grid.style.display = 'block';
+    grid.innerHTML = data.map(d => `
+      <div class="direccion-card">
+        <div class="direccion-foto">
+          ${d.foto_url
+            ? `<img src="${d.foto_url}" alt="${d.nombre}"/>`
+            : `<div class="direccion-foto-placeholder"></div>`
+          }
+        </div>
+        <div class="direccion-info">
+          <div class="section-tag">Liderazgo institucional</div>
+          <h3>${d.nombre}</h3>
+          <div class="direccion-cargo">${d.cargo || ''}</div>
+          ${d.descripcion ? `<div class="direccion-desc">${d.descripcion}</div>` : ''}
+        </div>
+      </div>
+    `).join('');
+  } catch(err) {
+    cargando.style.display = 'none';
+    sinDatos.style.display = 'flex';
+    console.error(err);
+  }
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
 document.addEventListener('DOMContentLoaded', function() {
   cargarActividades();
   cargarRevistas();
   cargarAnuncios();
   cargarDireccion();
   initReveal();
+  initParallax();
   initContadores();
   init3DNivelCards();
-  initHeroCarousel();
-  initBannerShimmer();
-  animarArcoLetras();
-  initMusica();
+  initBannerLetras();
 });
