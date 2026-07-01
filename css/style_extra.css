@@ -237,13 +237,16 @@
 @media (max-width: 600px) {
   #act-detalle-imagen-wrap {
     flex-direction: column;
+    overflow: hidden;
   }
   #act-detalle-imagen {
     width: 100% !important;
+    max-width: 100% !important;
     height: 200px !important;
     object-fit: cover !important;
     object-position: top center !important;
     border-radius: 12px !important;
+    display: block !important;
   }
   #act-detalle-titulo,
   #act-detalle-titulo2 {
@@ -256,9 +259,22 @@
   }
   #modal-actividad-detalle .nivel-modal {
     padding: 1.2rem !important;
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
   }
   .nivel-modal-cerrar {
     top: 0.8rem !important;
     right: 0.8rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .nivel-modal-overlay {
+    padding: 0.5rem !important;
+  }
+  .nivel-modal {
+    max-width: 100% !important;
+    width: 100% !important;
+    border-radius: 16px !important;
   }
 }
