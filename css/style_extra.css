@@ -177,3 +177,27 @@
 .actividad-card:hover .act-ver-mas {
   letter-spacing: 1px;
 }
+
+/* ════════════════════════════
+   EFECTO SHIMMER EN BANNERS
+════════════════════════════ */
+.banner-shimmer {
+  background: linear-gradient(
+    90deg,
+    #a86200 0%,
+    #F0A500 30%,
+    #fffbe0 50%,
+    #F0A500 70%,
+    #a86200 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer-move 3s linear infinite;
+}
+
+@keyframes shimmer-move {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
