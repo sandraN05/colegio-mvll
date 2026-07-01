@@ -240,6 +240,25 @@
   }
   #act-detalle-imagen {
     width: 100% !important;
-    height: 220px !important;
+    height: 200px !important;
+    object-fit: cover !important;
+    object-position: top center !important;
+    border-radius: 12px !important;
+  }
+  #act-detalle-titulo,
+  #act-detalle-titulo2 {
+    font-size: 1.1rem !important;
+  }
+  #act-detalle-desc,
+  #act-detalle-desc2 {
+    font-size: 0.82rem !important;
+    line-height: 1.6 !important;
+  }
+  #modal-actividad-detalle .nivel-modal {
+    padding: 1.2rem !important;
+  }
+  .nivel-modal-cerrar {
+    top: 0.8rem !important;
+    right: 0.8rem !important;
   }
 }
