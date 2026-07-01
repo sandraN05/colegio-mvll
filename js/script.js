@@ -353,36 +353,38 @@ function initBannerLetras() {
 }
 
 // ══════════════════════════════════════
-// CARRUSEL EN MODAL DE NIVELES
+// CARRUSEL COVERFLOW 3D EN MODAL NIVELES
 // ══════════════════════════════════════
 let carruselIndex = 0;
 let carruselFotos = [];
 
 function renderCarrusel(fotos, info) {
-  carruselFotos  = fotos;
-  carruselIndex  = 0;
+  carruselFotos = fotos;
+  carruselIndex = 0;
 
-  const galeria  = document.getElementById('nivel-modal-fotos');
+  const galeria = document.getElementById('nivel-modal-fotos');
   galeria.style.display = 'block';
   galeria.innerHTML = `
-    <div class="carrusel-wrap">
-      <div class="carrusel-track" id="carrusel-track"></div>
+    <div class="coverflow-wrap">
+      <div class="coverflow-track" id="coverflow-track"></div>
       <button class="carrusel-btn carrusel-prev" onclick="moverCarrusel(-1)">&#8249;</button>
       <button class="carrusel-btn carrusel-next" onclick="moverCarrusel(1)">&#8250;</button>
-      <div class="carrusel-puntos" id="carrusel-puntos"></div>
     </div>
-    ${fotos.length > 1 ? `<p class="carrusel-counter" id="carrusel-counter">1 / ${fotos.length}</p>` : ''}
+    <div class="carrusel-puntos" id="carrusel-puntos" style="display:flex;justify-content:center;gap:7px;margin-top:14px;"></div>
+    <p class="carrusel-counter" id="carrusel-counter">1 / ${fotos.length}</p>
   `;
 
-  const track  = document.getElementById('carrusel-track');
+  const track  = document.getElementById('coverflow-track');
   const puntos = document.getElementById('carrusel-puntos');
 
   fotos.forEach(function(f, i) {
     const slide = document.createElement('div');
-    slide.className = 'carrusel-slide';
+    slide.className = 'coverflow-slide';
+    slide.dataset.index = i;
+    slide.onclick = function() { irASlide(i); };
     slide.innerHTML = `
       <img src="${f.foto_url}" alt="${f.descripcion || info.titulo}" loading="lazy"/>
-      ${f.descripcion ? `<div class="carrusel-caption">${f.descripcion}</div>` : ''}
+      ${f.descripcion ? `<div class="coverflow-caption">${f.descripcion}</div>` : ''}
     `;
     track.appendChild(slide);
 
@@ -392,38 +394,78 @@ function renderCarrusel(fotos, info) {
     puntos.appendChild(punto);
   });
 
-  actualizarCarrusel();
+  actualizarCoverflow();
 }
 
-function actualizarCarrusel() {
-  const track   = document.getElementById('carrusel-track');
+function actualizarCoverflow() {
+  const slides  = document.querySelectorAll('.coverflow-slide');
   const puntos  = document.querySelectorAll('.carrusel-punto');
   const counter = document.getElementById('carrusel-counter');
-  if (!track) return;
-  track.style.transform = `translateX(-${carruselIndex * 100}%)`;
+  const total   = carruselFotos.length;
+
+  slides.forEach(function(slide, i) {
+    const diff = i - carruselIndex;
+    const absDiff = Math.abs(diff);
+
+    let transform, zIndex, opacity;
+
+    if (diff === 0) {
+      // Central — grande y frontal
+      transform = 'translateX(0) scale(1) rotateY(0deg)';
+      zIndex    = 10;
+      opacity   = 1;
+    } else if (diff === -1) {
+      // Izquierda inmediata
+      transform = 'translateX(-65%) scale(0.78) rotateY(35deg)';
+      zIndex    = 8;
+      opacity   = 0.7;
+    } else if (diff === 1) {
+      // Derecha inmediata
+      transform = 'translateX(65%) scale(0.78) rotateY(-35deg)';
+      zIndex    = 8;
+      opacity   = 0.7;
+    } else if (diff <= -2) {
+      // Más a la izquierda
+      transform = 'translateX(-110%) scale(0.6) rotateY(45deg)';
+      zIndex    = 6;
+      opacity   = 0.35;
+    } else {
+      // Más a la derecha
+      transform = 'translateX(110%) scale(0.6) rotateY(-45deg)';
+      zIndex    = 6;
+      opacity   = 0.35;
+    }
+
+    slide.style.transform  = transform;
+    slide.style.zIndex     = zIndex;
+    slide.style.opacity    = opacity;
+    slide.style.cursor     = diff === 0 ? 'default' : 'pointer';
+  });
+
   puntos.forEach(function(p, i) {
     p.classList.toggle('activo', i === carruselIndex);
   });
-  if (counter) counter.textContent = `${carruselIndex + 1} / ${carruselFotos.length}`;
+
+  if (counter) counter.textContent = `${carruselIndex + 1} / ${total}`;
 }
 
 function moverCarrusel(dir) {
   carruselIndex = (carruselIndex + dir + carruselFotos.length) % carruselFotos.length;
-  actualizarCarrusel();
+  actualizarCoverflow();
 }
 
 function irASlide(i) {
   carruselIndex = i;
-  actualizarCarrusel();
+  actualizarCoverflow();
 }
 
 // Swipe en móvil
 let touchStartX = 0;
 document.addEventListener('touchstart', function(e) {
-  if (e.target.closest('.carrusel-wrap')) touchStartX = e.touches[0].clientX;
+  if (e.target.closest('.coverflow-wrap')) touchStartX = e.touches[0].clientX;
 }, { passive: true });
 document.addEventListener('touchend', function(e) {
-  if (e.target.closest('.carrusel-wrap')) {
+  if (e.target.closest('.coverflow-wrap')) {
     const diff = touchStartX - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 40) moverCarrusel(diff > 0 ? 1 : -1);
   }
