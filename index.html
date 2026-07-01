@@ -381,25 +381,30 @@
       <div id="lista-anuncios" class="anuncios-grid" style="display:none;"></div>
     </div>
   </section>
-  <!-- MODAL ACTIVIDAD DETALLE -->
-  <div id="modal-actividad-detalle" class="nivel-modal-overlay" onclick="cerrarActividadDetalle(event)">
-    <div class="nivel-modal">
-      <button class="nivel-modal-cerrar" onclick="cerrarActividadDetalle()">✕ Cerrar</button>
-      <div id="act-detalle-imagen-wrap" style="margin-bottom:1.2rem;border-radius:14px;overflow:hidden;display:none;">
-        <img id="act-detalle-imagen" src="" alt="" style="width:100%;max-height:320px;object-fit:cover;display:block;"/>
-      </div>
-      <div class="nivel-modal-header" style="border-bottom:none;padding-bottom:0;margin-bottom:0.8rem;">
-        <div>
-          <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
-            <span id="act-detalle-badge" class="actividad-badge"></span>
-            <span id="act-detalle-fecha" style="font-size:0.8rem;color:#94a3b8;"></span>
-          </div>
-          <h2 id="act-detalle-titulo" style="font-family:'Playfair Display',serif;font-size:1.6rem;color:#fff;margin-bottom:6px;"></h2>
+<div id="modal-actividad-detalle" class="nivel-modal-overlay" onclick="cerrarActividadDetalle(event)">
+  <div class="nivel-modal">
+    <button class="nivel-modal-cerrar" onclick="cerrarActividadDetalle()">✕ Cerrar</button>
+    <div id="act-detalle-imagen-wrap" style="display:none;">
+      <img id="act-detalle-imagen" src="" alt=""/>
+      <div class="act-detalle-contenido">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <span id="act-detalle-badge" class="actividad-badge"></span>
+          <span id="act-detalle-fecha" style="font-size:0.8rem;color:#94a3b8;"></span>
         </div>
+        <h2 id="act-detalle-titulo" style="font-family:'Playfair Display',serif;font-size:1.5rem;color:#fff;line-height:1.3;"></h2>
+        <p id="act-detalle-desc" style="color:#a8b8d8;line-height:1.8;font-size:0.92rem;"></p>
       </div>
-      <p id="act-detalle-desc" style="color:#a8b8d8;line-height:1.8;font-size:0.95rem;"></p>
+    </div>
+    <div id="act-detalle-sin-imagen" style="display:none;">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
+        <span id="act-detalle-badge2" class="actividad-badge"></span>
+        <span id="act-detalle-fecha2" style="font-size:0.8rem;color:#94a3b8;"></span>
+      </div>
+      <h2 id="act-detalle-titulo2" style="font-family:'Playfair Display',serif;font-size:1.5rem;color:#fff;margin-bottom:12px;"></h2>
+      <p id="act-detalle-desc2" style="color:#a8b8d8;line-height:1.8;font-size:0.92rem;"></p>
     </div>
   </div>
+</div>
 
   <div id="visor-modal" class="visor-overlay" onclick="cerrarVisor(event)">
     <div class="visor-contenedor">
