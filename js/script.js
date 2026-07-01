@@ -405,35 +405,29 @@ function actualizarCoverflow() {
 
   slides.forEach(function(slide, i) {
     const diff = i - carruselIndex;
-    const absDiff = Math.abs(diff);
 
     let transform, zIndex, opacity;
 
     if (diff === 0) {
-      // Central — grande y frontal
-      transform = 'translateX(0) scale(1) rotateY(0deg)';
+      transform = 'translateX(-50%) translateY(-50%) scale(1) rotateY(0deg)';
       zIndex    = 10;
       opacity   = 1;
     } else if (diff === -1) {
-      // Izquierda inmediata
-      transform = 'translateX(-65%) scale(0.78) rotateY(35deg)';
+      transform = 'translateX(-120%) translateY(-50%) scale(0.75) rotateY(40deg)';
       zIndex    = 8;
-      opacity   = 0.7;
+      opacity   = 0.65;
     } else if (diff === 1) {
-      // Derecha inmediata
-      transform = 'translateX(65%) scale(0.78) rotateY(-35deg)';
+      transform = 'translateX(20%) translateY(-50%) scale(0.75) rotateY(-40deg)';
       zIndex    = 8;
-      opacity   = 0.7;
-    } else if (diff <= -2) {
-      // Más a la izquierda
-      transform = 'translateX(-110%) scale(0.6) rotateY(45deg)';
-      zIndex    = 6;
-      opacity   = 0.35;
+      opacity   = 0.65;
+    } else if (diff < -1) {
+      transform = 'translateX(-160%) translateY(-50%) scale(0.55) rotateY(50deg)';
+      zIndex    = 5;
+      opacity   = 0.25;
     } else {
-      // Más a la derecha
-      transform = 'translateX(110%) scale(0.6) rotateY(-45deg)';
-      zIndex    = 6;
-      opacity   = 0.35;
+      transform = 'translateX(60%) translateY(-50%) scale(0.55) rotateY(-50deg)';
+      zIndex    = 5;
+      opacity   = 0.25;
     }
 
     slide.style.transform  = transform;
