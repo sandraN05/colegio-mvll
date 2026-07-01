@@ -598,5 +598,4 @@ document.addEventListener('DOMContentLoaded', function() {
   initParallax();
   initContadores();
   init3DNivelCards();
-  initBannerLetras();
 });
