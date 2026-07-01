@@ -367,8 +367,6 @@ function renderCarrusel(fotos, info) {
   galeria.innerHTML = `
     <div class="coverflow-wrap">
       <div class="coverflow-track" id="coverflow-track"></div>
-      <button class="carrusel-btn carrusel-prev" onclick="moverCarrusel(-1)">&#8249;</button>
-      <button class="carrusel-btn carrusel-next" onclick="moverCarrusel(1)">&#8250;</button>
     </div>
     <div class="carrusel-puntos" id="carrusel-puntos" style="display:flex;justify-content:center;gap:7px;margin-top:14px;"></div>
     <p class="carrusel-counter" id="carrusel-counter">1 / ${fotos.length}</p>
