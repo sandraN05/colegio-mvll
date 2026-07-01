@@ -45,6 +45,7 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     cerrarVisor();
     cerrarNivel();
+    cerrarActividadDetalle();
   }
 });
 
@@ -539,6 +540,8 @@ function cerrarNivel(event) {
   carruselFotos = [];
 }
 
+let anunciosData = [];
+
 async function cargarAnuncios() {
   const cargando = document.getElementById('cargando-anuncios');
   const sinDatos = document.getElementById('sin-anuncios');
@@ -554,23 +557,30 @@ async function cargarAnuncios() {
       sinDatos.style.display = 'flex';
       return;
     }
+    anunciosData = data;
     lista.style.display = 'grid';
-    lista.innerHTML = data.map(function(a) {
+    lista.innerHTML = data.map(function(a, i) {
+      const descCorta = a.descripcion && a.descripcion.length > 120
+        ? a.descripcion.substring(0, 120) + '...'
+        : (a.descripcion || '');
       const detalles = [];
       if (a.fecha_evento) detalles.push(`<div class="anuncio-detalle"><span>📅</span><span>${formatearFecha(a.fecha_evento)}</span></div>`);
       if (a.hora)         detalles.push(`<div class="anuncio-detalle"><span>🕐</span><span>${a.hora}</span></div>`);
       if (a.lugar)        detalles.push(`<div class="anuncio-detalle"><span>📍</span><span>${a.lugar}</span></div>`);
       return `
-        <div class="anuncio-card">
+        <div class="anuncio-card" onclick="abrirAnuncioDetalle(${i})" style="cursor:pointer;">
           ${a.imagen_url
             ? `<img class="anuncio-img" src="${a.imagen_url}" alt="${a.titulo}"/>`
             : `<div class="anuncio-img-placeholder"></div>`
           }
           <div class="anuncio-franja"></div>
           <div class="anuncio-body">
-            <div class="anuncio-badge"> Anuncio</div>
+            <div class="anuncio-badge">Anuncio</div>
             <div class="anuncio-titulo">${a.titulo}</div>
-            ${a.descripcion ? `<div class="anuncio-desc">${a.descripcion}</div>` : ''}
+            ${descCorta ? `<div class="anuncio-desc">${descCorta}</div>` : ''}
+            ${a.descripcion && a.descripcion.length > 120
+              ? `<div class="act-ver-mas">Ver más →</div>`
+              : ''}
             ${detalles.length ? `<div class="anuncio-detalles">${detalles.join('')}</div>` : ''}
           </div>
         </div>
@@ -582,6 +592,29 @@ async function cargarAnuncios() {
     console.error('Error al cargar anuncios:', err);
   }
 }
+
+function abrirAnuncioDetalle(i) {
+  const a = anunciosData[i];
+  if (!a) return;
+  const imgWrap = document.getElementById('act-detalle-imagen-wrap');
+  const img     = document.getElementById('act-detalle-imagen');
+  if (a.imagen_url) {
+    img.src = a.imagen_url;
+    imgWrap.style.display = 'block';
+  } else {
+    imgWrap.style.display = 'none';
+  }
+  document.getElementById('act-detalle-titulo').textContent = a.titulo;
+  document.getElementById('act-detalle-desc').textContent   = a.descripcion || '';
+  document.getElementById('act-detalle-fecha').textContent  = a.fecha_evento ? formatearFecha(a.fecha_evento) : '';
+  const badge = document.getElementById('act-detalle-badge');
+  badge.textContent = 'Anuncio';
+  badge.className   = 'actividad-badge cat-otro';
+  document.getElementById('modal-actividad-detalle').classList.add('activo');
+  document.body.style.overflow = 'hidden';
+}
+
+let direccionData = [];
 
 async function cargarDireccion() {
   const cargando = document.getElementById('cargando-direccion');
@@ -596,28 +629,58 @@ async function cargarDireccion() {
       sinDatos.style.display = 'flex';
       return;
     }
+    direccionData = data;
     grid.style.display = 'block';
-    grid.innerHTML = data.map(d => `
-      <div class="direccion-card">
-        <div class="direccion-foto">
-          ${d.foto_url
-            ? `<img src="${d.foto_url}" alt="${d.nombre}"/>`
-            : `<div class="direccion-foto-placeholder"></div>`
-          }
+    grid.innerHTML = data.map(function(d, i) {
+      const descCorta = d.descripcion && d.descripcion.length > 150
+        ? d.descripcion.substring(0, 150) + '...'
+        : (d.descripcion || '');
+      return `
+        <div class="direccion-card">
+          <div class="direccion-foto">
+            ${d.foto_url
+              ? `<img src="${d.foto_url}" alt="${d.nombre}"/>`
+              : `<div class="direccion-foto-placeholder"></div>`
+            }
+          </div>
+          <div class="direccion-info">
+            <div class="section-tag">Liderazgo institucional</div>
+            <h3>${d.nombre}</h3>
+            <div class="direccion-cargo">${d.cargo || ''}</div>
+            ${descCorta ? `<div class="direccion-desc">${descCorta}</div>` : ''}
+            ${d.descripcion && d.descripcion.length > 150
+              ? `<div class="act-ver-mas" onclick="abrirDireccionDetalle(${i})" style="cursor:pointer;">Ver más →</div>`
+              : ''}
+          </div>
         </div>
-        <div class="direccion-info">
-          <div class="section-tag">Liderazgo institucional</div>
-          <h3>${d.nombre}</h3>
-          <div class="direccion-cargo">${d.cargo || ''}</div>
-          ${d.descripcion ? `<div class="direccion-desc">${d.descripcion}</div>` : ''}
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   } catch(err) {
     cargando.style.display = 'none';
     sinDatos.style.display = 'flex';
     console.error(err);
   }
+}
+
+function abrirDireccionDetalle(i) {
+  const d = direccionData[i];
+  if (!d) return;
+  const imgWrap = document.getElementById('act-detalle-imagen-wrap');
+  const img     = document.getElementById('act-detalle-imagen');
+  if (d.foto_url) {
+    img.src = d.foto_url;
+    imgWrap.style.display = 'block';
+  } else {
+    imgWrap.style.display = 'none';
+  }
+  document.getElementById('act-detalle-titulo').textContent = d.nombre;
+  document.getElementById('act-detalle-desc').textContent   = d.descripcion || '';
+  document.getElementById('act-detalle-fecha').textContent  = d.cargo || '';
+  const badge = document.getElementById('act-detalle-badge');
+  badge.textContent = 'Dirección';
+  badge.className   = 'actividad-badge cat-otro';
+  document.getElementById('modal-actividad-detalle').classList.add('activo');
+  document.body.style.overflow = 'hidden';
 }
 
 // ══════════════════════════════════════
