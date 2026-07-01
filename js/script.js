@@ -12,9 +12,11 @@ document.addEventListener('click', function(e) {
   }
 });
 
-document.querySelectorAll('a[href^="#"]').forEach(function(link) {
+document.querySelectorAll('a[href^="#"], a[href*="index.html#"]').forEach(function(link) {
   link.addEventListener('click', function(e) {
-    const destino = document.querySelector(this.getAttribute('href'));
+    const href = this.getAttribute('href');
+    const hash = href.includes('#') ? '#' + href.split('#')[1] : href;
+    const destino = document.querySelector(hash);
     if (destino) {
       e.preventDefault();
       destino.scrollIntoView({ behavior: 'smooth' });
@@ -294,30 +296,56 @@ function init3DNivelCards() {
 }
 
 // ══════════════════════════════════════
-// EFECTO ARCO DORADO EN BANNERS
+// EFECTO ARCO DORADO EN BANNERS INTERMEDIOS
 // ══════════════════════════════════════
 function initBannerLetras() {
-  document.querySelectorAll('.banner-content h2').forEach(function(h2) {
+  // Solo aplica a banners que NO tengan SVG propio
+  document.querySelectorAll('.banner-content h2.banner-shimmer').forEach(function(h2) {
+    // Si ya tiene SVG dentro o es el hero, saltar
+    if (h2.closest('.hero') || h2.querySelector('svg') || h2.closest('.hero-arco-wrap')) return;
+
     const texto  = h2.textContent.trim();
+    if (!texto) return;
     const letras = texto.split('');
     const total  = letras.length;
     h2.innerHTML = '';
+    h2.style.display = 'flex';
+    h2.style.justifyContent = 'center';
+    h2.style.alignItems = 'flex-end';
+    h2.style.height = '60px';
+    h2.style.overflow = 'visible';
 
     letras.forEach(function(letra, i) {
       if (letra === ' ') {
         const espacio = document.createElement('span');
-        espacio.className = 'banner-espacio';
+        espacio.style.display = 'inline-block';
+        espacio.style.width = '0.35em';
         h2.appendChild(espacio);
       } else {
         const span = document.createElement('span');
-        span.className = 'banner-letra';
+        span.style.display = 'inline-block';
+        span.style.opacity = '0';
+        span.style.color = '#F0A500';
+        span.style.fontFamily = "'Playfair Display', serif";
+        span.style.fontSize = '1.8rem';
+        span.style.fontWeight = '700';
+        span.style.textShadow = '0 2px 12px rgba(240,165,0,0.35)';
+        span.style.transformOrigin = 'bottom center';
         span.textContent = letra;
 
-        // Arco: seno hace que los extremos suban y el centro baje
-        const pos   = i / (total - 1);
-        const arcoY = -Math.sin(pos * Math.PI) * 22;
-        span.style.setProperty('--arco-y', arcoY + 'px');
-        span.style.animationDelay = (i * 0.055) + 's';
+        const pos   = i / (total - 1 || 1);
+        const arcoY = -Math.sin(pos * Math.PI) * 18;
+
+        span.animate([
+          { opacity: 0, transform: `translateY(12px) scale(0.8)` },
+          { opacity: 1, transform: `translateY(${arcoY}px) scale(1)` }
+        ], {
+          duration: 400,
+          delay: i * 55,
+          fill: 'forwards',
+          easing: 'cubic-bezier(0.22,1,0.36,1)'
+        });
+
         h2.appendChild(span);
       }
     });
