@@ -46,7 +46,7 @@
     <div class="nav-links">
       <a href="index.html#nosotros">Historia</a>
       <a href="index.html#niveles">Niveles</a>
-      <a href="index.html#revistas">Revista</a>
+      <a href="index.html#revistas-anchor">Revista</a>
       <a href="Promotores.html">Promotores</a>
 
       <div class="nav-dropdown">
@@ -104,7 +104,7 @@
     <a href="escuela.html"         onclick="toggleMenu()">Escuela de Investigación</a>
 
     <div class="mobile-group-label">Contenido</div>
-    <a href="index.html#revistas"   onclick="toggleMenu()">Revista</a>
+    <a href="index.html#revistas-anchor" onclick="toggleMenu()">Revista</a>
     <a href="index.html#actividades"onclick="toggleMenu()">Actividades</a>
     <a href="index.html#anuncios"   onclick="toggleMenu()">Anuncios</a>
 
@@ -333,6 +333,7 @@
       <div class="banner-line banner-line-grow"></div>
     </div>
   </div>
+  <div id="revistas-anchor" style="position:relative;top:-80px;visibility:hidden;"></div>
   <section class="revistas-sec" id="revistas">
     <div class="section-inner">
       <div class="section-header">
@@ -379,6 +380,26 @@
       <div id="lista-anuncios" class="anuncios-grid" style="display:none;"></div>
     </div>
   </section>
+  <!-- MODAL ACTIVIDAD DETALLE -->
+  <div id="modal-actividad-detalle" class="nivel-modal-overlay" onclick="cerrarActividadDetalle(event)">
+    <div class="nivel-modal">
+      <button class="nivel-modal-cerrar" onclick="cerrarActividadDetalle()">✕ Cerrar</button>
+      <div id="act-detalle-imagen-wrap" style="margin-bottom:1.2rem;border-radius:14px;overflow:hidden;display:none;">
+        <img id="act-detalle-imagen" src="" alt="" style="width:100%;max-height:320px;object-fit:cover;display:block;"/>
+      </div>
+      <div class="nivel-modal-header" style="border-bottom:none;padding-bottom:0;margin-bottom:0.8rem;">
+        <div>
+          <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+            <span id="act-detalle-badge" class="actividad-badge"></span>
+            <span id="act-detalle-fecha" style="font-size:0.8rem;color:#94a3b8;"></span>
+          </div>
+          <h2 id="act-detalle-titulo" style="font-family:'Playfair Display',serif;font-size:1.6rem;color:#fff;margin-bottom:6px;"></h2>
+        </div>
+      </div>
+      <p id="act-detalle-desc" style="color:#a8b8d8;line-height:1.8;font-size:0.95rem;"></p>
+    </div>
+  </div>
+
   <div id="visor-modal" class="visor-overlay" onclick="cerrarVisor(event)">
     <div class="visor-contenedor">
       <div class="visor-header">
