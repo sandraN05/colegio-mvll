@@ -1135,3 +1135,13 @@ footer {
   .contacto-grid    { grid-template-columns: 1fr; }
   .mapa-contenedor iframe { height: 280px; }
 }
+
+#particles-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
