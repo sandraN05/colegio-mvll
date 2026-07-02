@@ -694,6 +694,64 @@ async function cargarDireccion() {
     console.error(err);
   }
 }
+// ══════════════════════════════════════
+// FONDO DE PARTÍCULAS FLOTANTES
+// ══════════════════════════════════════
+function initParticlesBackground() {
+  const canvas = document.getElementById('particles-bg');
+  if (!canvas) return;
+
+  // Respeta si el usuario prefiere menos movimiento
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const ctx = canvas.getContext('2d');
+  let width, height, particulas;
+
+  function resize() {
+    width  = canvas.width  = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const colores = [
+    'rgba(240,165,0,0.55)',   // dorado
+    'rgba(255,255,255,0.35)', // blanco suave
+    'rgba(30,79,168,0.5)'     // azul
+  ];
+
+  const cantidad = Math.min(80, Math.floor((width * height) / 16000));
+
+  particulas = Array.from({ length: cantidad }, function() {
+    return {
+      x: Math.random() * width,
+      y: Math.random() * height,
+      r: Math.random() * 2.2 + 0.6,
+      dx: (Math.random() - 0.5) * 0.25,
+      dy: (Math.random() - 0.5) * 0.25,
+      color: colores[Math.floor(Math.random() * colores.length)]
+    };
+  });
+
+  function animar() {
+    ctx.clearRect(0, 0, width, height);
+    particulas.forEach(function(p) {
+      p.x += p.dx;
+      p.y += p.dy;
+      if (p.x < 0) p.x = width;
+      if (p.x > width) p.x = 0;
+      if (p.y < 0) p.y = height;
+      if (p.y > height) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+    });
+    requestAnimationFrame(animar);
+  }
+  animar();
+}
 
 // ══════════════════════════════════════
 // INIT
@@ -707,4 +765,5 @@ document.addEventListener('DOMContentLoaded', function() {
   initParallax();
   initContadores();
   init3DNivelCards();
+  initParticlesBackground();
 });
