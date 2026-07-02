@@ -752,7 +752,150 @@ function initParticlesBackground() {
   }
   animar();
 }
+// ══════════════════════════════════════
+// LENIS - SCROLL SUAVE CON INERCIA
+// ══════════════════════════════════════
+let lenis;
+function initSmoothScroll() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (typeof Lenis === 'undefined') return;
 
+  lenis = new Lenis({
+    duration: 1.4,
+    easing: (t) => 1 - Math.pow(1 - t, 4),
+    orientation: 'vertical',
+    gestureOrientation: 'vertical',
+    smoothWheel: true,
+    wheelMultiplier: 0.55,
+    touchMultiplier: 2,
+    infinite: false
+  });
+
+  gsap.registerPlugin(ScrollTrigger);
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
+  gsap.ticker.lagSmoothing(0);
+}
+
+// ══════════════════════════════════════
+// REVEAL CON GSAP SCROLLTRIGGER
+// ══════════════════════════════════════
+function initRevealGSAP() {
+  if (typeof gsap === 'undefined') return;
+
+  const selectores = [
+    '.nivel-card', '.actividad-card', '.profe-card', '.revista-card',
+    '.anuncio-card', '.contacto-item', '.valor-item',
+    '.section-tag', '.section-title', '.section-sub',
+    '.stat-item', '.nosotros-img', '.nosotros-text'
+  ];
+
+  selectores.forEach(function(selector) {
+    document.querySelectorAll(selector).forEach(function(el, i) {
+      gsap.fromTo(el,
+        { opacity: 0, y: 36 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.65,
+          delay: (i % 4) * 0.1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 92%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    });
+  });
+}
+
+// ══════════════════════════════════════
+// FONDO DE PARTÍCULAS FLOTANTES
+// ══════════════════════════════════════
+function initParticlesBackground() {
+  const canvas = document.getElementById('particles-bg');
+  if (!canvas) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const ctx = canvas.getContext('2d');
+  let width, height, particulas;
+
+  function resize() {
+    width  = canvas.width  = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const colores = [
+    'rgba(240,165,0,0.55)',
+    'rgba(255,255,255,0.35)',
+    'rgba(30,79,168,0.5)'
+  ];
+  const cantidad = Math.min(80, Math.floor((width * height) / 16000));
+
+  particulas = Array.from({ length: cantidad }, function() {
+    return {
+      x: Math.random() * width,
+      y: Math.random() * height,
+      r: Math.random() * 2.2 + 0.6,
+      dx: (Math.random() - 0.5) * 0.25,
+      dy: (Math.random() - 0.5) * 0.25,
+      color: colores[Math.floor(Math.random() * colores.length)]
+    };
+  });
+
+  function animar() {
+    ctx.clearRect(0, 0, width, height);
+    particulas.forEach(function(p) {
+      p.x += p.dx;
+      p.y += p.dy;
+      if (p.x < 0) p.x = width;
+      if (p.x > width) p.x = 0;
+      if (p.y < 0) p.y = height;
+      if (p.y > height) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+    });
+    requestAnimationFrame(animar);
+  }
+  animar();
+}
+function initCursorDorado() {
+  const esPC = window.matchMedia('(pointer: fine)').matches && window.innerWidth > 768;
+  if (!esPC) return;
+
+  const cursor = document.createElement('div');
+  cursor.id = 'cursor-dorado';
+  document.body.appendChild(cursor);
+
+  const halo = document.createElement('div');
+  halo.id = 'cursor-halo';
+  document.body.appendChild(halo);
+
+  let cx = 0, cy = 0, hx = 0, hy = 0;
+
+  window.addEventListener('mousemove', function(e) {
+    cx = e.clientX;
+    cy = e.clientY;
+    cursor.style.left = cx + 'px';
+    cursor.style.top  = cy + 'px';
+  });
+
+  function animarHalo() {
+    hx += (cx - hx) * 0.15;
+    hy += (cy - hy) * 0.15;
+    halo.style.left = hx + 'px';
+    halo.style.top  = hy + 'px';
+    requestAnimationFrame(animarHalo);
+  }
+  animarHalo();
+}
 // ══════════════════════════════════════
 // INIT
 // ══════════════════════════════════════
@@ -761,9 +904,11 @@ document.addEventListener('DOMContentLoaded', function() {
   cargarRevistas();
   cargarAnuncios();
   cargarDireccion();
-  initReveal();
+  initSmoothScroll();
+  initRevealGSAP();
   initParallax();
   initContadores();
   init3DNivelCards();
   initParticlesBackground();
+  initCursorDorado();
 });
