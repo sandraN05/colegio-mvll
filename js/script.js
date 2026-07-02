@@ -911,5 +911,5 @@ document.addEventListener('DOMContentLoaded', function() {
   init3DNivelCards();
   initParticlesBackground();
   initCursorDorado();
-
+)
 }
