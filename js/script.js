@@ -198,7 +198,6 @@ function cerrarActividadDetalle(event) {
   if (event && event.target !== document.getElementById('modal-actividad-detalle')) return;
   const modal = document.getElementById('modal-actividad-detalle');
   modal.classList.remove('activo');
-  modal.querySelector('.nivel-modal').innerHTML = '';
   document.body.style.overflow = '';
 }
 
