@@ -911,18 +911,4 @@ document.addEventListener('DOMContentLoaded', function() {
   init3DNivelCards();
   initParticlesBackground();
   initCursorDorado();
-});
-  if (window.location.hash) {
-    const id = window.location.hash.substring(1);
-    setTimeout(function() {
-      const destino = document.getElementById(id);
-      if (destino) {
-        if (lenis) {
-          lenis.scrollTo(destino, { offset: -70, duration: 1.2 });
-        } else {
-          destino.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }
-    }, 800);
-  }
-});
+
