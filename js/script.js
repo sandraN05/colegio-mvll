@@ -912,3 +912,4 @@ document.addEventListener('DOMContentLoaded', function() {
   initParticlesBackground();
   initCursorDorado();
 
+}
