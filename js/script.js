@@ -116,74 +116,90 @@ async function cargarActividades() {
 function abrirActividadDetalle(i) {
   const act = actividadesData[i];
   if (!act) return;
-  _abrirDetalle(act.imagen_url, act.titulo, act.descripcion || '',
-    formatearFecha(act.fecha), capitalizarPrimera(act.categoria || 'Actividad'),
-    'cat-' + (act.categoria || 'otro'));
+  _abrirDetalle(
+    act.imagen_url || null,
+    act.titulo,
+    act.descripcion || '',
+    formatearFecha(act.fecha),
+    capitalizarPrimera(act.categoria || 'Actividad'),
+    'cat-' + (act.categoria || 'otro')
+  );
 }
 
 function abrirDireccionDetalle(i) {
   const d = direccionData[i];
   if (!d) return;
-  _abrirDetalle(d.foto_url, d.nombre, d.descripcion || '', d.cargo || '', 'Dirección', 'cat-otro');
+  _abrirDetalle(
+    d.foto_url || null,
+    d.nombre,
+    d.descripcion || '',
+    d.cargo || '',
+    'Dirección',
+    'cat-otro'
+  );
 }
 
 function abrirAnuncioDetalle(i) {
   const a = anunciosData[i];
   if (!a) return;
-  _abrirDetalle(a.imagen_url, a.titulo, a.descripcion || '',
-    a.fecha_evento ? formatearFecha(a.fecha_evento) : '', 'Anuncio', 'cat-otro');
+  _abrirDetalle(
+    a.imagen_url || null,
+    a.titulo,
+    a.descripcion || '',
+    a.fecha_evento ? formatearFecha(a.fecha_evento) : '',
+    'Anuncio',
+    'cat-otro'
+  );
 }
 
 function _abrirDetalle(imgUrl, titulo, desc, fecha, badgeTxt, badgeClass) {
-  const conImagen = document.getElementById('act-detalle-imagen-wrap');
-  const sinImagen = document.getElementById('act-detalle-sin-imagen');
-
-  // Ocultar ambos siempre primero
-  conImagen.style.display = 'none';
-  sinImagen.style.display = 'none';
-
-  // Limpiar campos
-  document.getElementById('act-detalle-imagen').src          = '';
-  document.getElementById('act-detalle-titulo').textContent  = '';
-  document.getElementById('act-detalle-desc').textContent    = '';
-  document.getElementById('act-detalle-fecha').textContent   = '';
-  document.getElementById('act-detalle-titulo2').textContent = '';
-  document.getElementById('act-detalle-desc2').textContent   = '';
-  document.getElementById('act-detalle-fecha2').textContent  = '';
+  const modal = document.getElementById('modal-actividad-detalle');
+  const inner = modal.querySelector('.nivel-modal');
 
   const tieneImagen = imgUrl && imgUrl.trim() !== '' && imgUrl !== 'null' && imgUrl !== 'undefined';
 
-  if (tieneImagen) {
-    document.getElementById('act-detalle-imagen').src         = imgUrl;
-    document.getElementById('act-detalle-titulo').textContent = titulo;
-    document.getElementById('act-detalle-desc').textContent   = desc;
-    document.getElementById('act-detalle-fecha').textContent  = fecha;
-    const b = document.getElementById('act-detalle-badge');
-    b.textContent = badgeTxt;
-    b.className   = 'actividad-badge ' + badgeClass;
-    conImagen.style.display = 'flex';
-  } else {
-    document.getElementById('act-detalle-titulo2').textContent = titulo;
-    document.getElementById('act-detalle-desc2').textContent   = desc;
-    document.getElementById('act-detalle-fecha2').textContent  = fecha;
-    const b2 = document.getElementById('act-detalle-badge2');
-    b2.textContent = badgeTxt;
-    b2.className   = 'actividad-badge ' + badgeClass;
-    sinImagen.style.display = 'block';
-  }
+  inner.innerHTML = `
+    <button class="nivel-modal-cerrar" onclick="cerrarActividadDetalle()">✕ Cerrar</button>
+    ${tieneImagen ? `
+    <div style="display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap;">
+      <img src="${imgUrl}" alt="${titulo}"
+        style="width:240px;height:280px;object-fit:cover;object-position:top center;border-radius:14px;flex-shrink:0;"/>
+      <div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:8px;padding-top:4px;">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <span class="actividad-badge ${badgeClass}">${badgeTxt}</span>
+          <span style="font-size:0.8rem;color:#94a3b8;">${fecha}</span>
+        </div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;color:#fff;line-height:1.3;margin:0;">${titulo}</h2>
+        <p style="color:#a8b8d8;line-height:1.8;font-size:0.92rem;margin:0;">${desc}</p>
+      </div>
+    </div>
+    ` : `
+    <div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
+        <span class="actividad-badge ${badgeClass}">${badgeTxt}</span>
+        <span style="font-size:0.8rem;color:#94a3b8;">${fecha}</span>
+      </div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;color:#fff;line-height:1.3;margin-bottom:12px;">${titulo}</h2>
+      <p style="color:#a8b8d8;line-height:1.8;font-size:0.92rem;">${desc}</p>
+    </div>
+    `}
+  `;
 
-  document.getElementById('modal-actividad-detalle').classList.add('activo');
+  modal.classList.add('activo');
   document.body.style.overflow = 'hidden';
+
+  // Cerrar al hacer clic en el overlay
+  modal.onclick = function(e) {
+    if (e.target === modal) cerrarActividadDetalle();
+  };
 }
 
 function cerrarActividadDetalle(event) {
   if (event && event.target !== document.getElementById('modal-actividad-detalle')) return;
-  document.getElementById('modal-actividad-detalle').classList.remove('activo');
+  const modal = document.getElementById('modal-actividad-detalle');
+  modal.classList.remove('activo');
+  modal.querySelector('.nivel-modal').innerHTML = '';
   document.body.style.overflow = '';
-  // Limpiar contenido para evitar flash del contenido anterior
-  document.getElementById('act-detalle-imagen').src = '';
-  document.getElementById('act-detalle-imagen-wrap').style.display = 'none';
-  document.getElementById('act-detalle-sin-imagen').style.display  = 'none';
 }
 
 async function cargarRevistas() {
