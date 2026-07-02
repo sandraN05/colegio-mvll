@@ -644,27 +644,9 @@ async function cargarAnuncios() {
   }
 }
 
-function abrirAnuncioDetalle(i) {
-  const a = anunciosData[i];
-  if (!a) return;
-  const imgWrap = document.getElementById('act-detalle-imagen-wrap');
-  const img     = document.getElementById('act-detalle-imagen');
-  if (a.imagen_url) {
-    img.src = a.imagen_url;
-    imgWrap.style.display = 'block';
-  } else {
-    imgWrap.style.display = 'none';
-  }
-  document.getElementById('act-detalle-titulo').textContent = a.titulo;
-  document.getElementById('act-detalle-desc').textContent   = a.descripcion || '';
-  document.getElementById('act-detalle-fecha').textContent  = a.fecha_evento ? formatearFecha(a.fecha_evento) : '';
-  const badge = document.getElementById('act-detalle-badge');
-  badge.textContent = 'Anuncio';
-  badge.className   = 'actividad-badge cat-otro';
-  document.getElementById('modal-actividad-detalle').classList.add('activo');
-  document.body.style.overflow = 'hidden';
-}
-
+// ══════════════════════════════════════
+// DIRECCIÓN
+// ══════════════════════════════════════
 let direccionData = [];
 
 async function cargarDireccion() {
@@ -711,27 +693,6 @@ async function cargarDireccion() {
     sinDatos.style.display = 'flex';
     console.error(err);
   }
-}
-
-function abrirDireccionDetalle(i) {
-  const d = direccionData[i];
-  if (!d) return;
-  const imgWrap = document.getElementById('act-detalle-imagen-wrap');
-  const img     = document.getElementById('act-detalle-imagen');
-  if (d.foto_url) {
-    img.src = d.foto_url;
-    imgWrap.style.display = 'block';
-  } else {
-    imgWrap.style.display = 'none';
-  }
-  document.getElementById('act-detalle-titulo').textContent = d.nombre;
-  document.getElementById('act-detalle-desc').textContent   = d.descripcion || '';
-  document.getElementById('act-detalle-fecha').textContent  = d.cargo || '';
-  const badge = document.getElementById('act-detalle-badge');
-  badge.textContent = 'Dirección';
-  badge.className   = 'actividad-badge cat-otro';
-  document.getElementById('modal-actividad-detalle').classList.add('activo');
-  document.body.style.overflow = 'hidden';
 }
 
 // ══════════════════════════════════════
