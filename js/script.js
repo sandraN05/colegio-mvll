@@ -138,11 +138,22 @@ function _abrirDetalle(imgUrl, titulo, desc, fecha, badgeTxt, badgeClass) {
   const conImagen = document.getElementById('act-detalle-imagen-wrap');
   const sinImagen = document.getElementById('act-detalle-sin-imagen');
 
-  // Limpiar siempre ambos primero
+  // Ocultar ambos siempre primero
   conImagen.style.display = 'none';
   sinImagen.style.display = 'none';
 
-  if (imgUrl) {
+  // Limpiar campos
+  document.getElementById('act-detalle-imagen').src          = '';
+  document.getElementById('act-detalle-titulo').textContent  = '';
+  document.getElementById('act-detalle-desc').textContent    = '';
+  document.getElementById('act-detalle-fecha').textContent   = '';
+  document.getElementById('act-detalle-titulo2').textContent = '';
+  document.getElementById('act-detalle-desc2').textContent   = '';
+  document.getElementById('act-detalle-fecha2').textContent  = '';
+
+  const tieneImagen = imgUrl && imgUrl.trim() !== '' && imgUrl !== 'null' && imgUrl !== 'undefined';
+
+  if (tieneImagen) {
     document.getElementById('act-detalle-imagen').src         = imgUrl;
     document.getElementById('act-detalle-titulo').textContent = titulo;
     document.getElementById('act-detalle-desc').textContent   = desc;
