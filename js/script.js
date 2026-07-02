@@ -135,25 +135,29 @@ function abrirAnuncioDetalle(i) {
 }
 
 function _abrirDetalle(imgUrl, titulo, desc, fecha, badgeTxt, badgeClass) {
-  const conImagen    = document.getElementById('act-detalle-imagen-wrap');
-  const sinImagen    = document.getElementById('act-detalle-sin-imagen');
+  const conImagen = document.getElementById('act-detalle-imagen-wrap');
+  const sinImagen = document.getElementById('act-detalle-sin-imagen');
+
+  // Limpiar siempre ambos primero
+  conImagen.style.display = 'none';
+  sinImagen.style.display = 'none';
 
   if (imgUrl) {
-    document.getElementById('act-detalle-imagen').src        = imgUrl;
+    document.getElementById('act-detalle-imagen').src         = imgUrl;
     document.getElementById('act-detalle-titulo').textContent = titulo;
     document.getElementById('act-detalle-desc').textContent   = desc;
     document.getElementById('act-detalle-fecha').textContent  = fecha;
     const b = document.getElementById('act-detalle-badge');
-    b.textContent = badgeTxt; b.className = 'actividad-badge ' + badgeClass;
+    b.textContent = badgeTxt;
+    b.className   = 'actividad-badge ' + badgeClass;
     conImagen.style.display = 'flex';
-    sinImagen.style.display = 'none';
   } else {
     document.getElementById('act-detalle-titulo2').textContent = titulo;
     document.getElementById('act-detalle-desc2').textContent   = desc;
     document.getElementById('act-detalle-fecha2').textContent  = fecha;
     const b2 = document.getElementById('act-detalle-badge2');
-    b2.textContent = badgeTxt; b2.className = 'actividad-badge ' + badgeClass;
-    conImagen.style.display = 'none';
+    b2.textContent = badgeTxt;
+    b2.className   = 'actividad-badge ' + badgeClass;
     sinImagen.style.display = 'block';
   }
 
@@ -165,6 +169,10 @@ function cerrarActividadDetalle(event) {
   if (event && event.target !== document.getElementById('modal-actividad-detalle')) return;
   document.getElementById('modal-actividad-detalle').classList.remove('activo');
   document.body.style.overflow = '';
+  // Limpiar contenido para evitar flash del contenido anterior
+  document.getElementById('act-detalle-imagen').src = '';
+  document.getElementById('act-detalle-imagen-wrap').style.display = 'none';
+  document.getElementById('act-detalle-sin-imagen').style.display  = 'none';
 }
 
 async function cargarRevistas() {
