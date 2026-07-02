@@ -187,17 +187,11 @@ function _abrirDetalle(imgUrl, titulo, desc, fecha, badgeTxt, badgeClass) {
 
   modal.classList.add('activo');
   document.body.style.overflow = 'hidden';
-
-  // Cerrar al hacer clic en el overlay
-  modal.onclick = function(e) {
-    if (e.target === modal) cerrarActividadDetalle();
-  };
 }
 
 function cerrarActividadDetalle(event) {
   if (event && event.target !== document.getElementById('modal-actividad-detalle')) return;
-  const modal = document.getElementById('modal-actividad-detalle');
-  modal.classList.remove('activo');
+  document.getElementById('modal-actividad-detalle').classList.remove('activo');
   document.body.style.overflow = '';
 }
 
