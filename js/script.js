@@ -273,7 +273,72 @@ async function cargarRevistas() {
     console.error('Error al cargar revistas:', err);
   }
 }
+/* ════════════════════════════════
+   NOTIFICACIÓN DE NUEVO ANUNCIO
+════════════════════════════════ */
+let notifAnuncioTimeout = null;
 
+async function verificarNuevoAnuncio() {
+  try {
+    const ahora = new Date().toISOString();
+    const { data, error } = await supabase
+      .from('anuncios')
+      .select('*')
+      .eq('estado', 'activo')
+      .gt('fecha_expiracion', ahora)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    if (error || !data || data.length === 0) return;
+
+    const ultimo  = data[0];
+    const idVisto = localStorage.getItem('ultimoAnuncioVisto');
+
+    if (idVisto === String(ultimo.id)) return;
+
+    mostrarNotifAnuncio(ultimo);
+    localStorage.setItem('ultimoAnuncioVisto', String(ultimo.id));
+  } catch (err) {
+    console.error('Error al verificar nuevo anuncio:', err);
+  }
+}
+
+function mostrarNotifAnuncio(a) {
+  const overlay = document.getElementById('notif-anuncio');
+  if (!overlay) return;
+
+  document.getElementById('notif-anuncio-titulo').textContent = a.titulo;
+  document.getElementById('notif-anuncio-desc').textContent  = a.descripcion || '';
+
+  const detalles = [];
+  if (a.fecha_evento) detalles.push(`<span>📅 ${formatearFecha(a.fecha_evento)}</span>`);
+  if (a.hora)         detalles.push(`<span>🕐 ${a.hora}</span>`);
+  if (a.lugar)        detalles.push(`<span>📍 ${a.lugar}</span>`);
+  document.getElementById('notif-anuncio-detalles').innerHTML = detalles.join('');
+
+  overlay.classList.add('activo');
+  document.body.style.overflow = 'hidden';
+
+  const barra = document.getElementById('notif-anuncio-progreso');
+  barra.style.transition = 'none';
+  barra.style.width = '100%';
+  void barra.offsetWidth;
+  requestAnimationFrame(() => {
+    barra.style.transition = 'width 60s linear';
+    barra.style.width = '0%';
+  });
+
+  clearTimeout(notifAnuncioTimeout);
+  notifAnuncioTimeout = setTimeout(cerrarNotifAnuncio, 60000);
+}
+
+function cerrarNotifAnuncio() {
+  const overlay = document.getElementById('notif-anuncio');
+  if (!overlay) return;
+  overlay.classList.remove('activo');
+  document.body.style.overflow = '';
+  clearTimeout(notifAnuncioTimeout);
+}
 /* ════════════════════════════════
    ANUNCIOS
 ════════════════════════════════ */
