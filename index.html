@@ -35,6 +35,17 @@
   });
 </script>
 <body>
+<div id="notif-anuncio" class="notif-anuncio-overlay">
+  <div class="notif-anuncio-card">
+    <button class="notif-anuncio-cerrar" onclick="cerrarNotifAnuncio()">✕</button>
+    <img src="img/logo.png" alt="Logo colegio" class="notif-anuncio-icono">
+    <div class="notif-anuncio-badge">Nuevo anuncio</div>
+    <h3 id="notif-anuncio-titulo" class="notif-anuncio-titulo"></h3>
+    <p id="notif-anuncio-desc" class="notif-anuncio-desc"></p>
+    <div id="notif-anuncio-detalles" class="notif-anuncio-detalles"></div>
+    <div class="notif-anuncio-barra"><div id="notif-anuncio-progreso" class="notif-anuncio-progreso"></div></div>
+  </div>
+</div>
   <canvas id="particles-bg"></canvas>
 <nav>
   <div class="nav-inner">
