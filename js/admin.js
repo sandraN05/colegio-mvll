@@ -59,7 +59,7 @@ async function cargarActividades() {
       </div>
       <div class="admin-item-info">
         <h4>${a.titulo}</h4>
-        <p>${a.descripcion || 'Sin descripción'}</p>
+        <p>${a.descripcion ? (a.descripcion.length > 90 ? a.descripcion.substring(0,90) + '...' : a.descripcion) : 'Sin descripción'}</p>
         <div class="admin-item-meta"> ${formatearFecha(a.fecha)} · ${a.categoria || 'otro'}</div>
       </div>
       <div class="admin-item-acciones">
@@ -172,7 +172,7 @@ async function cargarAnuncios() {
       </div>
       <div class="admin-item-info">
         <h4>${a.titulo}</h4>
-        <p>${a.descripcion || 'Sin descripción'}</p>
+        <p>${a.descripcion ? (a.descripcion.length > 90 ? a.descripcion.substring(0,90) + '...' : a.descripcion) : 'Sin descripción'}</p>
         <div class="admin-item-meta">
           ${a.fecha_evento ? '📅 ' + formatearFecha(a.fecha_evento) : ''}
           ${a.hora  ? ' · 🕐 ' + a.hora  : ''}
@@ -326,11 +326,6 @@ async function editarRevista(id) {
   document.getElementById('rev-titulo').value = data.titulo;
   document.getElementById('rev-desc').value  = data.descripcion || '';
   document.getElementById('rev-drive-url').value = data.drive_url || '';
-  if (data.pdf_url) {
-    const pdfActual = document.getElementById('rev-pdf-actual');
-    pdfActual.textContent = ' Ya tiene un PDF. Sube uno nuevo para reemplazarlo.';
-    pdfActual.style.display = 'block';
-  }
   if (data.portada_url) {
     document.getElementById('rev-img-actual').src = data.portada_url;
     document.getElementById('rev-portada-preview').style.display = 'block';
@@ -342,24 +337,13 @@ async function guardarRevista() {
   const errorEl = document.getElementById('rev-error');
   const titulo    = document.getElementById('rev-titulo').value.trim();
   const id        = document.getElementById('rev-id').value;
-  const pdfFile   = document.getElementById('rev-pdf').files[0];
   const driveUrl  = document.getElementById('rev-drive-url').value.trim();
 
   if (!titulo) { errorEl.textContent = 'El título es obligatorio.'; errorEl.style.display = 'block'; return; }
   if (!driveUrl) { errorEl.textContent = 'Debes pegar el enlace de Google Drive.'; errorEl.style.display = 'block'; return; }
   btn.textContent = 'Subiendo...'; btn.disabled = true;
   errorEl.style.display = 'none';
-  let pdf_url = null, portada_url = null;
-  if (pdfFile) {
-    const path = 'revistas/' + Date.now() + '.pdf';
-    const { error: upError } = await window.supabase.storage.from('archivos').upload(path, pdfFile, { upsert: true });
-    if (upError) {
-      errorEl.textContent = upError.message; errorEl.style.display = 'block';
-      btn.textContent = 'Guardar'; btn.disabled = false; return;
-    }
-    const { data: urlData } = window.supabase.storage.from('archivos').getPublicUrl(path);
-    pdf_url = urlData.publicUrl;
-  }
+  let portada_url = null;
   const portadaFile = document.getElementById('rev-portada').files[0];
   if (portadaFile) {
     const ext  = portadaFile.name.split('.').pop();
@@ -369,6 +353,10 @@ async function guardarRevista() {
       const { data: urlData } = window.supabase.storage.from('archivos').getPublicUrl(path);
       portada_url = urlData.publicUrl;
     }
+  } else if (id) {
+    // Edición sin subir portada nueva: conservamos la que ya tenía
+    const preview = document.getElementById('rev-img-actual');
+    portada_url = (preview && preview.src) ? preview.src : null;
   }
   const fechaExp  = new Date(); fechaExp.setFullYear(fechaExp.getFullYear() + 1);
   const fechaElim = new Date(); fechaElim.setFullYear(fechaElim.getFullYear() + 2); fechaElim.setMonth(fechaElim.getMonth() + 5);
@@ -376,7 +364,6 @@ async function guardarRevista() {
   const payload = {
     titulo:           titulo,
     descripcion:      document.getElementById('rev-desc').value.trim(),
-    pdf_url:          pdf_url,
     drive_url:        driveUrl,
     portada_url:      portada_url,
     fecha_expiracion: fechaExp.toISOString(),
@@ -842,7 +829,7 @@ function limpiarModal(tipo) {
     'temp':       ['temp-id','temp-nombre','temp-curso'],
     'anuncio':    ['anu-id','anu-titulo','anu-desc','anu-fecha','anu-hora','anu-lugar','anu-imagen'],
     'actividad':  ['act-id','act-titulo','act-desc','act-fecha','act-imagen'],
-    'revista':    ['rev-id','rev-titulo','rev-desc','rev-pdf','rev-portada','rev-drive-url'],
+    'revista':    ['rev-id','rev-titulo','rev-desc','rev-portada','rev-drive-url'],
     'escuela':    ['esc-id','esc-titulo','esc-cuerpo'],
   };
   const previews = {
@@ -879,7 +866,7 @@ function limpiarModal(tipo) {
   if (errors[tipo])   { const el = document.getElementById(errors[tipo]);   if (el) el.style.display = 'none'; }
   if (btns[tipo])     { const el = document.getElementById(btns[tipo]);     if (el) { el.textContent = 'Guardar'; el.disabled = false; } }
   if (tipo === 'actividad') { const s = document.getElementById('act-categoria'); if (s) s.value = 'otro'; }
-  if (tipo === 'revista')   { const p = document.getElementById('rev-pdf-actual'); if (p) p.style.display = 'none'; }
+  if (tipo === 'revista')   { /* ya no hay campo de PDF */ }
 }
 function formatearFecha(fecha) {
   if (!fecha) return '';
