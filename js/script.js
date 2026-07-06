@@ -260,7 +260,7 @@ async function cargarRevistas() {
             </div>
             <div class="actividad-titulo">${rev.titulo}</div>
             ${rev.descripcion ? `<div class="actividad-desc">${rev.descripcion}</div>` : ''}
-            <button class="btn-ver" style="margin-top:10px;" onclick="abrirVisor('${rev.pdf_url}', '${rev.titulo}')">
+            <button class="btn-ver" style="margin-top:10px;" onclick="${rev.drive_url ? `window.open('${rev.drive_url}', '_blank')` : `abrirVisor('${rev.pdf_url}', '${rev.titulo}')`}">
               👁 Ver revista
             </button>
           </div>
@@ -290,14 +290,7 @@ async function verificarNuevoAnuncio() {
 
     if (error || !data || data.length === 0) return;
 
-    const vistos = JSON.parse(localStorage.getItem('anunciosVistos') || '[]');
-    const nuevo  = data.find(a => !vistos.includes(String(a.id)));
-
-    if (!nuevo) return;
-
-    mostrarNotifAnuncio(nuevo);
-    vistos.push(String(nuevo.id));
-    localStorage.setItem('anunciosVistos', JSON.stringify(vistos));
+    mostrarNotifAnuncio(data[0]);
   } catch (err) {
     console.error('Error al verificar nuevo anuncio:', err);
   }
