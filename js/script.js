@@ -273,6 +273,7 @@ async function cargarRevistas() {
     console.error('Error al cargar revistas:', err);
   }
 }
+
 /* ════════════════════════════════
    NOTIFICACIÓN DE NUEVO ANUNCIO
 ════════════════════════════════ */
@@ -285,19 +286,18 @@ async function verificarNuevoAnuncio() {
       .from('anuncios')
       .select('*')
       .eq('estado', 'activo')
-      .gt('fecha_expiracion', ahora)
-      .order('created_at', { ascending: false })
-      .limit(1);
+      .gt('fecha_expiracion', ahora);
 
     if (error || !data || data.length === 0) return;
 
-    const ultimo  = data[0];
-    const idVisto = localStorage.getItem('ultimoAnuncioVisto');
+    const vistos = JSON.parse(localStorage.getItem('anunciosVistos') || '[]');
+    const nuevo  = data.find(a => !vistos.includes(String(a.id)));
 
-    if (idVisto === String(ultimo.id)) return;
+    if (!nuevo) return;
 
-    mostrarNotifAnuncio(ultimo);
-    localStorage.setItem('ultimoAnuncioVisto', String(ultimo.id));
+    mostrarNotifAnuncio(nuevo);
+    vistos.push(String(nuevo.id));
+    localStorage.setItem('anunciosVistos', JSON.stringify(vistos));
   } catch (err) {
     console.error('Error al verificar nuevo anuncio:', err);
   }
@@ -339,6 +339,7 @@ function cerrarNotifAnuncio() {
   document.body.style.overflow = '';
   clearTimeout(notifAnuncioTimeout);
 }
+
 /* ════════════════════════════════
    ANUNCIOS
 ════════════════════════════════ */
@@ -947,7 +948,7 @@ function initHashScroll() {
    INIT GLOBAL
 ════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', function() {
-verificarNuevoAnuncio();
+  verificarNuevoAnuncio();
   cargarActividades();
   cargarRevistas();
   cargarAnuncios();
