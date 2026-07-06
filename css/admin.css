@@ -134,6 +134,7 @@ body {
 .admin-main {
   margin-left: 240px;
   flex: 1;
+  min-width: 0;
   padding: 2rem 2.5rem;
   min-height: 100vh;
 }
