@@ -278,7 +278,12 @@
           <textarea id="rev-desc" rows="2" placeholder="Breve descripción..."></textarea>
         </div>
         <div class="campo">
-          <label>Archivo PDF *</label>
+          <label>Enlace de Google Drive *</label>
+          <input type="url" id="rev-drive-url" placeholder="https://drive.google.com/file/d/..."/>
+          <p class="campo-hint">Pega aquí el link "Compartir" del archivo en Drive (que cualquiera con el enlace pueda verlo)</p>
+        </div>
+        <div class="campo">
+          <label>Archivo PDF (opcional, ya no es obligatorio)</label>
           <input type="file" id="rev-pdf" accept="application/pdf"/>
           <p id="rev-pdf-actual" class="campo-hint" style="display:none;"></p>
         </div>
