@@ -278,6 +278,7 @@
     border-radius: 16px !important;
   }
 }
+
 /* ════════════════════════════════
    NOTIFICACIÓN DE NUEVO ANUNCIO
 ════════════════════════════════ */
@@ -328,7 +329,18 @@
 }
 .notif-anuncio-cerrar:hover { color: var(--dorado); }
 .notif-anuncio-icono {
-  font-size: 2.6rem;
+  display: block !important;
+  width: 56px !important;
+  height: 56px !important;
+  max-width: 56px !important;
+  min-width: 56px !important;
+  margin: 0 auto !important;
+  object-fit: contain !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  background: #fff !important;
+  padding: 6px !important;
+  box-shadow: 0 0 0 3px rgba(240,165,0,0.4) !important;
   animation: notifBounce 1.4s ease-in-out infinite;
 }
 @keyframes notifBounce {
