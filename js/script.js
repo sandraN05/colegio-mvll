@@ -947,6 +947,7 @@ function initHashScroll() {
    INIT GLOBAL
 ════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', function() {
+verificarNuevoAnuncio();
   cargarActividades();
   cargarRevistas();
   cargarAnuncios();
