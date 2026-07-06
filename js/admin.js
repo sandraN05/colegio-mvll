@@ -235,14 +235,25 @@ async function guardarAnuncio() {
     imagen_url = document.getElementById('anu-img-actual').src || null;
   }
 
-  const fechaExp  = new Date(); fechaExp.setMonth(fechaExp.getMonth() + 3);
+  const fechaEventoStr = document.getElementById('anu-fecha').value || null;
+
+  let fechaExp;
+  if (fechaEventoStr) {
+    // El anuncio tiene fecha de evento: se archiva solo al día siguiente del evento
+    fechaExp = new Date(fechaEventoStr + 'T00:00:00');
+    fechaExp.setDate(fechaExp.getDate() + 1);
+  } else {
+    // Anuncio sin fecha de evento (aviso general): se mantiene 3 meses
+    fechaExp = new Date();
+    fechaExp.setMonth(fechaExp.getMonth() + 3);
+  }
   const fechaElim = new Date(); fechaElim.setMonth(fechaElim.getMonth() + 9);
   const user = await getUser();
 
   const payload = {
     titulo:           titulo,
     descripcion:      document.getElementById('anu-desc').value.trim(),
-    fecha_evento:     document.getElementById('anu-fecha').value || null,
+    fecha_evento:     fechaEventoStr,
     hora:             document.getElementById('anu-hora').value.trim() || null,
     lugar:            document.getElementById('anu-lugar').value.trim() || null,
     imagen_url:       imagen_url,
@@ -314,6 +325,7 @@ async function editarRevista(id) {
   document.getElementById('rev-id').value    = data.id;
   document.getElementById('rev-titulo').value = data.titulo;
   document.getElementById('rev-desc').value  = data.descripcion || '';
+  document.getElementById('rev-drive-url').value = data.drive_url || '';
   if (data.pdf_url) {
     const pdfActual = document.getElementById('rev-pdf-actual');
     pdfActual.textContent = ' Ya tiene un PDF. Sube uno nuevo para reemplazarlo.';
@@ -328,12 +340,13 @@ async function editarRevista(id) {
 async function guardarRevista() {
   const btn     = document.getElementById('btn-guardar-rev');
   const errorEl = document.getElementById('rev-error');
-  const titulo  = document.getElementById('rev-titulo').value.trim();
-  const id      = document.getElementById('rev-id').value;
-  const pdfFile = document.getElementById('rev-pdf').files[0];
+  const titulo    = document.getElementById('rev-titulo').value.trim();
+  const id        = document.getElementById('rev-id').value;
+  const pdfFile   = document.getElementById('rev-pdf').files[0];
+  const driveUrl  = document.getElementById('rev-drive-url').value.trim();
 
   if (!titulo) { errorEl.textContent = 'El título es obligatorio.'; errorEl.style.display = 'block'; return; }
-  if (!id && !pdfFile) { errorEl.textContent = 'Debes subir un PDF.'; errorEl.style.display = 'block'; return; }
+  if (!driveUrl) { errorEl.textContent = 'Debes pegar el enlace de Google Drive.'; errorEl.style.display = 'block'; return; }
   btn.textContent = 'Subiendo...'; btn.disabled = true;
   errorEl.style.display = 'none';
   let pdf_url = null, portada_url = null;
@@ -364,6 +377,7 @@ async function guardarRevista() {
     titulo:           titulo,
     descripcion:      document.getElementById('rev-desc').value.trim(),
     pdf_url:          pdf_url,
+    drive_url:        driveUrl,
     portada_url:      portada_url,
     fecha_expiracion: fechaExp.toISOString(),
     fecha_eliminacion:fechaElim.toISOString(),
@@ -828,7 +842,7 @@ function limpiarModal(tipo) {
     'temp':       ['temp-id','temp-nombre','temp-curso'],
     'anuncio':    ['anu-id','anu-titulo','anu-desc','anu-fecha','anu-hora','anu-lugar','anu-imagen'],
     'actividad':  ['act-id','act-titulo','act-desc','act-fecha','act-imagen'],
-    'revista':    ['rev-id','rev-titulo','rev-desc','rev-pdf','rev-portada'],
+    'revista':    ['rev-id','rev-titulo','rev-desc','rev-pdf','rev-portada','rev-drive-url'],
     'escuela':    ['esc-id','esc-titulo','esc-cuerpo'],
   };
   const previews = {
