@@ -63,10 +63,10 @@ document.addEventListener('keydown', function(e) {
    UTILIDADES
 ════════════════════════════════ */
 function formatearFecha(fechaStr) {
-  const fecha = new Date(fechaStr);
-  return fecha.toLocaleDateString('es-PE', {
-    day: '2-digit', month: 'long', year: 'numeric'
-  });
+  if (!fechaStr) return '';
+  const [y, m, d] = fechaStr.split('-');
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return `${d} de ${meses[parseInt(m, 10) - 1]} de ${y}`;
 }
 function getIconoCategoria(categoria) {
   const iconos = {
