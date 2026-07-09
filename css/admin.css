@@ -497,3 +497,44 @@ body {
     padding-top:75px;
   }
 }
+
+.guia-drive {
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: rgba(240,165,0,0.06);
+  border: 1px solid rgba(240,165,0,0.25);
+  border-radius: 10px;
+}
+.guia-drive-titulo {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #FFB830;
+  margin-bottom: 6px;
+}
+.guia-drive-paso {
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  margin-bottom: 4px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.guia-drive-paso span {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: rgba(240,165,0,0.2);
+  color: #FFB830;
+  font-size: 0.68rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.guia-drive-paso b { color: #fff; font-weight: 600; }
+.guia-drive-alerta {
+  font-size: 0.76rem;
+  color: #fbbf24;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(240,165,0,0.15);
+}
