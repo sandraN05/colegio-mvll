@@ -91,7 +91,7 @@
           
           <a href="index.html#actividades">Actividades</a>
           <a href="index.html#anuncios">Anuncios</a>
-          <a href="index.html#anuario">Anuario</a>
+          <a href="Anuario.html">Anuario</a>
         </div>
       </div>
 
@@ -121,7 +121,7 @@
     <div class="mobile-group-label">Contenido</div>
     <a href="index.html#actividades"onclick="toggleMenu()">Actividades</a>
     <a href="index.html#anuncios"   onclick="toggleMenu()">Anuncios</a>
-    <a href="index.html#anuario"    onclick="toggleMenu()">Anuario</a>
+    <a href="Anuario.html"          onclick="toggleMenu()">Anuario</a>
 
     <a href="index.html#contacto" onclick="toggleMenu()">Contacto</a>
     <a href="login.html">⚙ Admin</a>
@@ -195,7 +195,9 @@
         <div class="nosotros-img">
           <div class="nosotros-img-placeholder">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-            <img src="img/banner.jpg" alt="" class="banner-bg-img"/>
+            <img src="img/banner.jpg" alt="" class="banner-bg-img historia-slide activa"/>
+            <img src="img/fondo1.jpg" alt="" class="banner-bg-img historia-slide"/>
+            <img src="img/fondo3.jpg" alt="" class="banner-bg-img historia-slide"/>
           </div>
         </div>
         <div class="nosotros-text">
@@ -367,25 +369,6 @@
       <div id="lista-revistas" class="revistas-grid" style="display:none;"></div>
     </div>
   </section>
-<div id="anuario-anchor" style="display:block;height:0;visibility:hidden;"></div>
-  <section class="anuario-sec" id="anuario">
-    <div class="section-inner">
-      <div class="section-header">
-        <div class="section-tag">Publicaciones</div>
-        <h2 class="section-title">Anuario</h2>
-        <p class="section-sub">Revive los momentos más destacados de cada año escolar.</p>
-      </div>
-      <div id="cargando-anuario" class="estado-msg">
-        <div class="spinner"></div>
-        <p>Cargando anuario...</p>
-      </div>
-      <div id="sin-anuario" class="estado-msg" style="display:none;">
-        <span style="font-size:2.5rem;">📖</span>
-        <p>Próximamente el anuario escolar.</p>
-      </div>
-      <div id="lista-anuario" class="anuario-anos-grid" style="display:none;"></div>
-    </div>
-  </section>
 <div class="banner-wrap">
     <div class="banner">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
@@ -446,30 +429,6 @@
         <button class="visor-cerrar" onclick="cerrarVisor()">✕ Cerrar</button>
       </div>
       <iframe id="visor-iframe" class="visor-iframe" src=""></iframe>
-    </div>
-  </div>
-
-  <div id="libro-modal" class="visor-overlay" onclick="cerrarLibroAnuario(event)">
-    <div class="visor-contenedor libro-contenedor">
-      <div class="visor-header">
-        <span id="libro-titulo">Anuario</span>
-        <button class="visor-cerrar" onclick="cerrarLibroAnuario()">✕ Cerrar</button>
-      </div>
-      <div class="libro-body">
-        <button class="libro-flecha libro-flecha-izq" onclick="paginaAnuarioAnterior()" aria-label="Anterior">‹</button>
-        <div class="libro-pagina">
-          <img id="libro-imagen" src="" alt="Página del anuario" style="display:none;"/>
-          <div id="libro-sin-imagenes" class="estado-msg" style="display:none;">
-            <span style="font-size:2.5rem;">📖</span>
-            <p>Este anuario aún no tiene imágenes.</p>
-          </div>
-        </div>
-        <button class="libro-flecha libro-flecha-der" onclick="paginaAnuarioSiguiente()" aria-label="Siguiente">›</button>
-      </div>
-      <div class="libro-footer">
-        <p id="libro-desc"></p>
-        <span id="libro-contador" class="libro-contador"></span>
-      </div>
     </div>
   </div>
    <section id="contacto">
