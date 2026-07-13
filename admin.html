@@ -38,6 +38,10 @@
     <span>Revistas</span>
   </button>
 
+  <button class="sidebar-btn" onclick="mostrarTab('anuarios',this)">
+    <span>Anuario</span>
+  </button>
+
   <button class="sidebar-btn" onclick="mostrarTab('archivados',this)">
     <span>Archivados</span>
   </button>
@@ -116,6 +120,16 @@
       </div>
       <div id="lista-rev" class="admin-lista"></div>
     </div>
+    <div id="tab-anuarios" class="tab-contenido">
+      <div class="panel-header">
+        <div>
+          <h2>Anuario</h2>
+          <p class="panel-desc">Un anuario por año · se archiva solo a los 8 años</p>
+        </div>
+        <button class="btn-nuevo" onclick="abrirModalAnuario()">+ Nuevo año</button>
+      </div>
+      <div id="lista-anuarios" class="anuario-grid"></div>
+    </div>
     <div id="tab-niveles" class="tab-contenido">
       <div class="panel-header">
         <div>
@@ -179,7 +193,7 @@
     <div>
       <h2> Archivados</h2>
       <p class="panel-desc">
-        Actividades, anuncios y revistas vencidas
+        Actividades, anuncios, revistas y anuarios vencidos
       </p>
     </div>
   </div>
@@ -300,6 +314,41 @@
         <div class="modal-footer">
           <button class="btn-cancelar" onclick="cerrarModal('revista')">Cancelar</button>
           <button class="btn-guardar" id="btn-guardar-rev" onclick="guardarRevista()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="modal-anuario" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-anuario-titulo">Nuevo anuario</h3>
+        <button onclick="cerrarModalAnuario()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="anuario-id"/>
+        <div class="campo">
+          <label>Año *</label>
+          <input type="number" id="anuario-anio" placeholder="Ej: 2026" min="2000" max="2100"/>
+        </div>
+        <div class="campo">
+          <label>Título</label>
+          <input type="text" id="anuario-titulo" placeholder="Ej: Anuario 2026"/>
+        </div>
+        <div class="campo">
+          <label>Descripción (máx. 50 palabras)</label>
+          <textarea id="anuario-desc" rows="3" placeholder="Breve reseña del año escolar..." oninput="actualizarContadorPalabrasAnuario()"></textarea>
+          <p class="campo-hint" id="anuario-contador">0 / 50 palabras</p>
+        </div>
+        <div class="campo">
+          <label>Imágenes (máx. 7)</label>
+          <input type="file" id="anuario-imagenes-input" accept="image/*" multiple onchange="agregarImagenesAnuario(event)"/>
+          <p class="campo-hint">Puedes elegir varias a la vez. Cupo restante se actualiza abajo.</p>
+          <div id="anuario-imagenes-grid" class="anuario-imagenes-grid"></div>
+        </div>
+        <div id="anuario-error" class="form-error" style="display:none;"></div>
+        <div class="modal-footer">
+          <button class="btn-cancelar" onclick="cerrarModalAnuario()">Cancelar</button>
+          <button class="btn-guardar" id="btn-guardar-anuario" onclick="guardarAnuario()">Guardar</button>
         </div>
       </div>
     </div>
