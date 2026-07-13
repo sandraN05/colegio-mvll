@@ -12,6 +12,7 @@ function mostrarTab(tab, btn) {
 
   if      (tab === 'actividades')    cargarActividades();
   else if (tab === 'revistas')       cargarRevistas();
+  else if (tab === 'anuarios')       cargarAnuarios();
   else if (tab === 'anuncios')       cargarAnuncios();
   else if (tab === 'archivados')     cargarArchivados();
   else if (tab === 'niveles')        cargarFotosNivel('inicial');
@@ -384,6 +385,198 @@ async function guardarRevista() {
   cerrarModal('revista');
   cargarRevistas();
 }
+// ===== ANUARIO =====
+let anuarioImagenes = []; // { tipo:'existente', url } | { tipo:'nueva', file, previewUrl }
+const ANUARIO_MAX_IMAGENES = 7;
+const ANUARIO_MAX_PALABRAS = 50;
+
+async function cargarAnuarios() {
+  const lista = document.getElementById('lista-anuarios');
+  lista.innerHTML = '<p style="color:#94a3b8;padding:20px">Cargando...</p>';
+
+  const ahora = new Date().toISOString();
+  const user  = await getUser();
+
+  const { data, error } = await window.supabase
+    .from('anuarios').select('*')
+    .eq('usuario_id', user.id)
+    .eq('estado', 'activo')
+    .gt('fecha_expiracion', ahora)
+    .order('anio', { ascending: false });
+
+  if (error) { lista.innerHTML = '<p style="color:red">Error al cargar el anuario.</p>'; return; }
+  if (!data.length) {
+    lista.innerHTML = '<div class="admin-empty"><span></span><p>Aún no hay anuarios. ¡Crea el primero!</p></div>';
+    return;
+  }
+  lista.innerHTML = data.map(a => {
+    const imgs = Array.isArray(a.imagenes) ? a.imagenes : [];
+    const portada = imgs[0] || null;
+    return `
+    <div class="anuario-card">
+      <div class="anuario-card-anio">${a.anio}</div>
+      <div class="anuario-card-count">${imgs.length}/7</div>
+      <div class="anuario-card-img">${portada ? `<img src="${portada}" alt="Anuario ${a.anio}"/>` : '📖'}</div>
+      <div class="anuario-card-acciones">
+        <button class="btn-editar" onclick="editarAnuario('${a.id}')">Editar</button>
+        <button class="btn-eliminar" onclick="confirmarEliminar('anuario','${a.id}','${(a.titulo || ('Anuario ' + a.anio)).replace(/'/g,"\\'")}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function actualizarContadorPalabrasAnuario() {
+  const texto = document.getElementById('anuario-desc').value.trim();
+  const palabras = texto ? texto.split(/\s+/).length : 0;
+  const contador = document.getElementById('anuario-contador');
+  contador.textContent = palabras + ' / ' + ANUARIO_MAX_PALABRAS + ' palabras';
+  contador.style.color = palabras > ANUARIO_MAX_PALABRAS ? '#fca5a5' : '#64748b';
+}
+
+function renderImagenesAnuario() {
+  const grid = document.getElementById('anuario-imagenes-grid');
+  grid.innerHTML = anuarioImagenes.map((img, i) => `
+    <div class="anuario-imagen-slot">
+      <img src="${img.tipo === 'existente' ? img.url : img.previewUrl}" alt="imagen ${i+1}"/>
+      <button type="button" class="anuario-imagen-quitar" onclick="quitarImagenAnuario(${i})">✕</button>
+    </div>
+  `).join('');
+  const input = document.getElementById('anuario-imagenes-input');
+  input.disabled = anuarioImagenes.length >= ANUARIO_MAX_IMAGENES;
+}
+
+function agregarImagenesAnuario(event) {
+  const errorEl = document.getElementById('anuario-error');
+  errorEl.style.display = 'none';
+  const archivos = Array.from(event.target.files || []);
+  const cupo = ANUARIO_MAX_IMAGENES - anuarioImagenes.length;
+  if (archivos.length > cupo) {
+    errorEl.textContent = `Solo puedes agregar ${cupo} imagen(es) más (máximo ${ANUARIO_MAX_IMAGENES} en total).`;
+    errorEl.style.display = 'block';
+  }
+  archivos.slice(0, cupo).forEach(file => {
+    anuarioImagenes.push({ tipo: 'nueva', file, previewUrl: URL.createObjectURL(file) });
+  });
+  event.target.value = '';
+  renderImagenesAnuario();
+}
+
+function quitarImagenAnuario(index) {
+  anuarioImagenes.splice(index, 1);
+  renderImagenesAnuario();
+}
+
+function abrirModalAnuario() {
+  limpiarModalAnuario();
+  document.getElementById('modal-anuario-titulo').textContent = 'Nuevo anuario';
+  document.getElementById('modal-anuario').classList.add('activo');
+}
+
+async function editarAnuario(id) {
+  const user = await getUser();
+  const { data, error } = await window.supabase
+    .from('anuarios').select('*')
+    .eq('id', id).eq('usuario_id', user.id).single();
+  if (error || !data) return;
+
+  limpiarModalAnuario();
+  document.getElementById('modal-anuario-titulo').textContent = 'Editar anuario';
+  document.getElementById('anuario-id').value    = data.id;
+  document.getElementById('anuario-anio').value  = data.anio;
+  document.getElementById('anuario-titulo').value = data.titulo || '';
+  document.getElementById('anuario-desc').value  = data.descripcion || '';
+  anuarioImagenes = (Array.isArray(data.imagenes) ? data.imagenes : [])
+    .map(url => ({ tipo: 'existente', url }));
+  renderImagenesAnuario();
+  actualizarContadorPalabrasAnuario();
+  document.getElementById('modal-anuario').classList.add('activo');
+}
+
+function cerrarModalAnuario() {
+  document.getElementById('modal-anuario').classList.remove('activo');
+  limpiarModalAnuario();
+}
+
+function limpiarModalAnuario() {
+  ['anuario-id','anuario-anio','anuario-titulo','anuario-desc'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('anuario-imagenes-input').value = '';
+  document.getElementById('anuario-imagenes-input').disabled = false;
+  document.getElementById('anuario-error').style.display = 'none';
+  const btn = document.getElementById('btn-guardar-anuario');
+  btn.textContent = 'Guardar'; btn.disabled = false;
+  anuarioImagenes = [];
+  renderImagenesAnuario();
+  actualizarContadorPalabrasAnuario();
+}
+
+async function guardarAnuario() {
+  const btn     = document.getElementById('btn-guardar-anuario');
+  const errorEl = document.getElementById('anuario-error');
+  const id      = document.getElementById('anuario-id').value;
+  const anio    = parseInt(document.getElementById('anuario-anio').value);
+  const titulo  = document.getElementById('anuario-titulo').value.trim() || ('Anuario ' + anio);
+  const desc    = document.getElementById('anuario-desc').value.trim();
+  const palabras = desc ? desc.split(/\s+/).length : 0;
+
+  errorEl.style.display = 'none';
+  if (!anio || anio < 2000 || anio > 2100) {
+    errorEl.textContent = 'Ingresa un año válido.'; errorEl.style.display = 'block'; return;
+  }
+  if (palabras > ANUARIO_MAX_PALABRAS) {
+    errorEl.textContent = `La descripción supera las ${ANUARIO_MAX_PALABRAS} palabras (tiene ${palabras}).`;
+    errorEl.style.display = 'block'; return;
+  }
+  if (anuarioImagenes.length > ANUARIO_MAX_IMAGENES) {
+    errorEl.textContent = `Máximo ${ANUARIO_MAX_IMAGENES} imágenes.`; errorEl.style.display = 'block'; return;
+  }
+
+  btn.textContent = 'Subiendo...'; btn.disabled = true;
+  const user = await getUser();
+
+  // Subir solo las imágenes nuevas; conservar las existentes
+  const urlsFinales = [];
+  for (const img of anuarioImagenes) {
+    if (img.tipo === 'existente') {
+      urlsFinales.push(img.url);
+      continue;
+    }
+    const ext  = img.file.name.split('.').pop();
+    const path = 'anuarios/' + anio + '/' + Date.now() + '-' + Math.random().toString(36).slice(2,8) + '.' + ext;
+    const { error: upError } = await window.supabase.storage.from('archivos').upload(path, img.file, { upsert: true });
+    if (upError) {
+      errorEl.textContent = 'Error al subir una imagen: ' + upError.message;
+      errorEl.style.display = 'block'; btn.textContent = 'Guardar'; btn.disabled = false; return;
+    }
+    const { data: urlData } = window.supabase.storage.from('archivos').getPublicUrl(path);
+    urlsFinales.push(urlData.publicUrl);
+  }
+
+  const fechaExp = new Date(); fechaExp.setFullYear(fechaExp.getFullYear() + 8);
+  const payload = {
+    anio, titulo,
+    descripcion:      desc,
+    imagenes:         urlsFinales,
+    fecha_expiracion: fechaExp.toISOString(),
+    estado:           'activo',
+    usuario_id:       user.id
+  };
+
+  let error;
+  if (id) {
+    ({ error } = await window.supabase.from('anuarios').update(payload).eq('id', id).eq('usuario_id', user.id));
+  } else {
+    ({ error } = await window.supabase.from('anuarios').insert(payload));
+  }
+  if (error) {
+    errorEl.textContent = 'Error al guardar: ' + error.message;
+    errorEl.style.display = 'block'; btn.textContent = 'Guardar'; btn.disabled = false; return;
+  }
+  cerrarModalAnuario();
+  cargarAnuarios();
+}
+
 async function cargarArchivados() {
   const lista = document.getElementById('lista-archivados');
   lista.innerHTML = '<p style="color:#94a3b8;padding:20px">Cargando...</p>';
@@ -391,15 +584,17 @@ async function cargarArchivados() {
   const ahora = new Date().toISOString();
   const user  = await getUser();
 
-  const [actRes, anuRes, revRes] = await Promise.all([
+  const [actRes, anuRes, revRes, anuarioRes] = await Promise.all([
     window.supabase.from('actividades').select('*').eq('usuario_id', user.id).lt('fecha_expiracion', ahora),
     window.supabase.from('anuncios').select('*').eq('usuario_id', user.id).lt('fecha_expiracion', ahora),
-    window.supabase.from('revistas').select('*').eq('usuario_id', user.id).lt('fecha_expiracion', ahora)
+    window.supabase.from('revistas').select('*').eq('usuario_id', user.id).lt('fecha_expiracion', ahora),
+    window.supabase.from('anuarios').select('*').eq('usuario_id', user.id).lt('fecha_expiracion', ahora)
   ]);
   const archivados = [
     ...(actRes.data || []).map(i => ({ ...i, tipo: 'Actividad' })),
     ...(anuRes.data || []).map(i => ({ ...i, tipo: 'Anuncio' })),
-    ...(revRes.data || []).map(i => ({ ...i, tipo: 'Revista' }))
+    ...(revRes.data || []).map(i => ({ ...i, tipo: 'Revista' })),
+    ...(anuarioRes.data || []).map(i => ({ ...i, tipo: 'Anuario', titulo: i.titulo || ('Anuario ' + i.anio) }))
   ];
 
   if (!archivados.length) {
@@ -409,8 +604,8 @@ async function cargarArchivados() {
   lista.innerHTML = archivados.map(item => `
     <div class="admin-item">
       <div class="admin-item-img">
-        ${item.imagen_url || item.portada_url
-          ? `<img src="${item.imagen_url || item.portada_url}" alt="${item.titulo}"/>`
+        ${item.imagen_url || item.portada_url || (item.imagenes && item.imagenes[0])
+          ? `<img src="${item.imagen_url || item.portada_url || item.imagenes[0]}" alt="${item.titulo}"/>`
           : '<span style="font-size:2rem">📦</span>'}
       </div>
       <div class="admin-item-info">
@@ -426,16 +621,21 @@ async function cargarArchivados() {
     </div>
   `).join('');
 }
+function tablaDeTipo(tipo) {
+  return tipo === 'Actividad' ? 'actividades' :
+         tipo === 'Anuncio'   ? 'anuncios' :
+         tipo === 'Anuario'   ? 'anuarios' : 'revistas';
+}
 async function verArchivado(tipo, id) {
-  const tabla = tipo === 'Actividad' ? 'actividades' : tipo === 'Anuncio' ? 'anuncios' : 'revistas';
+  const tabla = tablaDeTipo(tipo);
   const user  = await getUser();
   const { data, error } = await window.supabase.from(tabla).select('*').eq('id', id).eq('usuario_id', user.id).single();
   if (error || !data) return;
 
   document.getElementById('ver-archivado-tipo').value          = tipo;
-  document.getElementById('ver-archivado-titulo-input').value  = data.titulo || '';
+  document.getElementById('ver-archivado-titulo-input').value  = data.titulo || (data.anio ? ('Anuario ' + data.anio) : '');
   document.getElementById('ver-archivado-descripcion').value   = data.descripcion || '';
-  const imagen    = data.imagen_url || data.portada_url || null;
+  const imagen    = data.imagen_url || data.portada_url || (data.imagenes && data.imagenes[0]) || null;
   const contenedor = document.getElementById('ver-archivado-imagen-container');
   const img        = document.getElementById('ver-archivado-imagen');
   if (imagen) { img.src = imagen; contenedor.style.display = 'block'; }
@@ -450,12 +650,13 @@ function cerrarVerArchivado() {
 async function restaurarArchivado(tipo, id) {
   if (!confirm('¿Deseas restaurar este contenido?')) return;
 
-  const tabla = tipo === 'Actividad' ? 'actividades' : tipo === 'Anuncio' ? 'anuncios' : 'revistas';
+  const tabla = tablaDeTipo(tipo);
   const user  = await getUser();
 
   const nuevaFecha = new Date();
   if      (tipo === 'Actividad') nuevaFecha.setMonth(nuevaFecha.getMonth() + 5);
   else if (tipo === 'Anuncio')   nuevaFecha.setMonth(nuevaFecha.getMonth() + 3);
+  else if (tipo === 'Anuario')   nuevaFecha.setFullYear(nuevaFecha.getFullYear() + 8);
   else                           nuevaFecha.setFullYear(nuevaFecha.getFullYear() + 1);
 
   const { error } = await window.supabase.from(tabla)
@@ -468,7 +669,7 @@ async function restaurarArchivado(tipo, id) {
 }
 
 function eliminarArchivado(tipo, id, titulo) {
-  const tipoEliminar = tipo === 'Actividad' ? 'actividad' : tipo === 'Anuncio' ? 'anuncio' : 'revista';
+  const tipoEliminar = tipo === 'Actividad' ? 'actividad' : tipo === 'Anuncio' ? 'anuncio' : tipo === 'Anuario' ? 'anuario' : 'revista';
   confirmarEliminar(tipoEliminar, id, titulo);
 }
 function obtenerRutaStorage(url) {
@@ -487,6 +688,7 @@ function confirmarEliminar(tipo, id, nombre) {
     tipo === 'actividad'    ? 'actividades' :
     tipo === 'revista'      ? 'revistas' :
     tipo === 'anuncio'      ? 'anuncios' :
+    tipo === 'anuario'      ? 'anuarios' :
     tipo === 'perm'         ? 'profesores_permanentes' :
     tipo === 'temp'         ? 'profesores_temporales' :
     tipo === 'promotor'     ? 'promotores' :
@@ -502,12 +704,15 @@ function confirmarEliminar(tipo, id, nombre) {
         if (registro.pdf_url)     { const r = obtenerRutaStorage(registro.pdf_url);     if (r) archivos.push(r); }
         if (registro.portada_url) { const r = obtenerRutaStorage(registro.portada_url); if (r) archivos.push(r); }
         if (registro.foto_url)    { const r = obtenerRutaStorage(registro.foto_url);    if (r) archivos.push(r); }
+        if (Array.isArray(registro.imagenes)) {
+          registro.imagenes.forEach(url => { const r = obtenerRutaStorage(url); if (r) archivos.push(r); });
+        }
         if (archivos.length > 0) {
           await window.supabase.storage.from('archivos').remove(archivos);
         }
       }
       let q = window.supabase.from(tabla).delete().eq('id', id);
-      if (['actividades','anuncios','revistas'].includes(tabla)) {
+      if (['actividades','anuncios','revistas','anuarios'].includes(tabla)) {
         q = q.eq('usuario_id', user.id);
       }
       const { error } = await q;
@@ -518,6 +723,7 @@ function confirmarEliminar(tipo, id, nombre) {
    if      (tipo === 'actividad')    cargarActividades();
 else if (tipo === 'revista')      cargarRevistas();
 else if (tipo === 'anuncio')      cargarAnuncios();
+else if (tipo === 'anuario')      cargarAnuarios();
 else if (tipo === 'perm')         cargarPermanentes();
 else if (tipo === 'temp')         cargarTemporales();
 else if (tipo === 'escuela')      cargarEscuelaAdmin();
