@@ -4,6 +4,7 @@
 let anuariosCache = [];
 let anuarioLibroActual = null; // { titulo, descripcion, imagenes }
 let anuarioPaginaActual = 0;
+let pageFlipInstance = null;
 
 async function cargarAnuarioPublico() {
   const cargando = document.getElementById('cargando-anuario');
@@ -43,6 +44,10 @@ async function cargarAnuarioPublico() {
   }
 }
 
+function libroDisponible() {
+  return typeof window.St !== 'undefined' && window.St.PageFlip;
+}
+
 function abrirLibroAnuario(indice) {
   const a = anuariosCache[indice];
   if (!a) return;
@@ -54,49 +59,115 @@ function abrirLibroAnuario(indice) {
   anuarioPaginaActual = 0;
   document.getElementById('libro-titulo').textContent = anuarioLibroActual.titulo;
   document.getElementById('libro-desc').textContent    = anuarioLibroActual.descripcion;
-  mostrarPaginaAnuario();
   document.getElementById('libro-modal').classList.add('activo');
   document.body.style.overflow = 'hidden';
-}
 
-function mostrarPaginaAnuario() {
-  if (!anuarioLibroActual) return;
-  const imgs     = anuarioLibroActual.imagenes;
-  const img      = document.getElementById('libro-imagen');
-  const vacio    = document.getElementById('libro-sin-imagenes');
-  const contador = document.getElementById('libro-contador');
-  const flechaIzq = document.querySelector('.libro-flecha-izq');
-  const flechaDer = document.querySelector('.libro-flecha-der');
+  const imgs = anuarioLibroActual.imagenes;
+  const vacio = document.getElementById('libro-sin-imagenes');
+  const flipEl = document.getElementById('libro-flip');
+  const imgEl  = document.getElementById('libro-imagen');
 
   if (!imgs.length) {
-    img.style.display = 'none';
     vacio.style.display = 'flex';
-    contador.textContent = '';
-    flechaIzq.disabled = true;
-    flechaDer.disabled = true;
+    flipEl.style.display = 'none';
+    imgEl.style.display = 'none';
+    document.getElementById('libro-contador').textContent = '';
     return;
   }
   vacio.style.display = 'none';
-  img.style.display = 'block';
+
+  if (libroDisponible()) {
+    imgEl.style.display = 'none';
+    flipEl.style.display = 'block';
+    // Pequeño delay para que el contenedor ya tenga tamaño real (modal recién visible)
+    setTimeout(function() { iniciarLibroFlip(imgs); }, 60);
+  } else {
+    // Respaldo sin animación de libro (ej. sin conexión a la CDN)
+    flipEl.style.display = 'none';
+    imgEl.style.display = 'block';
+    mostrarPaginaSimple();
+  }
+}
+
+function iniciarLibroFlip(imgs) {
+  const flipEl = document.getElementById('libro-flip');
+  destruirLibroFlip();
+  flipEl.innerHTML = '';
+
+  try {
+    pageFlipInstance = new St.PageFlip(flipEl, {
+      width: 420,
+      height: 560,
+      size: 'stretch',
+      minWidth: 240,
+      maxWidth: 900,
+      minHeight: 320,
+      maxHeight: 1100,
+      showCover: false,
+      usePortrait: true,
+      mobileScrollSupport: false,
+      maxShadowOpacity: 0.5,
+      flippingTime: 700
+    });
+    pageFlipInstance.loadFromImages(imgs);
+    actualizarContadorFlip(0, imgs.length);
+    actualizarFlechas(0, imgs.length);
+
+    pageFlipInstance.on('flip', function(e) {
+      actualizarContadorFlip(e.data, imgs.length);
+      actualizarFlechas(e.data, imgs.length);
+    });
+  } catch (err) {
+    console.error('No se pudo iniciar el visor de libro, usando respaldo simple:', err);
+    flipEl.style.display = 'none';
+    document.getElementById('libro-imagen').style.display = 'block';
+    mostrarPaginaSimple();
+  }
+}
+
+function destruirLibroFlip() {
+  if (pageFlipInstance) {
+    try { pageFlipInstance.destroy(); } catch (e) {}
+    pageFlipInstance = null;
+  }
+}
+
+function actualizarContadorFlip(indice, total) {
+  document.getElementById('libro-contador').textContent = (indice + 1) + ' / ' + total;
+}
+function actualizarFlechas(indice, total) {
+  document.querySelector('.libro-flecha-izq').disabled = indice === 0;
+  document.querySelector('.libro-flecha-der').disabled = indice === total - 1;
+}
+
+/* ---- Respaldo sin StPageFlip (imagen simple con flechas) ---- */
+function mostrarPaginaSimple() {
+  if (!anuarioLibroActual) return;
+  const imgs = anuarioLibroActual.imagenes;
+  const img  = document.getElementById('libro-imagen');
   img.src = imgs[anuarioPaginaActual];
-  contador.textContent = (anuarioPaginaActual + 1) + ' / ' + imgs.length;
-  flechaIzq.disabled = anuarioPaginaActual === 0;
-  flechaDer.disabled = anuarioPaginaActual === imgs.length - 1;
+  actualizarContadorFlip(anuarioPaginaActual, imgs.length);
+  actualizarFlechas(anuarioPaginaActual, imgs.length);
 }
 
 function paginaAnuarioAnterior() {
-  if (anuarioPaginaActual > 0) { anuarioPaginaActual--; mostrarPaginaAnuario(); }
+  if (pageFlipInstance) { pageFlipInstance.flipPrev(); return; }
+  if (anuarioPaginaActual > 0) { anuarioPaginaActual--; mostrarPaginaSimple(); }
 }
 function paginaAnuarioSiguiente() {
+  if (pageFlipInstance) { pageFlipInstance.flipNext(); return; }
   if (anuarioLibroActual && anuarioPaginaActual < anuarioLibroActual.imagenes.length - 1) {
-    anuarioPaginaActual++; mostrarPaginaAnuario();
+    anuarioPaginaActual++; mostrarPaginaSimple();
   }
 }
+
 function cerrarLibroAnuario(event) {
   if (event && event.target !== document.getElementById('libro-modal')) return;
   document.getElementById('libro-modal').classList.remove('activo');
   document.body.style.overflow = '';
+  destruirLibroFlip();
   anuarioLibroActual = null;
+  anuarioPaginaActual = 0;
 }
 
 document.addEventListener('keydown', function(e) {
