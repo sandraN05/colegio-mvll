@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Anuario - Colegio Mario Vargas Llosa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/Anuario.css"/>
+</head>
+<body>
+<audio id="bg-music" loop preload="auto">
+  <source src="assets/fondo1.mp3" type="audio/mpeg">
+</audio>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const music = document.getElementById("bg-music");
+    if (!music) return;
+    music.volume = 0.35;
+    music.play().catch(function() {
+      document.addEventListener("click", function iniciar() {
+        music.play();
+        document.removeEventListener("click", iniciar);
+      }, { once: true });
+    });
+  });
+</script>
+<nav>
+  <div class="nav-inner">
+    <a class="logo-area" href="index.html">
+      <img src="img/logo.png" alt="Logo MVL" class="logo-img"/>
+      <div>
+        <div class="logo-text">Mario Vargas Llosa</div>
+        <div class="logo-sub">Mariano Melgar · Arequipa</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#nosotros">Historia</a>
+      <a href="index.html#niveles">Niveles</a>
+      <a href="Promotores.html">Promotores</a>
+      <a href="index.html#revistas">Revista</a>
+
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-btn">
+          Equipo <span class="nav-chevron">▾</span>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="profesores.html">Profesores</a>
+          <a href="index.html#direccion">Dirección</a>
+        </div>
+      </div>
+
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-btn">
+          Institución <span class="nav-chevron">▾</span>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="Investigadores.html">Investigadores</a>
+          <a href="escuela.html">Escuela de Investigación</a>
+        </div>
+      </div>
+
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-btn">
+          Contenido <span class="nav-chevron">▾</span>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="index.html#actividades">Actividades</a>
+          <a href="index.html#anuncios">Anuncios</a>
+          <a href="Anuario.html" class="nav-active">Anuario</a>
+        </div>
+      </div>
+
+      <a href="index.html#contacto">Contacto</a>
+      <a href="login.html" class="nav-admin">⚙ Admin</a>
+    </div>
+
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div class="nav-menu-mobile" id="mobileMenu">
+    <a href="index.html#nosotros" onclick="toggleMenu()">Historia</a>
+    <a href="index.html#niveles"  onclick="toggleMenu()">Niveles</a>
+    <a href="Promotores.html"      onclick="toggleMenu()">Promotores</a>
+    <a href="index.html#revistas-anchor" onclick="toggleMenu()">Revista</a>
+
+    <div class="mobile-group-label">Equipo</div>
+    <a href="profesores.html"      onclick="toggleMenu()">Profesores</a>
+    <a href="index.html#direccion" onclick="toggleMenu()">Dirección</a>
+
+    <div class="mobile-group-label">Institución</div>
+    <a href="Investigadores.html"  onclick="toggleMenu()">Investigadores</a>
+    <a href="escuela.html"         onclick="toggleMenu()">Escuela de Investigación</a>
+
+    <div class="mobile-group-label">Contenido</div>
+    <a href="index.html#actividades"onclick="toggleMenu()">Actividades</a>
+    <a href="index.html#anuncios"   onclick="toggleMenu()">Anuncios</a>
+    <a href="Anuario.html"          onclick="toggleMenu()">Anuario</a>
+
+    <a href="index.html#contacto" onclick="toggleMenu()">Contacto</a>
+    <a href="login.html">⚙ Admin</a>
+  </div>
+</nav>
+
+  <div class="anu-hero">
+    <div class="anu-hero-inner">
+      <div class="section-tag">Publicaciones</div>
+      <h1>Nuestro <span>Anuario</span></h1>
+      <p>Revive los momentos más destacados de cada año escolar, edición por edición.</p>
+    </div>
+  </div>
+
+  <section class="anu-sec" id="anuario">
+    <div class="section-inner">
+      <div id="cargando-anuario" class="estado-msg">
+        <div class="spinner"></div>
+        <p>Cargando anuario...</p>
+      </div>
+      <div id="sin-anuario" class="estado-msg" style="display:none;">
+        <span style="font-size:2.5rem;">📖</span>
+        <p>Próximamente el anuario escolar.</p>
+      </div>
+      <div id="lista-anuario" class="anuario-anos-grid" style="display:none;"></div>
+    </div>
+  </section>
+
+  <div id="libro-modal" class="visor-overlay" onclick="cerrarLibroAnuario(event)">
+    <div class="visor-contenedor libro-contenedor">
+      <div class="visor-header">
+        <span id="libro-titulo">Anuario</span>
+        <button class="visor-cerrar" onclick="cerrarLibroAnuario()">✕ Cerrar</button>
+      </div>
+      <div class="libro-body">
+        <button class="libro-flecha libro-flecha-izq" onclick="paginaAnuarioAnterior()" aria-label="Anterior">‹</button>
+        <div class="libro-pagina">
+          <img id="libro-imagen" src="" alt="Página del anuario" style="display:none;"/>
+          <div id="libro-sin-imagenes" class="estado-msg" style="display:none;">
+            <span style="font-size:2.5rem;">📖</span>
+            <p>Este anuario aún no tiene imágenes.</p>
+          </div>
+        </div>
+        <button class="libro-flecha libro-flecha-der" onclick="paginaAnuarioSiguiente()" aria-label="Siguiente">›</button>
+      </div>
+      <div class="libro-footer">
+        <p id="libro-desc"></p>
+        <span id="libro-contador" class="libro-contador"></span>
+      </div>
+    </div>
+  </div>
+
+  <a href="https://wa.me/51957240209" class="wa-float" target="_blank">💬</a>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/Anuario.js"></script>
+  <script>
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    }
+  </script>
+</body>
+</html>
