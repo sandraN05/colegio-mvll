@@ -789,6 +789,36 @@ section { padding: 4rem 1.5rem; position: relative; }
 .revista-info { padding: 1rem; }
 .revista-info h4 { font-weight: 800; font-size: 0.9rem; color: var(--blanco); margin-bottom: 4px; }
 .revista-info p { font-size: 0.78rem; color: var(--texto2); margin-bottom: 0.8rem; }
+.repositorios-wrap { margin-bottom: 1.8rem; }
+.repositorios-titulo {
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em;
+  color: var(--texto2); margin-bottom: 0.7rem;
+  text-transform: uppercase;
+}
+.repositorios-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  display: flex;
+}
+.repositorios-track {
+  display: flex; gap: 8px; flex-shrink: 0;
+  animation: repo-scroll 26s linear infinite;
+  padding-right: 8px;
+}
+@keyframes repo-scroll {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+.repositorio-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.06);
+  color: var(--dorado2);
+  border: 1px solid rgba(240,165,0,0.2);
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 0.74rem; font-weight: 700;
+  white-space: nowrap;
+}
 
 .btn-ver {
   display: block; width: 100%;
