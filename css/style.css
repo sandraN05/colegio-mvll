@@ -803,7 +803,7 @@ section { padding: 4rem 1.5rem; position: relative; }
 }
 .repositorios-track {
   display: flex; gap: 8px; flex-shrink: 0;
-  animation: repo-scroll 26s linear infinite;
+  animation: repo-scroll 60s linear infinite;
   padding-right: 8px;
 }
 @keyframes repo-scroll {
