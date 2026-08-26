@@ -1,56 +1,133 @@
-.jg-hero{
-  padding:120px 20px 60px;
-  text-align:center;
-  background:linear-gradient(160deg,#0f1f3d,#0a1628);
-}
-.jg-hero-inner{ max-width:640px; margin:0 auto; }
-.jg-hero h1{
-  font-family:'Playfair Display', serif;
-  color:#fff; font-size:2.4rem; margin:10px 0;
-}
-.jg-hero h1 span{ color:var(--dorado); }
-.jg-hero p{ color:var(--texto2); font-size:1.05rem; }
+/* ============================================================
+   JUEGO: Letras escondidas — Colegio Mario Vargas Llosa
+   Estilos compartidos por todas las páginas del sitio.
+   Usa las variables definidas en :root de css/style.css
+   ============================================================ */
 
-.jg-sec{ padding:60px 20px 100px; }
-
-
-.jg-candado{
-  max-width:480px; margin:0 auto; text-align:center;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(240,165,0,0.25);
-  border-radius:16px; padding:48px 32px;
+/* ---------- Cinta de colección (arriba, aparece/oculta) ---------- */
+.cinta-letras{
+  position:fixed; top:0; left:0; right:0; z-index:999;
+  background: rgba(10,25,64,0.97);
+  backdrop-filter: blur(10px);
+  padding:10px 16px;
+  display:flex; align-items:center; justify-content:center;
+  gap:8px; flex-wrap:wrap;
+  border-bottom:1px solid rgba(240,165,0,0.25);
+  box-shadow:0 8px 24px rgba(0,0,0,0.35);
+  opacity:0; transform:translateY(-100%); pointer-events:none;
+  transition:opacity .35s ease, transform .35s ease;
 }
-.jg-candado-icono{ font-size:3rem; display:block; margin-bottom:16px; }
-.jg-candado h2{
-  font-family:'Playfair Display', serif;
-  color:var(--dorado2); font-size:1.4rem; margin:0 0 12px;
+.cinta-letras.clt-visible{ opacity:1; transform:translateY(0); pointer-events:auto; }
+
+.cinta-slots{ display:flex; align-items:center; gap:4px; flex-wrap:wrap; justify-content:center; }
+
+.clt-slot{
+  width:30px; height:34px;
+  border:2px dashed rgba(255,255,255,0.35);
+  border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display', serif; font-weight:700; font-size:1.05rem;
+  color:#fff; background:rgba(255,255,255,0.05);
+  transition:all .3s;
+  flex-shrink:0;
 }
-.jg-candado p{ color:var(--texto2); line-height:1.6; margin:0 0 24px; }
-.jg-btn-volver{
-  display:inline-block;
+.clt-slot.clt-fin-palabra{ margin-right:12px; }
+.clt-slot.clt-lleno{
+  border-style:solid; border-color:var(--dorado);
   background:linear-gradient(135deg,var(--dorado),var(--dorado2));
+  color:#14204a;
+  animation:clt-pop .4s ease;
+}
+@keyframes clt-pop{
+  0%{ transform:scale(.4); }
+  60%{ transform:scale(1.25); }
+  100%{ transform:scale(1); }
+}
+
+/* ---------- Pill flotante (siempre visible, abre la cinta) ---------- */
+.pill-letras{
+  position:fixed; bottom:24px; left:24px; z-index:998;
+  background: rgba(10,25,64,0.92);
+  border:1px solid rgba(240,165,0,0.35);
+  color:var(--dorado2);
+  font-family:'Nunito',sans-serif; font-weight:800; font-size:.85rem;
+  padding:10px 14px; border-radius:999px; cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,0.35);
+  display:flex; align-items:center; gap:6px;
+  transition:transform .2s, box-shadow .2s;
+}
+.pill-letras:hover{ transform:scale(1.06); box-shadow:0 10px 28px rgba(0,0,0,0.45); }
+.pill-letras span{ color:#fff; }
+
+/* ---------- Letras escondidas en el contenido ---------- */
+.letra-escondida-mvll{
+  position:absolute; z-index:5;
+  font-family:'Playfair Display', serif; font-weight:700; font-size:1.25rem;
+  color:#14204a;
+  background:rgba(255,255,255,0.92);
+  border:2px solid var(--dorado);
+  padding:3px 10px; border-radius:8px;
+  box-shadow:0 0 12px rgba(240,165,0,0.55), 0 2px 8px rgba(0,0,0,0.3);
+  cursor:pointer; user-select:none; opacity:.95;
+  transition:transform .15s, opacity .15s, box-shadow .15s;
+  animation: clt-pulso 1.6s ease-in-out infinite;
+}
+.letra-escondida-mvll:hover{
+  transform:scale(1.2); opacity:1;
+  box-shadow:0 0 20px rgba(240,165,0,0.85), 0 2px 8px rgba(0,0,0,0.3);
+}
+@keyframes clt-pulso{
+  0%,100%{ box-shadow:0 0 10px rgba(240,165,0,0.45), 0 2px 8px rgba(0,0,0,0.3); }
+  50%{ box-shadow:0 0 20px rgba(240,165,0,0.9), 0 2px 8px rgba(0,0,0,0.3); }
+}
+.letra-escondida-mvll.clt-brillando{
+  animation:clt-brillo .5s ease forwards;
+  color:var(--dorado) !important;
+}
+@keyframes clt-brillo{
+  0%{ text-shadow:0 0 0 rgba(240,165,0,0); transform:scale(1); }
+  50%{ text-shadow:0 0 18px rgba(240,165,0,0.9); transform:scale(1.6); }
+  100%{ text-shadow:0 0 6px rgba(240,165,0,0.6); transform:scale(1.6); opacity:0; }
+}
+
+.letra-volando-mvll{
+  position:fixed; z-index:1000; pointer-events:none;
+  font-family:'Playfair Display', serif; font-weight:700; font-size:1.3rem;
+  color:var(--dorado);
+  text-shadow:0 0 10px rgba(240,165,0,0.8);
+  transition:top .55s cubic-bezier(.3,.7,.4,1), left .55s cubic-bezier(.3,.7,.4,1), transform .55s ease, opacity .55s ease;
+}
+
+/* ---------- Mensaje final ---------- */
+.mvll-overlay{
+  position:fixed; inset:0; z-index:1001;
+  background:rgba(5,10,25,0.9);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .3s ease;
+  padding:20px;
+}
+.mvll-overlay.mvll-mostrar{ opacity:1; pointer-events:auto; }
+.mvll-caja{
+  background: linear-gradient(160deg,#0f1f3d,#0a1628);
+  border:2px solid var(--dorado);
+  border-radius:16px; padding:36px 40px; max-width:360px; text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.mvll-caja h3{
+  font-family:'Playfair Display', serif; color:var(--dorado2);
+  font-size:1.4rem; margin:0 0 12px; letter-spacing:.5px;
+}
+.mvll-caja p{ color:var(--texto2); margin:0 0 20px; line-height:1.6; }
+.mvll-btn-juegos{
+  display:inline-block; background:linear-gradient(135deg,var(--dorado),var(--dorado2));
   color:#14204a; font-weight:800; text-decoration:none;
-  padding:12px 24px; border-radius:10px;
+  padding:12px 22px; border-radius:10px;
+  box-shadow:0 8px 20px rgba(240,165,0,0.3);
   transition:transform .2s;
 }
-.jg-btn-volver:hover{ transform:translateY(-2px); }
+.mvll-btn-juegos:hover{ transform:translateY(-2px); }
 
-/* ---------- Grid de juegos ---------- */
-.jg-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
-  gap:24px; max-width:960px; margin:0 auto;
+@media (max-width:600px){
+  .clt-slot{ width:24px; height:28px; font-size:.9rem; }
+  .pill-letras{ bottom:16px; left:16px; padding:8px 12px; font-size:.8rem; }
 }
-.jg-card{
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:14px; padding:32px 24px; text-align:center;
-  transition:transform .2s, border-color .2s;
-}
-.jg-card:hover{ transform:translateY(-4px); border-color:rgba(240,165,0,0.4); }
-.jg-card-icono{ font-size:2.2rem; display:block; margin-bottom:12px; }
-.jg-card h3{
-  font-family:'Playfair Display', serif; color:var(--dorado2);
-  font-size:1.1rem; margin:0 0 8px;
-}
-.jg-card p{ color:var(--texto2); font-size:.9rem; line-height:1.5; margin:0; }
