@@ -48,8 +48,10 @@
   let encontradas = cargarEncontradas();
 
   function paginaActual(){
-    const archivo = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-    return archivo === '' ? 'index.html' : archivo;
+    let archivo = (location.pathname.split('/').pop() || '').toLowerCase();
+    if(archivo === '') archivo = 'index.html';
+    if(!archivo.endsWith('.html')) archivo += '.html'; // Vercel usa cleanUrls (sin .html)
+    return archivo;
   }
 
   /* ---------------- UI: cinta + pill ---------------- */
