@@ -20,10 +20,12 @@ const perfilesAcademicos = {
 };
 
 grid.style.display = 'grid';
-grid.innerHTML = data.map(p => {
+grid.innerHTML = data.map((p, idx) => {
   const urlPerfil = perfilesAcademicos[p.nombre] || ('https://scholar.google.com/scholar?q=' + encodeURIComponent(p.nombre));
+  const enlaces = Array.isArray(p.enlaces) ? p.enlaces : [];
+  const idPanel = 'inv-trabajos-' + idx;
   return `
-  <a class="profe-card-grande" href="${urlPerfil}" target="_blank" rel="noopener noreferrer" title="Ver perfil académico de ${p.nombre}">
+  <div class="profe-card-grande">
     <div class="profe-avatar-grande">
       ${p.foto_url
         ? `<img src="${p.foto_url}" alt="${p.nombre}"/>`
@@ -35,7 +37,21 @@ grid.innerHTML = data.map(p => {
     </div>
     <div class="profe-name">${p.nombre}</div>
     ${p.cargo ? `<div class="profe-curso">${p.cargo}</div>` : ''}
-  </a>
+    <a class="inv-link-perfil" href="${urlPerfil}" target="_blank" rel="noopener noreferrer">Perfil académico ↗</a>
+    ${enlaces.length ? `
+      <button class="inv-toggle-trabajos" onclick="toggleTrabajosInv(this, '${idPanel}')">
+        <span>Ver trabajos publicados (${enlaces.length})</span>
+        <span class="inv-toggle-flecha">▾</span>
+      </button>
+      <div class="inv-trabajos-lista" id="${idPanel}">
+        ${enlaces.map(e => `
+          <a href="${e.url}" target="_blank" rel="noopener noreferrer" class="inv-trabajo-item">
+            📄 ${e.titulo || 'Ver trabajo'}
+          </a>
+        `).join('')}
+      </div>
+    ` : ''}
+  </div>
 `;
 }).join('');
   } catch(err) {
@@ -43,6 +59,13 @@ grid.innerHTML = data.map(p => {
     sinDatos.style.display = 'flex';
     console.error(err);
   }
+}
+
+function toggleTrabajosInv(boton, idPanel){
+  const panel = document.getElementById(idPanel);
+  if(!panel) return;
+  const abierto = panel.classList.toggle('inv-trabajos-abierto');
+  boton.classList.toggle('inv-toggle-abierto', abierto);
 }
 
 document.addEventListener('DOMContentLoaded', cargarInvestigadores);
