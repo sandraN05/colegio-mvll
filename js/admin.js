@@ -1095,6 +1095,32 @@ function abrirModalInvestigador() {
   document.getElementById('modal-inv-titulo-label').textContent = 'Nuevo contenido';
   document.getElementById('modal-investigador').classList.add('activo');
 }
+
+/* ---------- Enlaces a trabajos publicados (investigador) ---------- */
+function agregarFilaEnlaceInv(titulo, url) {
+  const cont = document.getElementById('inv-enlaces-lista');
+  if (!cont) return;
+  const fila = document.createElement('div');
+  fila.className = 'inv-enlace-fila';
+  fila.style.cssText = 'display:flex; gap:8px; margin-bottom:8px; align-items:center;';
+  fila.innerHTML = `
+    <input type="text" class="inv-enlace-titulo" placeholder="Título del trabajo" value="${titulo ? titulo.replace(/"/g,'&quot;') : ''}" style="flex:1;"/>
+    <input type="url" class="inv-enlace-url" placeholder="https://..." value="${url ? url.replace(/"/g,'&quot;') : ''}" style="flex:1;"/>
+    <button type="button" onclick="this.parentElement.remove()" style="background:none;border:none;color:#f87171;font-size:1.1rem;cursor:pointer;">🗑</button>
+  `;
+  cont.appendChild(fila);
+}
+function leerEnlacesInv() {
+  const filas = document.querySelectorAll('#inv-enlaces-lista .inv-enlace-fila');
+  const enlaces = [];
+  filas.forEach(fila => {
+    const titulo = fila.querySelector('.inv-enlace-titulo').value.trim();
+    const url    = fila.querySelector('.inv-enlace-url').value.trim();
+    if (url) enlaces.push({ titulo: titulo || 'Ver trabajo', url });
+  });
+  return enlaces;
+}
+
 function limpiarModalNuevo(tipo) {
   const maps = {
     promotor: {
@@ -1136,6 +1162,10 @@ function limpiarModalNuevo(tipo) {
       el.textContent = 'Guardar';
       el.disabled = false;
     }
+  }
+  if (tipo === 'investigador') {
+    const lista = document.getElementById('inv-enlaces-lista');
+    if (lista) lista.innerHTML = '';
   }
 }
 const TIEMPO_INACTIVIDAD =  60 * 1000;
@@ -1387,6 +1417,12 @@ async function editarInvestigador(id) {
   document.getElementById('inv-nombre').value = data.nombre;
   document.getElementById('inv-cargo').value  = data.cargo || '';
   document.getElementById('inv-orden').value  = data.orden || '';
+  const lista = document.getElementById('inv-enlaces-lista');
+  if (lista) {
+    lista.innerHTML = '';
+    const enlaces = Array.isArray(data.enlaces) ? data.enlaces : [];
+    enlaces.forEach(e => agregarFilaEnlaceInv(e.titulo, e.url));
+  }
   document.getElementById('modal-investigador').classList.add('activo');
 }
 async function guardarInvestigador() {
@@ -1423,6 +1459,7 @@ async function guardarInvestigador() {
     cargo:      document.getElementById('inv-cargo').value.trim() || null,
     orden:      parseInt(document.getElementById('inv-orden').value) || 0,
     foto_url:   foto_url,
+    enlaces:    leerEnlacesInv(),
     usuario_id: user.id
   };
   let error;
