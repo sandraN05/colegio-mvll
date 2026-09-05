@@ -126,7 +126,69 @@
   .profes-grandes-grid { grid-template-columns: repeat(2, 1fr); }
 }
 .profe-card-grande {
-  text-decoration: none;
-  color: inherit;
   display: block;
+}
+
+/* ---------- Enlace de perfil académico ---------- */
+.inv-link-perfil {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #F0A500;
+  text-decoration: none;
+}
+.inv-link-perfil:hover { text-decoration: underline; }
+
+/* ---------- Desplegable "Ver trabajos publicados" ---------- */
+.inv-toggle-trabajos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 0.9rem;
+  padding: 8px 10px;
+  background: rgba(240,165,0,0.1);
+  border: 1px solid rgba(240,165,0,0.3);
+  border-radius: 10px;
+  color: #F0A500;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.inv-toggle-trabajos:hover { background: rgba(240,165,0,0.18); }
+.inv-toggle-flecha { transition: transform 0.25s; display: inline-block; }
+.inv-toggle-trabajos.inv-toggle-abierto .inv-toggle-flecha { transform: rotate(180deg); }
+
+.inv-trabajos-lista {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.25s ease, margin-top 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+.inv-trabajos-lista.inv-trabajos-abierto {
+  max-height: 400px;
+  opacity: 1;
+  margin-top: 0.6rem;
+}
+.inv-trabajo-item {
+  display: block;
+  font-size: 0.78rem;
+  color: #dbe4f5;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+.inv-trabajo-item:hover {
+  background: rgba(240,165,0,0.1);
+  border-color: rgba(240,165,0,0.3);
 }
