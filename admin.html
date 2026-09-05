@@ -645,6 +645,12 @@
           <img id="inv-foto-actual" style="width:80px; height:80px; border-radius:50%; object-fit:cover;"/>
         </div>
       </div>
+      <div class="campo">
+        <label>Trabajos publicados (opcional)</label>
+        <p class="campo-hint">Agrega el título y el enlace (URL) de cada trabajo. Se mostrarán en un desplegable dentro de la tarjeta del investigador.</p>
+        <div id="inv-enlaces-lista"></div>
+        <button type="button" class="btn-cancelar" style="margin-top:8px;" onclick="agregarFilaEnlaceInv()">+ Agregar enlace</button>
+      </div>
       <div id="inv-error" class="form-error" style="display:none;"></div>
       <div class="modal-footer">
         <button class="btn-cancelar" onclick="cerrarModal('investigador')">Cancelar</button>
