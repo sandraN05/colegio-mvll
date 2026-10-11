@@ -48,6 +48,18 @@ function cerrarVisor(event) {
   document.body.style.overflow = '';
 }
 
+/* Convierte cualquier link de Google Drive (ver, compartir, descarga, etc.)
+   en el enlace de "vista previa" embebida, para que se muestre en el visor
+   en vez de descargarse. */
+function obtenerDriveVistaUrl(url) {
+  if (!url) return url;
+  const match = url.match(/[-\w]{25,}/);
+  if (match) {
+    return 'https://drive.google.com/file/d/' + match[0] + '/preview';
+  }
+  return url;
+}
+
 /* ════════════════════════════════
    TECLADO
 ════════════════════════════════ */
@@ -301,7 +313,7 @@ async function cargarRevistas() {
             </div>
             <div class="actividad-titulo">${rev.titulo}</div>
             ${rev.descripcion ? `<div class="actividad-desc">${rev.descripcion}</div>` : ''}
-            <button class="btn-ver" style="margin-top:10px;" onclick="${rev.drive_url ? `window.open('${rev.drive_url}', '_blank')` : `abrirVisor('${rev.pdf_url}', '${rev.titulo}')`}">
+            <button class="btn-ver" style="margin-top:10px;" onclick="${rev.drive_url ? `abrirVisor('${obtenerDriveVistaUrl(rev.drive_url)}', '${(rev.titulo||'').replace(/'/g, "\\'")}')` : `abrirVisor('${rev.pdf_url}', '${(rev.titulo||'').replace(/'/g, "\\'")}')`}">
               👁 Ver revista
             </button>
           </div>
