@@ -1,0 +1,162 @@
+/* ============================================================
+   OPINIONES Y "ME GUSTA" — lado público
+   Usa las variables de :root definidas en css/style.css
+   ============================================================ */
+
+/* ---------- Fila de botones (en la tarjeta y en el modal) ---------- */
+.op-acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.op-acciones-card {
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.op-like-btn, .op-dejar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: var(--texto2, #a8b8d8);
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+.op-like-btn:hover:not(:disabled), .op-dejar-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(240,165,0,0.35);
+}
+.op-like-btn:disabled { cursor: default; }
+.op-like-btn.op-like-dado {
+  background: rgba(240,165,0,0.12);
+  border-color: rgba(240,165,0,0.35);
+  color: var(--dorado2, #F0A500);
+}
+.op-dejar-btn:hover {
+  background: rgba(240,165,0,0.1);
+}
+
+/* ---------- Bloque dentro del modal de detalle ---------- */
+.op-bloque {
+  margin-top: 1.4rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.op-lista-publica { margin-top: 1rem; }
+.op-lista-titulo {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--dorado2, #F0A500);
+  margin-bottom: 0.7rem;
+}
+.op-opinion-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.op-opinion-item:first-of-type { border-top: none; }
+.op-opinion-avatar {
+  flex-shrink: 0;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--dorado, #F0A500), var(--dorado2, #e89000));
+  color: #0a1940;
+  font-weight: 800;
+  font-size: 0.85rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.op-opinion-cuerpo { flex: 1; min-width: 0; }
+.op-opinion-cab {
+  display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+.op-opinion-cab strong { color: var(--blanco, #fff); font-size: 0.85rem; }
+.op-opinion-cab span { color: var(--texto2, #94a3b8); font-size: 0.72rem; }
+.op-opinion-cuerpo p {
+  color: var(--texto2, #a8b8d8);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ---------- Formulario "Dejar opinión" (overlay) ---------- */
+.op-form-overlay {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(5,10,25,0.85);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.op-form-caja {
+  position: relative;
+  background: linear-gradient(160deg,#0f1f3d,#0a1628);
+  border: 1px solid rgba(240,165,0,0.3);
+  border-radius: 16px;
+  padding: 32px 26px 26px;
+  max-width: 400px; width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.op-form-cerrar {
+  position: absolute; top: 10px; right: 10px;
+  background: rgba(255,255,255,0.08); border: none; color: #fff;
+  width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.95rem;
+}
+.op-form-cerrar:hover { background: rgba(255,255,255,0.18); }
+.op-form-caja h3 {
+  font-family: 'Playfair Display', serif;
+  color: var(--dorado2, #F0A500);
+  font-size: 1.25rem; margin: 0 0 4px;
+}
+.op-form-sub { color: var(--texto2, #94a3b8); font-size: 0.82rem; margin: 0 0 18px; }
+.op-form-caja label {
+  display: block; color: var(--texto2, #cbd5e1); font-size: 0.78rem;
+  font-weight: 700; margin: 12px 0 6px;
+}
+.op-form-caja input, .op-form-caja textarea {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 10px;
+  color: #fff;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  resize: vertical;
+}
+.op-form-caja input:focus, .op-form-caja textarea:focus {
+  outline: none; border-color: var(--dorado, #F0A500);
+}
+.op-form-error {
+  color: #f87171; font-size: 0.78rem; margin-top: 8px;
+}
+.op-form-enviar {
+  margin-top: 16px; width: 100%;
+  background: linear-gradient(135deg, var(--dorado, #F0A500), var(--dorado2, #e89000));
+  color: #14204a; font-weight: 800; border: none;
+  padding: 11px 20px; border-radius: 10px; cursor: pointer; font-size: 0.9rem;
+  transition: transform 0.2s;
+}
+.op-form-enviar:hover { transform: translateY(-1px); }
+.op-form-enviar:disabled { opacity: 0.6; cursor: default; transform: none; }
+.op-form-exito {
+  background: rgba(34,197,94,0.12);
+  border: 1px solid rgba(34,197,94,0.35);
+  color: #4ade80;
+  padding: 14px; border-radius: 10px;
+  font-size: 0.85rem; text-align: center;
+}
+
+@media (max-width: 480px) {
+  .op-form-caja { padding: 26px 18px 20px; }
+}
