@@ -84,6 +84,7 @@ function capitalizarPrimera(texto) {
    ACTIVIDADES
 ════════════════════════════════ */
 let actividadesData = [];
+let actividadesLikes = {};
 
 async function cargarActividades() {
   const cargando = document.getElementById('cargando-actividades');
@@ -104,6 +105,7 @@ async function cargarActividades() {
       return;
     }
     actividadesData = data;
+    actividadesLikes = (typeof obtenerConteosLikes === 'function') ? await obtenerConteosLikes('actividad') : {};
     lista.style.display = 'grid';
     lista.innerHTML = data.map(function(act, i) {
       const descCorta = act.descripcion && act.descripcion.length > 120
@@ -128,6 +130,18 @@ async function cargarActividades() {
             ${act.descripcion && act.descripcion.length > 120
               ? `<div class="act-ver-mas">Ver más →</div>`
               : ''}
+            <div class="op-acciones op-acciones-card">
+              <button type="button" class="op-like-btn${(typeof yaDioLike === 'function' && yaDioLike('actividad', act.id)) ? ' op-like-dado' : ''}"
+                ${(typeof yaDioLike === 'function' && yaDioLike('actividad', act.id)) ? 'disabled' : ''}
+                onclick="event.stopPropagation(); darLike('actividad','${act.id}', this)">
+                <span class="op-like-icono">${(typeof yaDioLike === 'function' && yaDioLike('actividad', act.id)) ? '❤️' : '🤍'}</span>
+                <span class="op-like-count">${actividadesLikes[act.id] || 0}</span> me gusta
+              </button>
+              <button type="button" class="op-dejar-btn"
+                onclick="event.stopPropagation(); abrirFormOpinion('actividad','${act.id}','${(act.titulo||'').replace(/'/g, "\\'")}')">
+                💬 Dejar opinión
+              </button>
+            </div>
           </div>
         </div>
       `;
@@ -151,7 +165,8 @@ function abrirActividadDetalle(i) {
     act.descripcion || '',
     formatearFecha(act.fecha),
     capitalizarPrimera(act.categoria || 'Actividad'),
-    'cat-' + (act.categoria || 'otro')
+    'cat-' + (act.categoria || 'otro'),
+    'actividad', act.id, actividadesLikes[act.id] || 0
   );
 }
 
@@ -177,15 +192,36 @@ function abrirAnuncioDetalle(i) {
     a.descripcion || '',
     a.fecha_evento ? formatearFecha(a.fecha_evento) : '',
     'Anuncio',
-    'cat-otro'
+    'cat-otro',
+    'anuncio', a.id, anunciosLikes[a.id] || 0
   );
 }
 
-function _abrirDetalle(imgUrl, titulo, desc, fecha, badgeTxt, badgeClass) {
+function _abrirDetalle(imgUrl, titulo, desc, fecha, badgeTxt, badgeClass, tipo, itemId, likes) {
   const modal = document.getElementById('modal-actividad-detalle');
   if (!modal) return;
   const inner = modal.querySelector('.nivel-modal');
   const tieneImagen = imgUrl && imgUrl.trim() !== '' && imgUrl !== 'null' && imgUrl !== 'undefined';
+
+  const tieneOpiniones = !!(tipo && itemId);
+  const yaLike = tieneOpiniones && typeof yaDioLike === 'function' && yaDioLike(tipo, itemId);
+  const bloqueOpiniones = tieneOpiniones ? `
+    <div class="op-bloque">
+      <div class="op-acciones">
+        <button type="button" class="op-like-btn${yaLike ? ' op-like-dado' : ''}" ${yaLike ? 'disabled' : ''}
+          onclick="darLike('${tipo}','${itemId}', this)">
+          <span class="op-like-icono">${yaLike ? '❤️' : '🤍'}</span>
+          <span class="op-like-count">${likes || 0}</span> me gusta
+        </button>
+        <button type="button" class="op-dejar-btn"
+          onclick="abrirFormOpinion('${tipo}','${itemId}','${titulo.replace(/'/g, "\\'")}')">
+          💬 Dejar opinión
+        </button>
+      </div>
+      <div class="op-lista-publica" id="op-lista-${tipo}-${itemId}"></div>
+    </div>
+  ` : '';
+
   inner.innerHTML = `
     <button class="nivel-modal-cerrar" onclick="cerrarActividadDetalle()">✕ Cerrar</button>
     ${tieneImagen ? `
@@ -211,9 +247,14 @@ function _abrirDetalle(imgUrl, titulo, desc, fecha, badgeTxt, badgeClass) {
       <p style="color:#a8b8d8;line-height:1.8;font-size:0.92rem;">${desc}</p>
     </div>
     `}
+    ${bloqueOpiniones}
   `;
   modal.classList.add('activo');
   document.body.style.overflow = 'hidden';
+
+  if (tieneOpiniones && typeof cargarOpinionesPublicas === 'function') {
+    cargarOpinionesPublicas(tipo, itemId, 'op-lista-' + tipo + '-' + itemId);
+  }
 }
 
 function cerrarActividadDetalle(event) {
@@ -337,6 +378,7 @@ function cerrarNotifAnuncio() {
    ANUNCIOS
 ════════════════════════════════ */
 let anunciosData = [];
+let anunciosLikes = {};
 
 async function cargarAnuncios() {
   const cargando = document.getElementById('cargando-anuncios');
@@ -354,6 +396,7 @@ async function cargarAnuncios() {
       return;
     }
     anunciosData = data;
+    anunciosLikes = (typeof obtenerConteosLikes === 'function') ? await obtenerConteosLikes('anuncio') : {};
     lista.style.display = 'grid';
     lista.innerHTML = data.map(function(a, i) {
       const descCorta = a.descripcion && a.descripcion.length > 120
@@ -378,6 +421,18 @@ async function cargarAnuncios() {
               ? `<div class="act-ver-mas">Ver más →</div>`
               : ''}
             ${detalles.length ? `<div class="anuncio-detalles">${detalles.join('')}</div>` : ''}
+            <div class="op-acciones op-acciones-card">
+              <button type="button" class="op-like-btn${(typeof yaDioLike === 'function' && yaDioLike('anuncio', a.id)) ? ' op-like-dado' : ''}"
+                ${(typeof yaDioLike === 'function' && yaDioLike('anuncio', a.id)) ? 'disabled' : ''}
+                onclick="event.stopPropagation(); darLike('anuncio','${a.id}', this)">
+                <span class="op-like-icono">${(typeof yaDioLike === 'function' && yaDioLike('anuncio', a.id)) ? '❤️' : '🤍'}</span>
+                <span class="op-like-count">${anunciosLikes[a.id] || 0}</span> me gusta
+              </button>
+              <button type="button" class="op-dejar-btn"
+                onclick="event.stopPropagation(); abrirFormOpinion('anuncio','${a.id}','${(a.titulo||'').replace(/'/g, "\\'")}')">
+                💬 Dejar opinión
+              </button>
+            </div>
           </div>
         </div>
       `;
