@@ -49,6 +49,10 @@
   <button class="sidebar-btn" onclick="mostrarTab('niveles',this)">
     <span>Niveles</span>
   </button>
+
+  <button class="sidebar-btn" onclick="mostrarTab('opiniones',this)">
+    <span>💬 Opiniones</span>
+  </button>
   <div class="sidebar-section-label">Dirección e Investigadores</div>
  
   <button class="sidebar-btn" onclick="mostrarTab('direccion',this)">
@@ -147,6 +151,35 @@
         <button class="btn-nuevo" onclick="abrirModalFoto()">+ Agregar foto</button>
       </div>
       <div id="lista-fotos-nivel" class="admin-lista"></div>
+    </div>
+    <div id="tab-opiniones" class="tab-contenido">
+      <div class="panel-header">
+        <div>
+          <h2>💬 Opiniones y me gusta</h2>
+          <p class="panel-desc">Modera los comentarios dejados en Actividades y Anuncios</p>
+        </div>
+      </div>
+
+      <div class="op-admin-stats">
+        <div class="op-admin-stat">
+          <span class="op-admin-stat-num" id="op-stat-likes">0</span>
+          <span class="op-admin-stat-label">❤️ Me gusta totales</span>
+        </div>
+        <div class="op-admin-stat">
+          <span class="op-admin-stat-num" id="op-stat-total">0</span>
+          <span class="op-admin-stat-label">💬 Opiniones totales</span>
+        </div>
+        <div class="op-admin-stat op-admin-stat-pend">
+          <span class="op-admin-stat-num" id="op-stat-pendientes">0</span>
+          <span class="op-admin-stat-label">⏳ Pendientes de revisión</span>
+        </div>
+      </div>
+
+      <h3 class="op-admin-subtitulo">Pendientes de revisión</h3>
+      <div id="op-lista-pendientes" class="admin-lista"></div>
+
+      <h3 class="op-admin-subtitulo" style="margin-top:2rem;">Aprobadas</h3>
+      <div id="op-lista-aprobadas" class="admin-lista"></div>
     </div>
     <div id="tab-direccion" class="tab-contenido">
   <div class="panel-header">
