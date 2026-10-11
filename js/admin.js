@@ -22,6 +22,7 @@ function mostrarTab(tab, btn) {
   else if (tab === 'direccion')      cargarDireccionAdmin();
   else if (tab === 'investigadores') cargarInvestigadoresAdmin();
   else if (tab === 'escuela') cargarEscuelaAdmin();
+  else if (tab === 'opiniones') cargarOpinionesAdmin();
 }
 async function cerrarSesion() {
   await window.supabase.auth.signOut();
@@ -1565,6 +1566,100 @@ async function guardarEscuela() {
   cerrarModal('escuela');
   cargarEscuelaAdmin();
 }
+// ===== OPINIONES Y ME GUSTA (moderación) =====
+function tiempoRelativoOpAdmin(fechaISO) {
+  const ahora = new Date();
+  const fecha = new Date(fechaISO);
+  const segs  = Math.floor((ahora - fecha) / 1000);
+  if (segs < 60) return 'hace un momento';
+  const mins = Math.floor(segs / 60);
+  if (mins < 60) return 'hace ' + mins + ' min';
+  const horas = Math.floor(mins / 60);
+  if (horas < 24) return 'hace ' + horas + 'h';
+  const dias = Math.floor(horas / 24);
+  if (dias < 30) return 'hace ' + dias + 'd';
+  return fecha.toLocaleDateString('es-PE');
+}
+
+function tarjetaOpinionAdmin(o, estado) {
+  const inicial = (o.nombre || '?').trim().charAt(0).toUpperCase();
+  const origen  = o.tipo === 'actividad' ? 'Actividad' : o.tipo === 'anuncio' ? 'Anuncio' : o.tipo;
+  const tiempo  = tiempoRelativoOpAdmin(o.created_at);
+  const acciones = estado === 'pendiente'
+    ? `<button class="btn-aprobar" onclick="aprobarOpinion('${o.id}')">✔ Aprobar</button>
+       <button class="btn-eliminar" onclick="eliminarOpinion('${o.id}','${(o.nombre || '').replace(/'/g,"\\'")}')">🗑 Eliminar</button>`
+    : `<button class="btn-ocultar" onclick="ocultarOpinion('${o.id}')">👁 Ocultar</button>
+       <button class="btn-eliminar" onclick="eliminarOpinion('${o.id}','${(o.nombre || '').replace(/'/g,"\\'")}')">🗑 Eliminar</button>`;
+  return `
+    <div class="op-admin-item">
+      <div class="op-admin-avatar">${inicial}</div>
+      <div class="op-admin-cuerpo">
+        <div class="op-admin-cab">
+          <strong>${o.nombre}</strong>
+          <span class="op-admin-origen">${origen}</span>
+          <span class="op-admin-tiempo">${tiempo}</span>
+        </div>
+        <p class="op-admin-comentario">${o.comentario}</p>
+      </div>
+      <div class="op-admin-item-acciones">${acciones}</div>
+    </div>
+  `;
+}
+
+async function cargarOpinionesAdmin() {
+  const contP = document.getElementById('op-lista-pendientes');
+  const contA = document.getElementById('op-lista-aprobadas');
+  if (!contP || !contA) return;
+  contP.innerHTML = '<p style="color:#94a3b8;padding:20px">Cargando...</p>';
+  contA.innerHTML = '';
+
+  const [opRes, likesRes] = await Promise.all([
+    window.supabase.from('opiniones').select('*').order('created_at', { ascending: false }),
+    window.supabase.from('megusta').select('*', { count: 'exact', head: true })
+  ]);
+
+  if (opRes.error) { contP.innerHTML = '<p style="color:red">Error al cargar.</p>'; return; }
+
+  const lista       = opRes.data || [];
+  const pendientes  = lista.filter(o => !o.aprobado);
+  const aprobadas   = lista.filter(o => o.aprobado);
+
+  document.getElementById('op-stat-likes').textContent      = likesRes.count || 0;
+  document.getElementById('op-stat-total').textContent      = lista.length;
+  document.getElementById('op-stat-pendientes').textContent = pendientes.length;
+
+  contP.innerHTML = pendientes.length
+    ? pendientes.map(o => tarjetaOpinionAdmin(o, 'pendiente')).join('')
+    : '<div class="admin-empty"><span>✅</span><p>No hay opiniones pendientes.</p></div>';
+
+  contA.innerHTML = aprobadas.length
+    ? aprobadas.map(o => tarjetaOpinionAdmin(o, 'aprobada')).join('')
+    : '<div class="admin-empty"><span>💬</span><p>Aún no hay opiniones aprobadas.</p></div>';
+}
+
+async function aprobarOpinion(id) {
+  const { error } = await window.supabase.from('opiniones').update({ aprobado: true }).eq('id', id);
+  if (error) { alert('Error al aprobar.'); return; }
+  cargarOpinionesAdmin();
+}
+
+async function ocultarOpinion(id) {
+  const { error } = await window.supabase.from('opiniones').update({ aprobado: false }).eq('id', id);
+  if (error) { alert('Error al ocultar.'); return; }
+  cargarOpinionesAdmin();
+}
+
+function eliminarOpinion(id, nombre) {
+  document.getElementById('eliminar-msg').textContent = '¿Eliminar la opinión de "' + nombre + '"? Esta acción no se puede deshacer.';
+  document.getElementById('modal-eliminar').classList.add('activo');
+  document.getElementById('btn-confirmar-eliminar').onclick = async function() {
+    const { error } = await window.supabase.from('opiniones').delete().eq('id', id);
+    if (error) { alert('Error al eliminar.'); return; }
+    cerrarEliminar();
+    cargarOpinionesAdmin();
+  };
+}
+
 const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.querySelector(".sidebar");
 
