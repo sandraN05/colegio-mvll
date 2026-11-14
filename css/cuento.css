@@ -1,0 +1,161 @@
+/* ============================================================
+   ESTILO "CUENTO" para NIVELES, ACTIVIDADES, REVISTAS y ANUNCIOS
+   Tarjetas tipo foto pegada (papel blanco, ligeramente inclinadas),
+   letra manuscrita en los detalles, colores azul / dorado / blanco.
+   Las olas vienen de organico.css (no se tocan).
+   Se carga DESPUÉS de organico.css.
+   Para quitarlo: borra el <link> de este archivo en index.html.
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap');
+
+:root {
+  --papel: #fffdf7;
+  --crema: #f7f4ec;
+  --cuento-azul: #0a1940;
+  --cuento-azul2: #1a3a7c;
+  --cuento-dorado: #F0A500;
+}
+
+/* ---------- 1) Fondos: crema (niveles, revistas) y azul (actividades, anuncios) ---------- */
+#niveles, #revistas { background: var(--crema) !important; }
+#actividades, #anuncios {
+  background: linear-gradient(160deg, #16357a 0%, #0a1940 80%) !important;
+}
+
+/* títulos sobre fondo crema */
+#niveles .section-title, #revistas .section-title { color: var(--cuento-azul) !important; }
+#niveles .section-sub,   #revistas .section-sub   { color: #42507a !important; }
+#niveles .section-tag,   #revistas .section-tag {
+  background: rgba(240,165,0,.18) !important; color: #8a5d00 !important; border-color: rgba(240,165,0,.4) !important;
+}
+/* títulos sobre fondo azul */
+#actividades .section-title, #anuncios .section-title { color: #fff !important; }
+#actividades .section-sub,   #anuncios .section-sub   { color: #c9d4f0 !important; }
+
+/* ---------- 2) Tarjeta base: foto pegada ---------- */
+#niveles .nivel-card,
+#actividades .actividad-card,
+#revistas .actividad-card,
+#anuncios .anuncio-card {
+  --tilt: -1.2deg;
+  background: var(--papel) !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 12px 12px 18px !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,.28) !important;
+  transform: rotate(var(--tilt));
+  transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s !important;
+  position: relative;
+  color: var(--cuento-azul);
+  overflow: visible !important;
+}
+/* cada tarjeta se inclina distinto */
+#niveles .nivel-card:nth-child(2n),
+#actividades .actividad-card:nth-child(2n),
+#revistas .actividad-card:nth-child(2n),
+#anuncios .anuncio-card:nth-child(2n) { --tilt: 1.1deg; }
+#niveles .nivel-card:nth-child(3n),
+#actividades .actividad-card:nth-child(3n),
+#revistas .actividad-card:nth-child(3n),
+#anuncios .anuncio-card:nth-child(3n) { --tilt: -.6deg; }
+
+#niveles .nivel-card:hover,
+#actividades .actividad-card:hover,
+#revistas .actividad-card:hover,
+#anuncios .anuncio-card:hover {
+  transform: rotate(0deg) translateY(-8px) !important;
+  box-shadow: 0 22px 44px rgba(0,0,0,.35) !important;
+}
+
+/* cinta dorada pegada arriba */
+#niveles .nivel-card::before,
+#actividades .actividad-card::before,
+#revistas .actividad-card::before,
+#anuncios .anuncio-card::before {
+  content: "";
+  position: absolute; top: -12px; left: 50%;
+  width: 78px; height: 24px; margin-left: -39px;
+  background: rgba(240,165,0,.75);
+  transform: rotate(-3deg);
+  clip-path: polygon(0 12%, 6% 0, 12% 12%, 18% 0, 24% 12%, 76% 12%, 82% 0, 88% 12%, 94% 0, 100% 12%, 100% 88%, 94% 100%, 88% 88%, 82% 100%, 76% 88%, 24% 88%, 18% 100%, 12% 88%, 6% 100%, 0 88%);
+  z-index: 2;
+}
+
+/* ---------- 3) Interior de actividades / revistas / anuncios ---------- */
+#actividades .actividad-card > img,
+#revistas .actividad-card > img,
+#anuncios .anuncio-card > img,
+#anuncios .anuncio-img {
+  width: 100% !important; height: 180px !important;
+  object-fit: cover; display: block;
+  border-radius: 3px !important;
+}
+#actividades .actividad-card-placeholder,
+#revistas .actividad-card-placeholder,
+#anuncios .anuncio-img-placeholder {
+  height: 180px; border-radius: 3px !important;
+  background: #e8eefc !important; color: var(--cuento-azul2);
+  display: flex; align-items: center; justify-content: center; font-size: 2.6rem;
+}
+.actividad-franja, .anuncio-franja { display: none !important; }
+
+#actividades .actividad-body,
+#revistas .actividad-body,
+#anuncios .anuncio-body { padding: 14px 6px 0 !important; background: transparent !important; }
+
+#actividades .actividad-titulo, #revistas .actividad-titulo, #anuncios .anuncio-titulo {
+  color: var(--cuento-azul) !important;
+  font-family: 'Playfair Display', serif; font-weight: 700;
+}
+#actividades .actividad-desc, #revistas .actividad-desc, #anuncios .anuncio-desc,
+#anuncios .anuncio-detalle { color: #42507a !important; }
+
+/* fecha y "ver más": letra manuscrita */
+#actividades .actividad-fecha, #actividades .act-ver-mas, #anuncios .act-ver-mas {
+  font-family: 'Caveat', cursive !important; font-size: 1.2rem !important;
+  color: #b07a00 !important;
+}
+/* etiquetas (categoría / anuncio / revista) */
+#actividades .actividad-badge, #revistas .actividad-badge, #anuncios .anuncio-badge {
+  background: rgba(240,165,0,.18) !important; color: #8a5d00 !important;
+  border: 1px solid rgba(240,165,0,.4) !important; border-radius: 999px !important;
+}
+
+/* botones de me gusta / opinión sobre papel */
+#actividades .op-acciones-card, #anuncios .op-acciones-card {
+  border-top: 2px dashed rgba(10,25,64,.15);
+}
+#actividades .op-like-btn, #actividades .op-dejar-btn,
+#anuncios .op-like-btn, #anuncios .op-dejar-btn {
+  background: #fff; color: var(--cuento-azul2);
+  border: 1px solid rgba(10,25,64,.18);
+}
+#actividades .op-like-btn.op-like-dado, #anuncios .op-like-btn.op-like-dado {
+  background: rgba(240,165,0,.18); border-color: rgba(240,165,0,.5); color: #8a5d00;
+}
+
+/* botón "Ver revista" dorado en píldora */
+#revistas .btn-ver {
+  background: var(--cuento-dorado) !important; color: var(--cuento-azul) !important;
+  border: none !important; border-radius: 999px !important; font-weight: 800;
+}
+
+/* ---------- 4) Niveles ---------- */
+#niveles .nivel-card { text-align: center; padding: 26px 18px 22px !important; }
+#niveles .nivel-card h3 {
+  color: var(--cuento-azul) !important; font-family: 'Playfair Display', serif;
+}
+#niveles .nivel-icon {
+  background: #e8eefc !important; border: 3px solid var(--cuento-dorado) !important;
+  border-radius: 50% !important; overflow: hidden;
+}
+#niveles .nivel-tag {
+  font-family: 'Caveat', cursive !important; font-size: 1.3rem !important;
+  color: #b07a00 !important; background: none !important; border: none !important;
+}
+#niveles .nivel-arrow { color: var(--cuento-azul2) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  #niveles .nivel-card, #actividades .actividad-card,
+  #revistas .actividad-card, #anuncios .anuncio-card { transform: none !important; }
+}
