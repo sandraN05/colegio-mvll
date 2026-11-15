@@ -141,17 +141,32 @@ nav.nav-solido {
 nav:has(.nav-menu-mobile.open) { background: rgba(10,25,64,.97) !important; }
 
 /* ============================================================
-   FRASE MOTIVACIONAL con escritura animada
+   FRANJA DORADA: más delgada, con la frase escrita sobre una curva ondulada
    ============================================================ */
-.frase-motiv-texto { min-height: 2.8em; }
-.frase-motiv-texto.fm-escribiendo::after {
-  content: "|"; margin-left: 2px; font-weight: 300;
-  animation: fmCursor .8s steps(1) infinite;
+.frase-motiv-wrap {
+  padding-top: calc(34px + .4rem) !important;
+  padding-bottom: .9rem !important;
 }
+.frase-motiv-inner { padding: 0 1rem !important; max-width: 1100px; margin: 0 auto; }
+.frase-motiv-icono { display: none !important; }
+.frase-motiv-texto { min-height: 0 !important; margin: 0 !important; padding: 0 !important; }
+.fm-svg { display: block; width: 100%; max-width: 1000px; height: auto; margin: 0 auto; overflow: visible; }
+.fm-text {
+  font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700;
+  font-size: 29px; fill: #0a1940;
+}
+.fm-cur { animation: fmCursor .8s steps(1) infinite; }
 @keyframes fmCursor { 50% { opacity: 0 } }
 
+/* Quita las franjas con el nombre repetido "Mario Vargas Llosa";
+   el nombre queda solo en el arco del inicio. Para recuperarlas, borra esta regla. */
+.banner-wrap { display: none !important; }
+
+/* Quita los puntitos flotantes viejos (decor.js) */
+.decor-layer, .decor-item { display: none !important; }
+
 @media (prefers-reduced-motion: reduce) {
-  .fx-aurora, .fx-estrella, .frase-motiv-texto.fm-escribiendo::after { animation: none !important; }
+  .fx-aurora, .fx-estrella, .fm-cur { animation: none !important; }
   .fx-estrella { opacity: .5; top: 20%; }
   .fx-trazo { display: none; }
 }
