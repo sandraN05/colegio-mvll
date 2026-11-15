@@ -1,6 +1,6 @@
 /* ============================================================
-   FRASE MOTIVACIONAL — se escribe letra por letra, dura 1 minuto,
-   se borra y se escribe la siguiente. Así va rotando todas.
+   FRASE MOTIVACIONAL — se escribe letra por letra siguiendo una CURVA ONDULADA.
+   Cada frase dura 1 minuto, se borra y se escribe la siguiente.
    Para editar las frases, solo cambia el arreglo FRASES.
    Para cambiar el tiempo de cada frase, cambia MS_POR_FRASE.
    ============================================================ */
@@ -16,34 +16,65 @@
   const MS_ESCRIBIR  = 45;     // velocidad al escribir (ms por letra)
   const MS_BORRAR    = 20;     // velocidad al borrar (ms por letra)
 
+  const NS = 'http://www.w3.org/2000/svg';
+  // la curva: dos olas suaves de lado a lado
+  const CURVA = 'M0,48 Q125,-4 250,48 T500,48 T750,48 T1000,48';
+
   function diaDelAnio(fecha){
     const inicio = new Date(fecha.getFullYear(), 0, 0);
     return Math.floor((fecha - inicio) / 86400000);
   }
 
   document.addEventListener('DOMContentLoaded', function(){
-    const el = document.getElementById('frase-motiv-texto');
-    if(!el) return;
+    const cont = document.getElementById('frase-motiv-texto');
+    if(!cont) return;
 
+    // SVG con el texto pegado a la curva
+    cont.innerHTML =
+      '<svg class="fm-svg" viewBox="0 0 1000 96" aria-hidden="true" xmlns="' + NS + '">' +
+        '<path id="fm-curva" d="' + CURVA + '" fill="none"/>' +
+        '<text class="fm-text"><textPath href="#fm-curva" startOffset="50%" text-anchor="middle">' +
+          '<tspan id="fm-t"></tspan><tspan class="fm-cur">|</tspan>' +
+        '</textPath></text>' +
+      '</svg>';
+    cont.setAttribute('aria-label', FRASES[0]);
+
+    const textoEl = cont.querySelector('.fm-text');
+    const tp      = cont.querySelector('textPath');
+    const t       = cont.querySelector('#fm-t');
+    const curva   = cont.querySelector('#fm-curva');
     let indice = diaDelAnio(new Date()) % FRASES.length;
 
-    // Si la persona prefiere menos movimiento: texto fijo, cambia cada minuto sin animar
+    // Coloca la frase centrada sobre la curva, midiendo su ancho completo (así no se mueve al escribir)
+    function centrar(frase){
+      t.textContent = frase;
+      try {
+        const L = textoEl.getComputedTextLength();
+        const total = curva.getTotalLength();
+        if (L > 0) {
+          tp.setAttribute('text-anchor', 'start');
+          tp.setAttribute('startOffset', Math.max(0, (total - L) / 2));
+        }
+      } catch(e) {}
+      t.textContent = '';
+    }
+
+    // Menos movimiento: frase completa y quieta, cambia cada minuto
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      el.textContent = FRASES[indice];
-      setInterval(function(){
-        indice = (indice + 1) % FRASES.length;
-        el.textContent = FRASES[indice];
-      }, MS_POR_FRASE);
+      const mostrar = function(){ centrar(FRASES[indice]); t.textContent = FRASES[indice]; cont.setAttribute('aria-label', FRASES[indice]); };
+      mostrar();
+      setInterval(function(){ indice = (indice + 1) % FRASES.length; mostrar(); }, MS_POR_FRASE);
       return;
     }
 
     function escribir(){
       const frase = FRASES[indice];
+      cont.setAttribute('aria-label', frase);
+      centrar(frase);
       let n = 0;
-      el.classList.add('fm-escribiendo');
       (function paso(){
         n++;
-        el.textContent = frase.slice(0, n);
+        t.textContent = frase.slice(0, n);
         if (n < frase.length) {
           setTimeout(paso, MS_ESCRIBIR);
         } else {
@@ -54,10 +85,10 @@
     }
 
     function borrar(){
-      let n = el.textContent.length;
+      let n = t.textContent.length;
       (function paso(){
         n--;
-        el.textContent = el.textContent.slice(0, Math.max(n, 0));
+        t.textContent = t.textContent.slice(0, Math.max(n, 0));
         if (n > 0) {
           setTimeout(paso, MS_BORRAR);
         } else {
@@ -67,6 +98,7 @@
       })();
     }
 
-    escribir();
+    // espera a que carguen las fuentes para medir bien el ancho
+    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(escribir);
   });
 })();
