@@ -1,0 +1,157 @@
+/* ============================================================
+   FONDOS ANIMADOS — alternan BLANCO / AZUL
+     Niveles ........ blanco  (líneas azules en movimiento)
+     Actividades .... azul    (aurora suave + lluvia de estrellas)
+     Revistas ....... blanco  (líneas azules en movimiento)
+     Anuncios ....... azul    (aurora suave + lluvia de estrellas)
+     Contacto ....... blanco  (líneas azules en movimiento)
+   Las capas las crea js/aurora.js. Se carga DESPUÉS de cuento.css.
+   Para quitarlo: borra este <link> y el <script> de aurora.js en index.html.
+   ============================================================ */
+
+/* ---------- Capa base ---------- */
+.fx-sec { position: relative; overflow: hidden; }
+.fx-layer {
+  position: absolute; inset: 0;
+  overflow: hidden; pointer-events: none; z-index: 0;
+  /* difumina los efectos cerca de las ondas para que se fusionen con el borde */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
+}
+.fx-sec .section-inner { position: relative; z-index: 1; }
+
+/* ---------- Estrellas (secciones azules) ---------- */
+.fx-estrella {
+  position: absolute; top: 0;
+  clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+  animation: fxLluvia linear infinite;
+  will-change: transform, opacity;
+}
+@keyframes fxLluvia {
+  0%   { transform: translate3d(0,-40px,0) rotate(0deg); opacity: 0 }
+  10%  { opacity: 1 }
+  85%  { opacity: 1 }
+  100% { transform: translate3d(-140px,var(--alto,700px),0) rotate(220deg); opacity: 0 }
+}
+
+/* ---------- Aurora suave (secciones azules) ---------- */
+.fx-aurora {
+  position: absolute; border-radius: 50%;
+  filter: blur(55px); will-change: transform, opacity;
+  mix-blend-mode: screen;
+  background: radial-gradient(ellipse at center, var(--c) 0%, transparent 70%);
+}
+.fx-aurora:nth-child(1) { --c: var(--c1); top: -20%; left: -10%; width: 70%; height: 70%; animation: fxAuroraA 15s ease-in-out infinite; }
+.fx-aurora:nth-child(2) { --c: var(--c2); top: -10%; left: 35%;  width: 70%; height: 75%; animation: fxAuroraB 19s ease-in-out infinite; }
+.fx-aurora:nth-child(3) { --c: var(--c3); top: 30%;  left: 0%;   width: 60%; height: 60%; animation: fxAuroraC 23s ease-in-out infinite; }
+.fx-aurora:nth-child(4) { --c: var(--c4); top: 20%;  left: 55%;  width: 45%; height: 55%; animation: fxAuroraB 17s ease-in-out infinite -6s; }
+@keyframes fxAuroraA { 0%,100% { transform: translate(-8%,0) scale(1) rotate(-6deg); opacity:.6 } 50% { transform: translate(12%,8%) scale(1.2) rotate(5deg); opacity:1 } }
+@keyframes fxAuroraB { 0%,100% { transform: translate(8%,2%) scale(1.1) rotate(5deg); opacity:.55 } 50% { transform: translate(-14%,-5%) scale(.95) rotate(-6deg); opacity:1 } }
+@keyframes fxAuroraC { 0%,100% { transform: translate(0,0) scale(1); opacity:.45 } 50% { transform: translate(8%,10%) scale(1.25); opacity:.9 } }
+
+/* ---------- Trazos gruesos de derecha a izquierda (secciones blancas) ---------- */
+.fx-trazo {
+  position: absolute; left: 100%;
+  border-radius: 999px;
+  animation: fxTrazo ease-in-out infinite;
+  will-change: transform, opacity;
+}
+@keyframes fxTrazo {
+  0%   { transform: translateX(0) rotate(var(--rot,0deg)); opacity: 0 }
+  18%  { opacity: 1 }
+  62%  { opacity: .85 }
+  100% { transform: translateX(calc(-1 * var(--ancho,1800px))) rotate(var(--rot,0deg)); opacity: 0 }
+}
+
+/* se pausa cuando la sección no se ve (ahorra batería) */
+.fx-quieto .fx-layer * { animation-play-state: paused !important; }
+
+/* ============================================================
+   SECCIONES BLANCAS: Niveles, Revistas, Contacto
+   ============================================================ */
+#niveles, #revistas, #contacto {
+  background: #ffffff !important;
+}
+#niveles .section-title, #revistas .section-title, #contacto .section-title { color: #0a1940 !important; }
+#niveles .section-sub,   #revistas .section-sub,   #contacto .section-sub   { color: #42507a !important; }
+#niveles .section-tag, #revistas .section-tag, #contacto .section-tag {
+  background: rgba(240,165,0,.18) !important; color: #8a5d00 !important; border-color: rgba(240,165,0,.5) !important;
+}
+/* tarjetas de papel sobre blanco: borde y sombra azulada */
+#niveles .nivel-card, #revistas .actividad-card {
+  border: 1px solid rgba(10,25,64,.10) !important;
+  box-shadow: 0 14px 30px rgba(10,25,64,.16) !important;
+}
+/* Revistas: quitar el borde dorado animado y pasar la lista de "Indexada en" a claro */
+#revistas::before { display: none !important; }
+#revistas .repositorios-titulo { color: #42507a !important; }
+#revistas .repositorio-badge {
+  background: #fff !important; color: #1a3a7c !important;
+  border: 1px solid rgba(26,58,124,.25) !important;
+}
+/* Contacto: textos oscuros sobre blanco */
+#contacto .contacto-item h4 { color: #0a1940 !important; }
+#contacto .contacto-item p  { color: #42507a !important; }
+#contacto .contacto-icon {
+  background: rgba(240,165,0,.16) !important; border-color: rgba(240,165,0,.45) !important;
+}
+
+/* ============================================================
+   SECCIONES AZULES: Actividades, Anuncios
+   ============================================================ */
+#actividades, #anuncios {
+  --c1: rgba(47,211,196,.55); --c2: rgba(74,123,255,.65);
+  --c3: rgba(139,108,246,.45); --c4: rgba(61,220,151,.40);
+  background: linear-gradient(180deg, #050d26 0%, #0a1940 55%, #12286a 100%) !important;
+}
+#actividades .section-title, #anuncios .section-title { color: #fff !important; }
+#actividades .section-sub,   #anuncios .section-sub   { color: #d5def5 !important; }
+#actividades .section-tag,   #anuncios .section-tag {
+  background: rgba(240,165,0,.18) !important; color: #ffd166 !important; border-color: rgba(240,165,0,.45) !important;
+}
+#anuncios .anuncio-card { border: none !important; box-shadow: 0 12px 28px rgba(0,0,0,.4) !important; }
+
+/* ============================================================
+   INICIO: fondo azul con aurora y estrellas + menú transparente
+   (reemplaza las fotos del carrusel; para volver a las fotos borra este bloque)
+   ============================================================ */
+.hero {
+  --c1: #2fd3c4; --c2: #4a7bff; --c3: #8b6cf6; --c4: #3ddc97;
+  background: linear-gradient(180deg, #050d26 0%, #0a1940 55%, #12286a 100%) !important;
+  padding-top: 66px; box-sizing: border-box; min-height: 560px;
+}
+.hero .hero-carousel { display: none !important; }
+.hero .hero-overlay  { background: none !important; }
+.fx-layer.fx-libre { -webkit-mask-image: none; mask-image: none; }
+.hero .fx-aurora { opacity: .9; }
+
+/* menú: transparente arriba (flota sobre el inicio) y sólido al bajar */
+nav {
+  position: fixed !important; top: 0; left: 0; right: 0;
+  background: transparent !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+  border-bottom: 1px solid transparent !important;
+  transition: background .35s ease, border-color .35s ease;
+}
+nav.nav-solido {
+  background: rgba(10,25,64,.96) !important;
+  -webkit-backdrop-filter: blur(20px) !important; backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(240,165,0,.18) !important;
+}
+nav:has(.nav-menu-mobile.open) { background: rgba(10,25,64,.97) !important; }
+
+/* ============================================================
+   FRASE MOTIVACIONAL con escritura animada
+   ============================================================ */
+.frase-motiv-texto { min-height: 2.8em; }
+.frase-motiv-texto.fm-escribiendo::after {
+  content: "|"; margin-left: 2px; font-weight: 300;
+  animation: fmCursor .8s steps(1) infinite;
+}
+@keyframes fmCursor { 50% { opacity: 0 } }
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-aurora, .fx-estrella, .frase-motiv-texto.fm-escribiendo::after { animation: none !important; }
+  .fx-estrella { opacity: .5; top: 20%; }
+  .fx-trazo { display: none; }
+}
