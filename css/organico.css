@@ -1,4 +1,10 @@
+/* ============================================================
+   DISEÑO ORGÁNICO — bordes ondulados, formas suaves, animaciones
+   Se carga AL FINAL del <head> para sobreescribir las cajas rectangulares.
+   Para quitarlo todo: borra el <link> de este archivo en index.html.
+   ============================================================ */
 
+/* ---------- 1) Quitar las "cajas" rígidas ---------- */
 .hero,
 .frase-motiv-wrap,
 .banner-wrap,
