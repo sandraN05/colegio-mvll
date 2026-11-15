@@ -144,8 +144,8 @@ nav:has(.nav-menu-mobile.open) { background: rgba(10,25,64,.97) !important; }
    FRANJA DORADA: más delgada, con la frase escrita sobre una curva ondulada
    ============================================================ */
 .frase-motiv-wrap {
-  padding-top: calc(34px + .4rem) !important;
-  padding-bottom: .9rem !important;
+  padding-top: calc(34px + 1.4rem) !important;
+  padding-bottom: calc(46px + 1.2rem) !important;
 }
 .frase-motiv-inner { padding: 0 1rem !important; max-width: 1100px; margin: 0 auto; }
 .frase-motiv-icono { display: none !important; }
@@ -164,6 +164,36 @@ nav:has(.nav-menu-mobile.open) { background: rgba(10,25,64,.97) !important; }
 
 /* Quita los puntitos flotantes viejos (decor.js) */
 .decor-layer, .decor-item { display: none !important; }
+
+/* ============================================================
+   INICIO nuevo: título grande a la izquierda + etiqueta + botón dorado
+   ============================================================ */
+.hero { text-align: left !important; display: flex; align-items: center; min-height: 600px; }
+.hero .hero-content.hero-nuevo {
+  position: relative; z-index: 2; width: 100%; max-width: 1100px;
+  margin: 0 auto; padding: 70px 2rem 90px; text-align: left !important;
+  align-items: flex-start !important;
+}
+.hn-badge {
+  display: inline-block; padding: .45rem 1.1rem; border-radius: 999px;
+  background: rgba(240,165,0,.2); border: 1px solid rgba(240,165,0,.45);
+  color: #ffd166; font: 800 .8rem 'Nunito', sans-serif; letter-spacing: .12em; text-transform: uppercase;
+}
+.hn-titulo {
+  margin: 1.2rem 0 1rem; max-width: 640px; color: #fff;
+  font: 700 clamp(2.4rem, 4.6vw, 3.6rem)/1.12 'Playfair Display', serif;
+  text-shadow: 0 4px 24px rgba(0,0,0,.35);
+}
+.hn-sub { max-width: 520px; color: #d5def5; font: 400 1.1rem/1.6 'Nunito', sans-serif; margin: 0 0 1.8rem; }
+.hn-btn {
+  display: inline-block; padding: .95rem 1.9rem; border-radius: 999px;
+  background: #F0A500; color: #0a1940; font: 800 1rem 'Nunito', sans-serif; text-decoration: none;
+  box-shadow: 0 10px 26px rgba(240,165,0,.4); transition: transform .2s, box-shadow .2s;
+}
+.hn-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(240,165,0,.55); }
+/* aurora más viva y estrellas más grandes en el inicio */
+.hero .fx-aurora { opacity: 1; }
+.hero .fx-estrella { filter: drop-shadow(0 0 6px rgba(255,209,102,.7)); }
 
 @media (prefers-reduced-motion: reduce) {
   .fx-aurora, .fx-estrella, .fm-cur { animation: none !important; }
