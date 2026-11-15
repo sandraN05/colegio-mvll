@@ -1,6 +1,10 @@
+/* ============================================================
+   PANTALLA DE CARGA — logo que rebota (estilo B) en azul, dorado y blanco
+   Va en el <head> (antes de todo). Se inyecta sola: no necesita HTML ni CSS aparte.
+   ============================================================ */
 (function () {
-  var MIN_MS = 1400;      
-  var MAX_MS = 6000;      
+  var MIN_MS = 1400;       // tiempo mínimo visible
+  var MAX_MS = 6000;       // por si algo tarda de más, se quita igual
   var inicio = Date.now();
 
   var css = document.createElement('style');
