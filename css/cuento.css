@@ -16,21 +16,22 @@
   --cuento-dorado: #F0A500;
 }
 
-/* ---------- 1) Fondos: crema (niveles, revistas) y azul (actividades, anuncios) ---------- */
-#niveles, #revistas { background: var(--crema) !important; }
-#actividades, #anuncios {
-  background: linear-gradient(160deg, #16357a 0%, #0a1940 80%) !important;
+/* ---------- 1) Fondos: todo azul, alternando tono para que se vean las olas ---------- */
+#niveles, #revistas {            /* azul más claro */
+  background: linear-gradient(160deg, #234fa8 0%, #1a3a7c 100%) !important;
 }
-
-/* títulos sobre fondo crema */
-#niveles .section-title, #revistas .section-title { color: var(--cuento-azul) !important; }
-#niveles .section-sub,   #revistas .section-sub   { color: #42507a !important; }
-#niveles .section-tag,   #revistas .section-tag {
-  background: rgba(240,165,0,.18) !important; color: #8a5d00 !important; border-color: rgba(240,165,0,.4) !important;
+#actividades, #anuncios {        /* azul oscuro */
+  background: linear-gradient(160deg, #12286a 0%, #0a1940 80%) !important;
 }
-/* títulos sobre fondo azul */
+/* títulos, siempre claros sobre azul */
+#niveles .section-title, #revistas .section-title,
 #actividades .section-title, #anuncios .section-title { color: #fff !important; }
-#actividades .section-sub,   #anuncios .section-sub   { color: #c9d4f0 !important; }
+#niveles .section-sub, #revistas .section-sub,
+#actividades .section-sub, #anuncios .section-sub { color: #d5def5 !important; }
+#niveles .section-tag, #revistas .section-tag,
+#actividades .section-tag, #anuncios .section-tag {
+  background: rgba(240,165,0,.18) !important; color: #ffd166 !important; border-color: rgba(240,165,0,.45) !important;
+}
 
 /* ---------- 2) Tarjeta base: foto pegada ---------- */
 #niveles .nivel-card,
@@ -42,7 +43,7 @@
   border: none !important;
   border-radius: 6px !important;
   padding: 12px 12px 18px !important;
-  box-shadow: 0 12px 28px rgba(0,0,0,.28) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,.35) !important;
   transform: rotate(var(--tilt));
   transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s !important;
   position: relative;
@@ -153,7 +154,7 @@
   font-family: 'Caveat', cursive !important; font-size: 1.3rem !important;
   color: #b07a00 !important; background: none !important; border: none !important;
 }
-#niveles .nivel-arrow { color: var(--cuento-azul2) !important; }
+#niveles .nivel-arrow { background: var(--cuento-dorado) !important; color: var(--cuento-azul) !important; font-weight: 800; }
 
 @media (prefers-reduced-motion: reduce) {
   #niveles .nivel-card, #actividades .actividad-card,
